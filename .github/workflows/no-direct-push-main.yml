@@ -14,8 +14,10 @@ jobs:
       - name: Check if push is from PR merge
         id: check-pr
         run: |
-          # GitHub Actions sets this when merging a PR
-          if [[ "${{ github.event.head_commit.message }}" == Merge\ pull\ request* ]] || \
+          # Check if commit message contains PR reference (#123) which indicates PR merge
+          # This works for squash merges, regular merges, and rebase merges
+          if [[ "${{ github.event.head_commit.message }}" =~ \(#[0-9]+\) ]] || \
+             [[ "${{ github.event.head_commit.message }}" == Merge\ pull\ request* ]] || \
              [[ "${{ github.event.head_commit.message }}" == Merge\ branch* ]]; then
             echo "pr_merge=true" >> $GITHUB_OUTPUT
           else
