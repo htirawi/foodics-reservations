@@ -3,7 +3,28 @@
     "title": "Foodics Reservations",
     "loading": "Loading...",
     "switchToArabic": "العربية",
-    "switchToEnglish": "English"
+    "switchToEnglish": "English",
+    "close": "Close",
+    "remove": "Remove"
+  },
+  "reservations": {
+    "title": "Reservations",
+    "disableAll": "Disable Reservations",
+    "addBranches": "Add Branches",
+    "table": {
+      "branch": "Branch",
+      "reference": "Reference",
+      "tablesCount": "Number of Tables",
+      "duration": "Reservation Duration"
+    },
+    "empty": {
+      "title": "No branches configured",
+      "description": "Add branches to start managing reservations.",
+      "action": "Add Branches"
+    },
+    "duration": {
+      "minutes": "{count} Minutes"
+    }
   },
   "empty": {
     "title": "No items found",
@@ -11,5 +32,56 @@
   },
   "loading": {
     "message": "Loading content, please wait..."
+  },
+  "settings": {
+    "title": "Edit {branchName} branch reservation settings",
+    "workingHours": "Branch working hours are {from} - {to}",
+    "duration": {
+      "label": "Reservation Duration (minutes)",
+      "placeholder": "Enter duration in minutes"
+    },
+    "tables": {
+      "label": "Tables",
+      "placeholder": "Select tables that accept reservations",
+      "noTables": "No tables available"
+    },
+    "days": {
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday"
+    },
+    "timeSlots": {
+      "add": "Add Available Reservation Times",
+      "applyToAll": "Apply on all days",
+      "remove": "Remove time slot",
+      "from": "From",
+      "to": "To"
+    },
+    "actions": {
+      "save": "Save",
+      "close": "Close",
+      "disableReservations": "Disable Reservations"
+    },
+    "validation": {
+      "durationRequired": "Duration is required",
+      "durationMin": "Duration must be at least 1 minute",
+      "timeRequired": "Both start and end times are required",
+      "timeInvalid": "End time must be after start time",
+      "timeOverlap": "Time slots cannot overlap"
+    }
+  },
+  "addBranches": {
+    "title": "Add Branches",
+    "branchesLabel": "Branches",
+    "placeholder": "Select branches to enable",
+    "noBranches": "No disabled branches available",
+    "actions": {
+      "save": "Save",
+      "close": "Close"
+    }
   }
 }

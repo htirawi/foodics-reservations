@@ -3,7 +3,28 @@
     "title": "حجوزات فوديكس",
     "loading": "جاري التحميل...",
     "switchToArabic": "العربية",
-    "switchToEnglish": "English"
+    "switchToEnglish": "English",
+    "close": "إغلاق",
+    "remove": "إزالة"
+  },
+  "reservations": {
+    "title": "الحجوزات",
+    "disableAll": "تعطيل الحجوزات",
+    "addBranches": "إضافة فروع",
+    "table": {
+      "branch": "الفرع",
+      "reference": "المرجع",
+      "tablesCount": "عدد الطاولات",
+      "duration": "مدة الحجز"
+    },
+    "empty": {
+      "title": "لا توجد فروع مهيأة",
+      "description": "أضف فروعًا لبدء إدارة الحجوزات.",
+      "action": "إضافة فروع"
+    },
+    "duration": {
+      "minutes": "{count} دقيقة"
+    }
   },
   "empty": {
     "title": "لا توجد عناصر",
@@ -11,5 +32,56 @@
   },
   "loading": {
     "message": "جاري تحميل المحتوى، يرجى الانتظار..."
+  },
+  "settings": {
+    "title": "تعديل إعدادات الحجز لفرع {branchName}",
+    "workingHours": "ساعات عمل الفرع من {from} إلى {to}",
+    "duration": {
+      "label": "مدة الحجز (بالدقائق)",
+      "placeholder": "أدخل المدة بالدقائق"
+    },
+    "tables": {
+      "label": "الطاولات",
+      "placeholder": "اختر الطاولات التي تقبل الحجوزات",
+      "noTables": "لا توجد طاولات متاحة"
+    },
+    "days": {
+      "saturday": "السبت",
+      "sunday": "الأحد",
+      "monday": "الإثنين",
+      "tuesday": "الثلاثاء",
+      "wednesday": "الأربعاء",
+      "thursday": "الخميس",
+      "friday": "الجمعة"
+    },
+    "timeSlots": {
+      "add": "إضافة أوقات حجز متاحة",
+      "applyToAll": "تطبيق على جميع الأيام",
+      "remove": "إزالة الفترة الزمنية",
+      "from": "من",
+      "to": "إلى"
+    },
+    "actions": {
+      "save": "حفظ",
+      "close": "إغلاق",
+      "disableReservations": "تعطيل الحجوزات"
+    },
+    "validation": {
+      "durationRequired": "المدة مطلوبة",
+      "durationMin": "يجب أن تكون المدة دقيقة واحدة على الأقل",
+      "timeRequired": "وقت البداية والنهاية مطلوبان",
+      "timeInvalid": "يجب أن يكون وقت النهاية بعد وقت البداية",
+      "timeOverlap": "لا يمكن أن تتداخل الفترات الزمنية"
+    }
+  },
+  "addBranches": {
+    "title": "إضافة فروع",
+    "branchesLabel": "الفروع",
+    "placeholder": "اختر الفروع لتفعيلها",
+    "noBranches": "لا توجد فروع معطلة متاحة",
+    "actions": {
+      "save": "حفظ",
+      "close": "إغلاق"
+    }
   }
 }

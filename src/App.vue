@@ -5,9 +5,8 @@
       id="main"
       role="main"
       tabindex="-1"
-      class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"
     >
-      <slot />
+      <BranchesListView />
     </main>
     <Toaster />
   </div>
@@ -17,6 +16,7 @@
 import { onMounted } from 'vue';
 import AppHeader from '@/layouts/AppHeader.vue';
 import Toaster from '@/layouts/Toaster.vue';
+import BranchesListView from '@/features/branches/views/BranchesListView.vue';
 import { useLocale } from '@/composables/useLocale';
 import { useUIStore } from '@/stores/ui.store';
 
