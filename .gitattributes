@@ -1,0 +1,6 @@
+# Exclude generated/vendor files from GitHub language stats
+dist/** linguist-generated=true
+coverage/** linguist-generated=true
+playwright-report/** linguist-generated=true
+test-results/** linguist-generated=true
+postcss.config.cjs linguist-vendored=true
