@@ -1,0 +1,37 @@
+name: Prevent Direct Push to Main
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    name: Enforce PR-only workflow
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check if push is from PR merge
+        id: check-pr
+        run: |
+          # GitHub Actions sets this when merging a PR
+          if [[ "${{ github.event.head_commit.message }}" == Merge\ pull\ request* ]] || \
+             [[ "${{ github.event.head_commit.message }}" == Merge\ branch* ]]; then
+            echo "pr_merge=true" >> $GITHUB_OUTPUT
+          else
+            echo "pr_merge=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Fail if direct push
+        if: steps.check-pr.outputs.pr_merge != 'true'
+        run: |
+          echo "❌ Direct pushes to 'main' are not allowed!"
+          echo ""
+          echo "Please use the following workflow:"
+          echo "1. Create a feature branch: git checkout -b feat/your-feature"
+          echo "2. Make your changes and commit"
+          echo "3. Push your branch: git push -u origin feat/your-feature"
+          echo "4. Open a Pull Request on GitHub"
+          echo ""
+          echo "For more details, see CONTRIBUTING.md"
+          exit 1
