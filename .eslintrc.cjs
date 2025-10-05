@@ -63,4 +63,17 @@ module.exports = {
     'prefer-const': 'error',
     'no-var': 'error',
   },
+  overrides: [
+    {
+      // Relax complexity rules for test files
+      files: ['tests/**/*.spec.ts', 'tests/**/*.test.ts', '**/*.spec.ts', '**/*.test.ts'],
+      rules: {
+        'max-lines-per-function': 'off',
+        'max-nested-callbacks': 'off',
+        'max-depth': 'off',
+        'max-lines': ['error', { max: 300, skipComments: true, skipBlankLines: true }],
+        'complexity': 'off',
+      },
+    },
+  ],
 };
