@@ -178,8 +178,9 @@ test.describe('Branches List View - i18n (Arabic)', () => {
     // Wait for locale to switch
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
 
-    // Check Arabic page title
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('الحجوزات');
+    // Check Arabic page title (scoped to main to avoid header h1)
+    const mainHeading = page.getByRole('main').getByRole('heading', { level: 1 });
+    await expect(mainHeading).toHaveText('الحجوزات');
 
     // Check table headers in Arabic
     const table = page.getByTestId('branches-table');
@@ -237,9 +238,9 @@ test.describe('Branches List View - Accessibility', () => {
     await setupOfflineMode(page);
     await page.goto('/');
 
-    // Should have main heading
-    const h1 = page.getByRole('heading', { level: 1 });
-    await expect(h1).toBeVisible();
+    // Should have main heading (scoped to main content)
+    const mainHeading = page.getByRole('main').getByRole('heading', { level: 1 });
+    await expect(mainHeading).toBeVisible();
 
     // Should have table with proper structure
     const table = page.getByTestId('branches-table');

@@ -11,7 +11,8 @@ test.describe('Smoke Tests', () => {
   test('should mount the app successfully', async ({ page }) => {
     await setupOfflineMode(page);
     await page.goto('/');
-    await expect(page.locator('h1')).toContainText('Foodics Reservations');
+    // Check header title specifically
+    await expect(page.getByTestId('header-title')).toContainText('Foodics Reservations');
   });
 
   test('should toggle locale between EN and AR', async ({ page }) => {
