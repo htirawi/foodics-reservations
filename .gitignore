@@ -24,8 +24,8 @@ dist/
 *.sln
 *.sw?
 
-# Editor-specific rules (Cursor)
-.cursor/
+# Git hooks (use native .git/hooks instead)
+.husky/
 
 # Test coverage
 coverage/
