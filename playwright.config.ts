@@ -1,8 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 
-// Load environment variables from .env.local
-dotenv.config({ path: '.env.local' });
+// Load .env.e2e for E2E tests (offline mode by default)
+// This ensures we never accidentally use real tokens in tests
+dotenv.config({ path: '.env.e2e' });
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -11,10 +12,12 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
+  globalSetup: './tests/e2e/setup/global-setup.ts',
   use: {
     baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
   projects: [
     // Desktop Browsers

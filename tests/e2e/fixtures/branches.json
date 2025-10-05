@@ -1,0 +1,70 @@
+{
+  "data": [
+    {
+      "id": "test-branch-1",
+      "name": "Downtown Branch",
+      "reference": "DT-001",
+      "type": 1,
+      "accepts_reservations": true,
+      "receives_online_orders": true,
+      "reservation_duration": 90,
+      "opening_from": "09:00:00",
+      "opening_to": "23:00:00",
+      "reservation_times": {
+        "saturday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "sunday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "monday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "tuesday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "wednesday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "thursday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "friday": ["12:00:00", "15:00:00", "18:00:00", "21:00:00"]
+      },
+      "created_at": "2024-01-01T00:00:00.000000Z",
+      "updated_at": "2024-01-15T10:30:00.000000Z"
+    },
+    {
+      "id": "test-branch-2",
+      "name": "Mall Branch",
+      "reference": "ML-002",
+      "type": 1,
+      "accepts_reservations": true,
+      "receives_online_orders": false,
+      "reservation_duration": 60,
+      "opening_from": "10:00:00",
+      "opening_to": "22:00:00",
+      "reservation_times": {
+        "saturday": ["10:00:00", "13:00:00", "16:00:00", "19:00:00"],
+        "sunday": ["10:00:00", "13:00:00", "16:00:00", "19:00:00"],
+        "monday": ["10:00:00", "13:00:00", "16:00:00", "19:00:00"],
+        "tuesday": ["10:00:00", "13:00:00", "16:00:00", "19:00:00"],
+        "wednesday": ["10:00:00", "13:00:00", "16:00:00", "19:00:00"],
+        "thursday": ["10:00:00", "13:00:00", "16:00:00", "19:00:00"],
+        "friday": ["13:00:00", "16:00:00", "19:00:00"]
+      },
+      "created_at": "2024-01-05T00:00:00.000000Z",
+      "updated_at": "2024-01-20T14:15:00.000000Z"
+    },
+    {
+      "id": "test-branch-3",
+      "name": "Airport Branch",
+      "reference": "AP-003",
+      "type": 1,
+      "accepts_reservations": false,
+      "receives_online_orders": true,
+      "reservation_duration": 45,
+      "opening_from": "06:00:00",
+      "opening_to": "00:00:00",
+      "reservation_times": {
+        "saturday": [],
+        "sunday": [],
+        "monday": [],
+        "tuesday": [],
+        "wednesday": [],
+        "thursday": [],
+        "friday": []
+      },
+      "created_at": "2024-01-10T00:00:00.000000Z",
+      "updated_at": "2024-01-25T08:45:00.000000Z"
+    }
+  ]
+}
