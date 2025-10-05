@@ -1,12 +1,15 @@
 /**
  * Branches List View E2E Tests
  * Validates semantic structure, interactions, and i18n/RTL
+ * Runs in offline mode by default (uses fixtures)
  */
 
 import { test, expect } from '@playwright/test';
+import { setupOfflineMode, setupEmptyState } from './setup/intercepts';
 
 test.describe('Branches List View - Structure', () => {
   test('renders page with correct semantic hierarchy', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     // Header
@@ -18,6 +21,7 @@ test.describe('Branches List View - Structure', () => {
   });
 
   test('displays branches table with correct columns', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const table = page.getByTestId('branches-table');
@@ -31,6 +35,7 @@ test.describe('Branches List View - Structure', () => {
   });
 
   test('displays Add Branches button', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const addButton = page.getByTestId('add-branches');
@@ -39,6 +44,7 @@ test.describe('Branches List View - Structure', () => {
   });
 
   test('displays Disable Reservations button when branches are enabled', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     // Wait for data to load
@@ -56,6 +62,7 @@ test.describe('Branches List View - Structure', () => {
 
 test.describe('Branches List View - Data Display', () => {
   test('displays branch rows with correct data', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     // Wait for table to load
@@ -76,6 +83,7 @@ test.describe('Branches List View - Data Display', () => {
   });
 
   test('displays duration in correct format', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const table = page.getByTestId('branches-table');
@@ -93,15 +101,7 @@ test.describe('Branches List View - Data Display', () => {
 
 test.describe('Branches List View - Empty State', () => {
   test('shows empty state when no branches configured', async ({ page }) => {
-    // Intercept API to return empty data
-    await page.route('**/api/branches*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ data: [] }),
-      });
-    });
-
+    await setupEmptyState(page);
     await page.goto('/');
 
     const emptyState = page.getByTestId('empty-state');
@@ -111,14 +111,7 @@ test.describe('Branches List View - Empty State', () => {
   });
 
   test('empty state Add Branches button is clickable', async ({ page }) => {
-    await page.route('**/api/branches*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ data: [] }),
-      });
-    });
-
+    await setupEmptyState(page);
     await page.goto('/');
 
     const addButton = page.getByTestId('add-branches');
@@ -133,6 +126,7 @@ test.describe('Branches List View - Empty State', () => {
 
 test.describe('Branches List View - Interactions', () => {
   test('Add Branches button triggers action', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const addButton = page.getByTestId('add-branches');
@@ -146,6 +140,7 @@ test.describe('Branches List View - Interactions', () => {
   });
 
   test('Disable All button is keyboard accessible', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     await page.waitForSelector('[data-testid="branches-table"]', { timeout: 5000 });
@@ -169,6 +164,7 @@ test.describe('Branches List View - Interactions', () => {
 
 test.describe('Branches List View - i18n (Arabic)', () => {
   test('displays Arabic translations correctly', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     // Switch to Arabic
@@ -188,6 +184,7 @@ test.describe('Branches List View - i18n (Arabic)', () => {
   });
 
   test('RTL layout flips correctly', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     // Switch to Arabic
@@ -206,10 +203,16 @@ test.describe('Branches List View - i18n (Arabic)', () => {
 
 test.describe('Branches List View - Loading State', () => {
   test('shows loading indicator while fetching data', async ({ page }) => {
-    // Delay API response
+    await setupOfflineMode(page);
+    
+    // Delay API response slightly to catch loading state
     await page.route('**/api/branches*', async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      await route.continue();
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: [] }),
+      });
     });
 
     await page.goto('/');
@@ -227,6 +230,7 @@ test.describe('Branches List View - Loading State', () => {
 
 test.describe('Branches List View - Accessibility', () => {
   test('has proper document structure', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     // Should have main heading
@@ -243,6 +247,7 @@ test.describe('Branches List View - Accessibility', () => {
   });
 
   test('interactive elements are focusable', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     // Add Branches button should be focusable

@@ -2,23 +2,25 @@
  * E2E API contract tests for branches endpoints
  * Validates response shapes and minimal required fields
  * 
- * Note: These tests hit the real Foodics API directly (not through Vite proxy)
- * Requires VITE_FOODICS_TOKEN and VITE_API_BASE_URL in .env.local
+ * ONLINE MODE ONLY: These tests require PW_E2E_ONLINE=true
+ * Set PW_API_BASE_URL and PW_STAGING_TOKEN in CI/staging environment
  * 
- * To skip these tests locally: npm run test:e2e -- --grep-invert "API Contract"
+ * To run these tests: PW_E2E_ONLINE=true PW_API_BASE_URL=... PW_STAGING_TOKEN=... npm run test:e2e -- --grep @online
+ * To skip these tests (default): npm run test:e2e
  */
 
 import { test, expect } from '@playwright/test';
 import type { Branch } from '@/types/foodics';
 
-// API configuration from environment
-const API_BASE = process.env.VITE_API_BASE_URL ?? 'https://api.foodics.dev/v5';
-const AUTH_TOKEN = process.env.VITE_FOODICS_TOKEN;
+// Online mode configuration (off by default)
+const IS_ONLINE_MODE = process.env.PW_E2E_ONLINE === 'true';
+const API_BASE = process.env.PW_API_BASE_URL ?? 'https://api.foodics.dev/v5';
+const AUTH_TOKEN = process.env.PW_STAGING_TOKEN ?? process.env.VITE_FOODICS_TOKEN;
 
-// Skip all API contract tests if no token is configured
-test.skip(!AUTH_TOKEN, 'Skipping API contract tests - VITE_FOODICS_TOKEN not set');
+// Skip all API contract tests unless explicitly in online mode
+test.skip(!IS_ONLINE_MODE, 'Skipping API contract tests - PW_E2E_ONLINE not enabled (offline mode)');
 
-test.describe('Branches API Contract', () => {
+test.describe('Branches API Contract @online', () => {
   test.describe('GET /branches', () => {
     test('should return array of branches with correct shape', async ({ request }) => {
       const response = await request.get(`${API_BASE}/branches`, {

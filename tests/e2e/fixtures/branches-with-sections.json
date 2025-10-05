@@ -1,0 +1,66 @@
+{
+  "data": [
+    {
+      "id": "test-branch-1",
+      "name": "Downtown Branch",
+      "reference": "DT-001",
+      "type": 1,
+      "accepts_reservations": true,
+      "receives_online_orders": true,
+      "reservation_duration": 90,
+      "opening_from": "09:00:00",
+      "opening_to": "23:00:00",
+      "reservation_times": {
+        "saturday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "sunday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "monday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "tuesday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "wednesday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "thursday": ["09:00:00", "12:00:00", "15:00:00", "18:00:00", "21:00:00"],
+        "friday": ["12:00:00", "15:00:00", "18:00:00", "21:00:00"]
+      },
+      "sections": [
+        {
+          "id": "test-section-1",
+          "branch_id": "test-branch-1",
+          "name": "Main Hall",
+          "tables": [
+            {
+              "id": "test-table-1",
+              "section_id": "test-section-1",
+              "name": "Table 1",
+              "accepts_reservations": true,
+              "seats": 4,
+              "status": 1
+            },
+            {
+              "id": "test-table-2",
+              "section_id": "test-section-1",
+              "name": "Table 2",
+              "accepts_reservations": true,
+              "seats": 6,
+              "status": 1
+            }
+          ]
+        },
+        {
+          "id": "test-section-2",
+          "branch_id": "test-branch-1",
+          "name": "Terrace",
+          "tables": [
+            {
+              "id": "test-table-3",
+              "section_id": "test-section-2",
+              "name": "Table 3",
+              "accepts_reservations": true,
+              "seats": 2,
+              "status": 1
+            }
+          ]
+        }
+      ],
+      "created_at": "2024-01-01T00:00:00.000000Z",
+      "updated_at": "2024-01-15T10:30:00.000000Z"
+    }
+  ]
+}

@@ -12,6 +12,8 @@ dist/
 .env
 .env.local
 .env.*.local
+.env.e2e
+.env.production
 
 # Editor directories and files
 .vscode/*

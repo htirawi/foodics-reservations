@@ -1,12 +1,15 @@
 /**
  * App Shell E2E Tests
  * Validates header, locale switching, toaster, and accessibility
+ * Runs in offline mode by default (uses fixtures)
  */
 
 import { test, expect } from '@playwright/test';
+import { setupOfflineMode } from './setup/intercepts';
 
 test.describe('App Shell', () => {
   test('renders header with title', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const header = page.getByTestId('header-title');
@@ -15,6 +18,7 @@ test.describe('App Shell', () => {
   });
 
   test('renders locale switcher', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const localeSwitcher = page.getByTestId('locale-switcher');
@@ -23,6 +27,7 @@ test.describe('App Shell', () => {
   });
 
   test('has proper header landmark', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const header = page.locator('header[role="banner"]');
@@ -30,6 +35,7 @@ test.describe('App Shell', () => {
   });
 
   test('has proper main landmark', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const main = page.locator('main[role="main"]');
@@ -41,6 +47,7 @@ test.describe('App Shell', () => {
 
 test.describe('Locale Switching', () => {
   test('toggles locale from EN to AR', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const localeSwitcher = page.getByTestId('locale-switcher');
@@ -59,6 +66,7 @@ test.describe('Locale Switching', () => {
   });
 
   test('toggles locale from AR back to EN', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const localeSwitcher = page.getByTestId('locale-switcher');
@@ -76,6 +84,7 @@ test.describe('Locale Switching', () => {
   });
 
   test('updates header title when locale changes', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const header = page.getByTestId('header-title');
@@ -89,6 +98,7 @@ test.describe('Locale Switching', () => {
   });
 
   test('locale switcher is keyboard accessible', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const localeSwitcher = page.getByTestId('locale-switcher');
@@ -108,6 +118,7 @@ test.describe('Locale Switching', () => {
 
 test.describe('Toaster', () => {
   test('displays toast notification', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     // Inject a toast via the UI store for testing
@@ -128,6 +139,7 @@ test.describe('Toaster', () => {
   });
 
   test('displays success toast with correct content', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     await page.evaluate(() => {
@@ -146,6 +158,7 @@ test.describe('Toaster', () => {
   });
 
   test('displays error toast with correct content', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     await page.evaluate(() => {
@@ -164,6 +177,7 @@ test.describe('Toaster', () => {
   });
 
   test('closes toast when close button clicked', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     await page.evaluate(() => {
@@ -188,6 +202,7 @@ test.describe('Toaster', () => {
 
 test.describe('Accessibility', () => {
   test('has visible focus indicators', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const localeSwitcher = page.getByTestId('locale-switcher');
@@ -205,6 +220,7 @@ test.describe('Accessibility', () => {
   });
 
   test('header has proper semantic structure', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const banner = page.locator('header[role="banner"]');
@@ -216,6 +232,7 @@ test.describe('Accessibility', () => {
   });
 
   test('main content is focusable for skip-to-content', async ({ page }) => {
+    await setupOfflineMode(page);
     await page.goto('/');
 
     const main = page.locator('main#main[role="main"]');
