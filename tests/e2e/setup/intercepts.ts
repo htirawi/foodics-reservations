@@ -25,20 +25,20 @@ function isAllowedUrl(url: string): boolean {
     url.startsWith('http://localhost:5173') ||
     url.includes('/@vite') ||
     url.includes('/@fs') ||
-    url.includes('/node_modules/') ||
-    url.includes('/api/')
+    url.includes('/node_modules/')
   );
 }
 
 async function interceptBranchesGet(page: Page, tracker: string[]): Promise<void> {
-  await page.route('**/api/branches', async (route: Route) => {
+  await page.route(/\/api\/branches(\?.*)?$/, async (route: Route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
     }
     tracker.push('GET /api/branches');
     const url = new URL(route.request().url());
-    const fixture = url.searchParams.get('include')?.includes('sections')
+    const includeParam = url.searchParams.get('include');
+    const fixture = includeParam?.includes('sections')
       ? 'branches-with-sections.json'
       : 'branches.json';
     await route.fulfill({
@@ -50,56 +50,29 @@ async function interceptBranchesGet(page: Page, tracker: string[]): Promise<void
 }
 
 async function interceptBranchMutations(page: Page, tracker: string[]): Promise<void> {
-  await page.route('**/api/branches/*/enable', async (route: Route) => {
-    if (route.request().method() !== 'PATCH') {
+  // Intercept PUT /branches/:id (generic - handles enable/disable/settings)
+  await page.route(/\/api\/branches\/[^/]+$/, async (route: Route) => {
+    if (route.request().method() !== 'PUT') {
       await route.continue();
       return;
     }
-    tracker.push('PATCH /api/branches/:id/enable');
+    
+    const body = route.request().postDataJSON() as Record<string, unknown>;
+    tracker.push('PUT /api/branches/:id');
+    
+    // Determine which fixture to use based on request body
+    let fixture = 'branch-enable-success.json';
+    if (body.accepts_reservations === false) {
+      fixture = 'branch-disable-success.json';
+    } else if (body.reservation_duration !== undefined || body.reservation_times !== undefined) {
+      fixture = 'branch-settings-success.json';
+    }
+    
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify(loadFixture('branch-enable-success.json')),
+      body: JSON.stringify(loadFixture(fixture)),
     });
-  });
-
-  await page.route('**/api/branches/*/disable', async (route: Route) => {
-    if (route.request().method() !== 'PATCH') {
-      await route.continue();
-      return;
-    }
-    tracker.push('PATCH /api/branches/:id/disable');
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(loadFixture('branch-disable-success.json')),
-    });
-  });
-
-  await page.route('**/api/branches/*/settings', async (route: Route) => {
-    if (route.request().method() !== 'PATCH') {
-      await route.continue();
-      return;
-    }
-    tracker.push('PATCH /api/branches/:id/settings');
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(loadFixture('branch-settings-success.json')),
-    });
-  });
-
-  await page.route('**/api/branches/*', async (route: Route) => {
-    if (route.request().method() === 'PATCH') {
-      tracker.push(`PATCH /api/branches/${route.request().url().split('/').pop() ?? 'unknown'}`);
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ data: { success: true } }),
-      });
-    } else {
-      await route.continue();
-    }
   });
 }
 
@@ -120,9 +93,11 @@ export async function setupOfflineMode(page: Page): Promise<void> {
   const interceptedRequests: string[] = [];
   const escapedRequests: string[] = [];
 
-  await interceptBranchesGet(page, interceptedRequests);
-  await interceptBranchMutations(page, interceptedRequests);
+  // Register in reverse order: catch-all first, then specific intercepts
+  // Playwright checks routes LIFO (last registered = first checked)
   await setupCatchAll(page, escapedRequests);
+  await interceptBranchMutations(page, interceptedRequests);
+  await interceptBranchesGet(page, interceptedRequests);
 
   await page.evaluate(
     ({ intercepted, escaped }) => {

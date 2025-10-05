@@ -122,9 +122,9 @@ test.describe('Branches List View - Empty State', () => {
     await expect(addButton).toBeVisible();
     await addButton.click();
 
-    // Should show toast
-    const toaster = page.getByTestId('toaster');
-    await expect(toaster).toBeVisible();
+    // Should open Add Branches modal
+    const modal = page.getByTestId('add-branches-modal');
+    await expect(modal).toBeVisible();
   });
 });
 
@@ -138,9 +138,9 @@ test.describe('Branches List View - Interactions', () => {
     
     await addButton.click();
 
-    // Should show notification
-    const toaster = page.getByTestId('toaster');
-    await expect(toaster).toBeVisible();
+    // Should open Add Branches modal
+    const modal = page.getByTestId('add-branches-modal');
+    await expect(modal).toBeVisible();
   });
 
   test('Disable All button is keyboard accessible', async ({ page }) => {

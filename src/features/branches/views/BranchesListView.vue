@@ -44,16 +44,16 @@
 
           <BaseTable data-testid="branches-table">
             <template #head>
-              <th class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
+              <th scope="col" class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
                 {{ $t('reservations.table.branch') }}
               </th>
-              <th class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
+              <th scope="col" class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
                 {{ $t('reservations.table.reference') }}
               </th>
-              <th class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
+              <th scope="col" class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
                 {{ $t('reservations.table.tablesCount') }}
               </th>
-              <th class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
+              <th scope="col" class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
                 {{ $t('reservations.table.duration') }}
               </th>
             </template>

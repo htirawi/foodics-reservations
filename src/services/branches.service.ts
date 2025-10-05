@@ -10,21 +10,23 @@ import type { FoodicsResponse } from '@/types/api';
 export const BranchesService = {
   /**
    * Fetch all branches from the Foodics API
-   * GET /branches
+   * GET /branches?include[0]=sections&include[1]=sections.tables
    * @param includeSections - If true, includes sections and tables in response
    */
   async getBranches(includeSections = false): Promise<Branch[]> {
-    const params = includeSections ? { include: 'sections.tables' } : {};
+    const params = includeSections 
+      ? { 'include[0]': 'sections', 'include[1]': 'sections.tables' }
+      : {};
     const { data } = await httpClient.get<FoodicsResponse<Branch[]>>('/branches', { params });
     return data.data;
   },
 
   /**
    * Enable reservations for a branch
-   * PATCH /branches/:id with accepts_reservations: true
+   * PUT /branches/:id with accepts_reservations: true
    */
   async enableBranch(id: string): Promise<Branch> {
-    const { data } = await httpClient.patch<FoodicsResponse<Branch>>(
+    const { data } = await httpClient.put<FoodicsResponse<Branch>>(
       `/branches/${id}`,
       { accepts_reservations: true }
     );
@@ -33,10 +35,10 @@ export const BranchesService = {
 
   /**
    * Disable reservations for a branch
-   * PATCH /branches/:id with accepts_reservations: false
+   * PUT /branches/:id with accepts_reservations: false
    */
   async disableBranch(id: string): Promise<Branch> {
-    const { data } = await httpClient.patch<FoodicsResponse<Branch>>(
+    const { data } = await httpClient.put<FoodicsResponse<Branch>>(
       `/branches/${id}`,
       { accepts_reservations: false }
     );
@@ -45,13 +47,13 @@ export const BranchesService = {
 
   /**
    * Update branch reservation settings
-   * PATCH /branches/:id with duration & time slots
+   * PUT /branches/:id with duration & time slots
    */
   async updateBranchSettings(
     id: string,
     payload: UpdateBranchSettingsPayload
   ): Promise<Branch> {
-    const { data } = await httpClient.patch<FoodicsResponse<Branch>>(
+    const { data } = await httpClient.put<FoodicsResponse<Branch>>(
       `/branches/${id}`,
       payload
     );

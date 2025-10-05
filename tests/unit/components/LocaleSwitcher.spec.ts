@@ -28,10 +28,13 @@ const i18n = createI18n({
 });
 
 describe('LocaleSwitcher', () => {
+  const STORAGE_KEY = 'foodics-locale';
+
   beforeEach(() => {
     i18n.global.locale.value = 'en';
     document.documentElement.removeAttribute('dir');
     document.documentElement.removeAttribute('lang');
+    localStorage.clear();
   });
 
   it('renders with English locale by default', () => {
@@ -119,5 +122,31 @@ describe('LocaleSwitcher', () => {
     });
 
     expect(wrapper.find('button').attributes('aria-label')).toBe('العربية');
+  });
+
+  it('persists locale to localStorage on toggle', async () => {
+    const wrapper = mount(LocaleSwitcher, {
+      global: {
+        plugins: [i18n],
+      },
+    });
+
+    await wrapper.find('button').trigger('click');
+
+    expect(localStorage.getItem(STORAGE_KEY)).toBe('ar');
+  });
+
+  it('persists locale back to en when toggling again', async () => {
+    const wrapper = mount(LocaleSwitcher, {
+      global: {
+        plugins: [i18n],
+      },
+    });
+
+    await wrapper.find('button').trigger('click');
+    expect(localStorage.getItem(STORAGE_KEY)).toBe('ar');
+
+    await wrapper.find('button').trigger('click');
+    expect(localStorage.getItem(STORAGE_KEY)).toBe('en');
   });
 });

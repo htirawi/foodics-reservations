@@ -91,7 +91,7 @@ describe('BranchesService', () => {
           },
         ],
       };
-      mock.onGet('/branches', { params: { include: 'sections.tables' } })
+      mock.onGet('/branches', { params: { 'include[0]': 'sections', 'include[1]': 'sections.tables' } })
         .reply(200, { data: [branchWithSections] });
 
       const result = await BranchesService.getBranches(true);
@@ -141,7 +141,7 @@ describe('BranchesService', () => {
   describe('enableBranch', () => {
     it('should enable reservations for a branch', async () => {
       const enabledBranch = { ...mockBranch, accepts_reservations: true };
-      mock.onPatch('/branches/branch-123').reply(200, { data: enabledBranch });
+      mock.onPut('/branches/branch-123').reply(200, { data: enabledBranch });
 
       const result = await BranchesService.enableBranch('branch-123');
 
@@ -150,7 +150,7 @@ describe('BranchesService', () => {
     });
 
     it('should send accepts_reservations: true in payload', async () => {
-      mock.onPatch('/branches/branch-123').reply((config) => {
+      mock.onPut('/branches/branch-123').reply((config) => {
         const payload = JSON.parse(config.data as string);
         expect(payload).toEqual({ accepts_reservations: true });
         return [200, { data: mockBranch }];
@@ -160,7 +160,7 @@ describe('BranchesService', () => {
     });
 
     it('should handle 404 for non-existent branch', async () => {
-      mock.onPatch('/branches/invalid-id').reply(404, { message: 'Branch not found' });
+      mock.onPut('/branches/invalid-id').reply(404, { message: 'Branch not found' });
 
       await expect(BranchesService.enableBranch('invalid-id')).rejects.toMatchObject({
         status: 404,
@@ -169,7 +169,7 @@ describe('BranchesService', () => {
     });
 
     it('should unwrap Foodics response wrapper', async () => {
-      mock.onPatch('/branches/branch-123').reply(200, { data: mockBranch });
+      mock.onPut('/branches/branch-123').reply(200, { data: mockBranch });
 
       const result = await BranchesService.enableBranch('branch-123');
 
@@ -182,7 +182,7 @@ describe('BranchesService', () => {
   describe('disableBranch', () => {
     it('should disable reservations for a branch', async () => {
       const disabledBranch = { ...mockBranch, accepts_reservations: false };
-      mock.onPatch('/branches/branch-123').reply(200, { data: disabledBranch });
+      mock.onPut('/branches/branch-123').reply(200, { data: disabledBranch });
 
       const result = await BranchesService.disableBranch('branch-123');
 
@@ -191,7 +191,7 @@ describe('BranchesService', () => {
     });
 
     it('should send accepts_reservations: false in payload', async () => {
-      mock.onPatch('/branches/branch-123').reply((config) => {
+      mock.onPut('/branches/branch-123').reply((config) => {
         const payload = JSON.parse(config.data as string);
         expect(payload).toEqual({ accepts_reservations: false });
         return [200, { data: mockBranch }];
@@ -201,7 +201,7 @@ describe('BranchesService', () => {
     });
 
     it('should handle authorization errors', async () => {
-      mock.onPatch('/branches/branch-123').reply(403, { message: 'Forbidden' });
+      mock.onPut('/branches/branch-123').reply(403, { message: 'Forbidden' });
 
       await expect(BranchesService.disableBranch('branch-123')).rejects.toMatchObject({
         status: 403,
@@ -221,7 +221,7 @@ describe('BranchesService', () => {
 
     it('should update branch reservation settings', async () => {
       const updatedBranch = { ...mockBranch, ...updatePayload };
-      mock.onPatch('/branches/branch-123').reply(200, { data: updatedBranch });
+      mock.onPut('/branches/branch-123').reply(200, { data: updatedBranch });
 
       const result = await BranchesService.updateBranchSettings('branch-123', updatePayload);
 
@@ -230,7 +230,7 @@ describe('BranchesService', () => {
     });
 
     it('should send complete payload to API', async () => {
-      mock.onPatch('/branches/branch-123').reply((config) => {
+      mock.onPut('/branches/branch-123').reply((config) => {
         const payload = JSON.parse(config.data as string);
         expect(payload.reservation_duration).toBe(120);
         expect(payload.reservation_times).toBeDefined();
@@ -242,7 +242,7 @@ describe('BranchesService', () => {
     });
 
     it('should handle validation errors', async () => {
-      mock.onPatch('/branches/branch-123').reply(422, {
+      mock.onPut('/branches/branch-123').reply(422, {
         message: 'Validation failed',
         errors: {
           reservation_duration: ['Must be positive'],
@@ -263,7 +263,7 @@ describe('BranchesService', () => {
         reservation_times: mockReservationTimes,
       };
       const updatedBranch = { ...mockBranch, reservation_duration: 60 };
-      mock.onPatch('/branches/branch-123').reply(200, { data: updatedBranch });
+      mock.onPut('/branches/branch-123').reply(200, { data: updatedBranch });
 
       const result = await BranchesService.updateBranchSettings('branch-123', partialPayload);
 
@@ -271,7 +271,7 @@ describe('BranchesService', () => {
     });
 
     it('should unwrap Foodics response wrapper', async () => {
-      mock.onPatch('/branches/branch-123').reply(200, { data: mockBranch });
+      mock.onPut('/branches/branch-123').reply(200, { data: mockBranch });
 
       const result = await BranchesService.updateBranchSettings('branch-123', updatePayload);
 

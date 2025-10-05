@@ -20,12 +20,12 @@ import BranchesListView from '@/features/branches/views/BranchesListView.vue';
 import { useLocale } from '@/composables/useLocale';
 import { useUIStore } from '@/stores/ui.store';
 
-const { setLocale } = useLocale();
+const { restoreLocale } = useLocale();
 const uiStore = useUIStore();
 
-// Initialize locale on mount
+// Restore locale from localStorage on mount
 onMounted(() => {
-  setLocale('en');
+  restoreLocale();
   
   // Expose UI store to window for E2E testing
   if (typeof window !== 'undefined') {
