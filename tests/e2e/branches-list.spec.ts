@@ -14,10 +14,14 @@ test.describe('Branches List View - Structure', () => {
 
     // Header
     await expect(page.getByRole('banner')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Reservations', level: 1 })).toBeVisible();
+    await expect(page.getByTestId('header-title')).toBeVisible();
 
     // Main content
     await expect(page.getByRole('main')).toBeVisible();
+    
+    // Page heading
+    const mainHeading = page.getByRole('main').getByRole('heading', { level: 1 });
+    await expect(mainHeading).toBeVisible();
   });
 
   test('displays branches table with correct columns', async ({ page }) => {
