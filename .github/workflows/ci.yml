@@ -5,12 +5,14 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
-  test:
-    name: Lint, Type Check, and Test
+  # Fast checks (required): ~2 minutes
+  quick-checks:
+    name: Lint, Type Check, and Unit Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
 
     steps:
       - name: Checkout code
@@ -34,22 +36,80 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit -- --run
 
+      - name: Build
+        run: npm run build
+
+  # Smoke E2E (required on PRs): ~1-2 minutes
+  smoke-e2e:
+    name: E2E Smoke Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: quick-checks
+    # Only run smoke tests on PRs, skip on main (full E2E runs there)
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke E2E tests
+        run: npm run test:e2e -- tests/e2e/smoke.spec.ts tests/e2e/app-shell.spec.ts --project="Desktop Chrome"
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-smoke-report
+          path: playwright-report/
+          retention-days: 3
+
+  # Full E2E (optional): ~5-10 minutes
+  full-e2e:
+    name: Full E2E Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: quick-checks
+    # Only run full E2E on main branch or when manually triggered
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run E2E tests
+      - name: Run full E2E test suite
         run: npm run test:e2e
 
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-full-report
           path: playwright-report/
           retention-days: 7
-
-      - name: Build
-        run: npm run build
 
   # Optional: Add coverage reporting
   coverage:
