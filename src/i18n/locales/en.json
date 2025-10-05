@@ -1,0 +1,15 @@
+{
+  "app": {
+    "title": "Foodics Reservations",
+    "loading": "Loading...",
+    "switchToArabic": "العربية",
+    "switchToEnglish": "English"
+  },
+  "empty": {
+    "title": "No items found",
+    "description": "There are no items to display at this time."
+  },
+  "loading": {
+    "message": "Loading content, please wait..."
+  }
+}

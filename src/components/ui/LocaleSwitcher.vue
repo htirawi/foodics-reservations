@@ -1,0 +1,17 @@
+<template>
+  <button
+    type="button"
+    :aria-label="$t('app.switchToArabic')"
+    data-testid="locale-switcher"
+    class="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors"
+    @click="toggleLocale"
+  >
+    {{ currentLocale === 'en' ? $t('app.switchToArabic') : $t('app.switchToEnglish') }}
+  </button>
+</template>
+
+<script setup lang="ts">
+import { useLocale } from '@/composables/useLocale';
+
+const { currentLocale, toggleLocale } = useLocale();
+</script>

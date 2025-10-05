@@ -1,18 +1,8 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
-import { createI18n } from 'vue-i18n';
+import { i18n } from '@/i18n';
 import App from './App.vue';
 import './styles/main.css';
-
-const i18n = createI18n({
-  legacy: false,
-  locale: 'en',
-  fallbackLocale: 'en',
-  messages: {
-    en: {},
-    ar: {},
-  },
-});
 
 const pinia = createPinia();
 const app = createApp(App);

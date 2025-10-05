@@ -1,0 +1,15 @@
+{
+  "app": {
+    "title": "حجوزات فوديكس",
+    "loading": "جاري التحميل...",
+    "switchToArabic": "العربية",
+    "switchToEnglish": "English"
+  },
+  "empty": {
+    "title": "لا توجد عناصر",
+    "description": "لا توجد عناصر لعرضها في الوقت الحالي."
+  },
+  "loading": {
+    "message": "جاري تحميل المحتوى، يرجى الانتظار..."
+  }
+}

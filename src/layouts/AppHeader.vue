@@ -1,0 +1,22 @@
+<template>
+  <header
+    role="banner"
+    class="bg-white shadow-sm"
+  >
+    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between gap-4">
+        <h1
+          data-testid="header-title"
+          class="text-2xl font-bold text-neutral-900"
+        >
+          {{ $t('app.title') }}
+        </h1>
+        <LocaleSwitcher />
+      </div>
+    </div>
+  </header>
+</template>
+
+<script setup lang="ts">
+import LocaleSwitcher from '@/components/ui/LocaleSwitcher.vue';
+</script>
