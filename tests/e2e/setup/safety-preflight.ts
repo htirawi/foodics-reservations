@@ -13,13 +13,16 @@ const REPO_ROOT = resolve(__dirname, '../../..');
 
 export function runSafetyPreflight(): void {
   const errors: string[] = [];
+  const warnings: string[] = [];
 
-  // 1. Check if VITE_FOODICS_TOKEN looks real (not the test token)
+  // 1. Check if VITE_FOODICS_TOKEN is exactly the test token (strict mode)
   const token = process.env.VITE_FOODICS_TOKEN;
-  if (token && token !== 'e2e-test-token' && token.length > 20) {
+  if (!token) {
+    warnings.push('VITE_FOODICS_TOKEN not set; some tests may fail');
+  } else if (token !== 'e2e-test-token') {
     errors.push(
-      `VITE_FOODICS_TOKEN appears to be a real token (length: ${token.length}). ` +
-        'E2E tests must use "e2e-test-token" from .env.e2e'
+      `VITE_FOODICS_TOKEN must be exactly "e2e-test-token" for E2E tests, got: "${token.slice(0, 20)}..." ` +
+        'Update .env.e2e to use the test token.'
     );
   }
 
@@ -45,7 +48,17 @@ export function runSafetyPreflight(): void {
     }
   }
 
-  // 4. Fail fast if any errors
+  // 4. Show warnings (non-blocking)
+  if (warnings.length > 0) {
+    // eslint-disable-next-line no-console -- Allowed for test setup logging
+    console.warn('\n⚠️  E2E Safety Preflight Warnings:\n');
+    // eslint-disable-next-line no-console -- Allowed for test setup logging
+    warnings.forEach((warn) => console.warn(`  - ${warn}`));
+    // eslint-disable-next-line no-console -- Allowed for test setup logging
+    console.warn('\n');
+  }
+
+  // 5. Fail fast if any errors
   if (errors.length > 0) {
     // eslint-disable-next-line no-console -- Allowed for critical test safety errors
     console.error('\n❌ E2E Safety Preflight FAILED:\n');
@@ -57,5 +70,5 @@ export function runSafetyPreflight(): void {
   }
 
   // eslint-disable-next-line no-console -- Allowed for test setup logging
-  console.log('✅ E2E Safety Preflight passed');
+  console.log('✅ E2E Safety Preflight passed (offline mode, test token only)');
 }
