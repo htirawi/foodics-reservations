@@ -5,8 +5,8 @@ import * as dotenv from 'dotenv';
 // This ensures we never accidentally use real tokens in tests
 dotenv.config({ path: '.env.e2e', quiet: true });
 
-// Fix environment variable conflicts
-process.env.FORCE_COLOR = '0';
+// Note: Color behavior is controlled via package.json scripts
+// Use FORCE_COLOR=0 for no color, or let tools default to colored output
 
 // Configurable locale via env (default EN)
 // const TEST_LOCALE = process.env.TEST_LOCALE || 'en';
