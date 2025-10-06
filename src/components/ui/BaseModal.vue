@@ -13,15 +13,16 @@
           :class="modalClasses"
           role="dialog"
           aria-modal="true"
+          :aria-labelledby="titleId"
           @click.stop
         >
           <div class="flex items-center justify-between border-b border-neutral-200 p-6">
-            <h2 class="text-xl font-semibold text-neutral-900">
+            <h2 :id="titleId" class="text-xl font-semibold text-neutral-900">
               <slot name="title">{{ title }}</slot>
             </h2>
             <button
               type="button"
-              :aria-label="$t('app.close', 'Close')"
+              :aria-label="$t('app.close')"
               class="text-neutral-400 hover:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg p-1"
               @click="closeModal"
             >
@@ -54,7 +55,7 @@ d="M6 18L18 6M6 6l12 12" />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, onBeforeUnmount } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -85,9 +86,25 @@ const modalClasses = computed(() => {
   return `${base} ${sizes[props.size]}`;
 });
 
+const titleId = computed(() => `modal-title-${Math.random().toString(36).slice(2)}`);
+
 function closeModal() {
   emit('update:modelValue', false);
 }
+
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && props.modelValue) {
+    closeModal();
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
 </script>
 
 <style scoped>

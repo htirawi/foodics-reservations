@@ -34,8 +34,9 @@ export const useLocale = () => {
     try {
       localStorage.setItem(LOCALE_STORAGE_KEY, newLocale);
     } catch (error) {
-      // Silent fail for storage errors (e.g., private browsing)
-      console.warn('Failed to persist locale:', error);
+      if (import.meta.env.DEV) {
+        console.warn('Failed to persist locale:', error);
+      }
     }
   };
 
@@ -51,8 +52,9 @@ export const useLocale = () => {
         return stored;
       }
     } catch (error) {
-      // Silent fail for storage errors
-      console.warn('Failed to restore locale:', error);
+      if (import.meta.env.DEV) {
+        console.warn('Failed to restore locale:', error);
+      }
     }
     
     // Default to 'en'

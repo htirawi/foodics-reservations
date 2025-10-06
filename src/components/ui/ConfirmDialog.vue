@@ -2,7 +2,7 @@
 <template>
   <BaseModal
     :model-value="confirmDialog.isOpen"
-    :title="confirmDialog.options?.title || ''"
+    :title="confirmDialog.options?.title || $t('app.title')"
     data-testid="confirm-modal"
     size="sm"
     @update:model-value="handleClose"
@@ -15,17 +15,14 @@
 
     <template #actions>
       <div class="flex justify-end space-x-3">
-        <BaseButton
-          variant="ghost"
-          @click="handleCancel"
-        >
-          {{ confirmDialog.options?.cancelText || 'Cancel' }}
+        <BaseButton variant="ghost" @click="handleCancel">
+          {{ confirmDialog.options?.cancelText || $t('reservations.confirm.disableAll.cancel') }}
         </BaseButton>
         <BaseButton
           :variant="confirmDialog.options?.variant === 'danger' ? 'danger' : 'primary'"
           @click="handleConfirm"
         >
-          {{ confirmDialog.options?.confirmText || 'Confirm' }}
+          {{ confirmDialog.options?.confirmText || $t('reservations.confirm.disableAll.confirm') }}
         </BaseButton>
       </div>
     </template>
