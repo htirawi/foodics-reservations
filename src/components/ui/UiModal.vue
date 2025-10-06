@@ -9,7 +9,6 @@
           :aria-modal="true"
           :aria-labelledby="ariaLabelledby"
           :class="['relative z-10 w-full bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]', sizeClasses]"
-          @keydown.esc="handleEscape"
         >
           <div v-if="$slots.title" class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
             <div :id="ariaLabelledby" class="text-lg font-semibold text-gray-900">
@@ -69,8 +68,8 @@ function handleBackdropClick(): void {
   }
 }
 
-function handleEscape(): void {
-  if (props.closeOnEscape) {
+function handleEscape(event: KeyboardEvent): void {
+  if (event.key === 'Escape' && props.closeOnEscape) {
     emit('close');
   }
 }
@@ -105,9 +104,20 @@ function restoreFocus(): void {
 
 watch(() => props.isOpen, (isOpen) => {
   document.body.style.overflow = isOpen ? 'hidden' : '';
+  
+  if (isOpen) {
+    // Add document-level escape key listener when modal opens
+    document.addEventListener('keydown', handleEscape);
+  } else {
+    // Remove document-level escape key listener when modal closes
+    document.removeEventListener('keydown', handleEscape);
+  }
 });
 
-onUnmounted(() => { document.body.style.overflow = ''; });
+onUnmounted(() => { 
+  document.body.style.overflow = '';
+  document.removeEventListener('keydown', handleEscape);
+});
 </script>
 
 <style scoped>

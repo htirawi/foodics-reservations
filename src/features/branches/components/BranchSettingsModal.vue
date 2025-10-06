@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useSettingsForm } from '@/features/branches/composables/useSettingsForm';
 import BaseModal from '@/components/ui/BaseModal.vue';
-import BaseInput from '@/components/ui/BaseInput.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import DaySlots from './DaySlots.vue';
+import DurationField from './ReservationSettingsModal/DurationField.vue';
 import { useI18n } from 'vue-i18n';
 
 const props = withDefaults(
@@ -29,7 +30,6 @@ const {
   weekdays,
   availableTables,
   errors,
-  checkDuration,
   addSlot,
   removeSlot,
   updateSlot,
@@ -37,6 +37,10 @@ const {
   handleSave,
   handleDisable,
 } = useSettingsForm(props, () => emit('close'));
+
+const canSave = computed<boolean>(() => {
+  return false;
+});
 
 function handleClose(): void {
   emit('close');
@@ -59,18 +63,11 @@ function handleClose(): void {
         {{ t('settings.workingHours', { from: branch.opening_from, to: branch.opening_to }) }}
       </div>
 
-      <BaseInput
-        v-model.number="duration"
-        type="number"
-        :label="t('settings.duration.label')"
-        :placeholder="t('settings.duration.placeholder')"
-        :error="errors.duration"
-        :required="true"
-        data-testid="duration-input"
-        @blur="checkDuration"
+      <DurationField
+        v-model="duration"
       />
 
-      <div data-testid="tables-section">
+      <div data-testid="settings-tables">
         <label class="mb-2 block text-sm font-medium text-neutral-700">
           {{ t('settings.tables.label') }}
         </label>
@@ -89,7 +86,7 @@ function handleClose(): void {
         </p>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-4" data-testid="settings-day-slots">
         <DaySlots
           v-for="day in weekdays"
           :key="day"
@@ -97,9 +94,9 @@ function handleClose(): void {
           :slots="weekSlots[day]"
           :error="errors.slots?.[day]"
           @update:slot="(idx, field, val) => updateSlot(day, idx, field, val)"
-          @add="addSlot(day)"
+          @add="() => addSlot(day)"
           @remove="(idx) => removeSlot(day, idx)"
-          @apply-to-all="applyToAllDays(day)"
+          @apply-to-all="() => applyToAllDays(day)"
         />
       </div>
     </div>
@@ -109,10 +106,14 @@ function handleClose(): void {
         {{ t('settings.actions.disableReservations') }}
       </BaseButton>
       <div class="flex gap-3">
-        <BaseButton variant="ghost" data-testid="close-button" @click="handleClose">
+        <BaseButton variant="ghost" data-testid="settings-cancel" @click="handleClose">
           {{ t('settings.actions.close') }}
         </BaseButton>
-        <BaseButton variant="primary" data-testid="save-button" @click="handleSave">
+        <BaseButton
+variant="primary"
+:disabled="!canSave"
+data-testid="save-button"
+@click="handleSave">
           {{ t('settings.actions.save') }}
         </BaseButton>
       </div>

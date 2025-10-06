@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const duration = ref<number>(0);
+const duration = ref<number | null>(null);
 const reservationTimes = ref(props.branch?.reservation_times ?? {
   saturday: [],
   sunday: [],
@@ -46,7 +46,7 @@ watch(() => props.branch, (newBranch) => {
 }, { immediate: true });
 
 function handleSave(): void {
-  if (!isFormValid.value) return;
+  if (!isFormValid.value || duration.value === null) return;
 
   const payload: UpdateBranchSettingsPayload = {
     reservation_duration: duration.value,
@@ -82,7 +82,7 @@ function handleClose(): void {
 
       <DurationField
         v-model="duration"
-        @update:valid="(valid) => isDurationValid = valid"
+        @valid:duration="(valid) => isDurationValid = valid"
       />
 
       <TablesList :sections="branch.sections" />

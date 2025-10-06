@@ -37,7 +37,8 @@ async function interceptBranchesGet(page: Page, tracker: string[]): Promise<void
     }
     tracker.push('GET /api/branches');
     const url = new URL(route.request().url());
-    const includeParam = url.searchParams.get('include');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const includeParam = url.searchParams.get('include[0]') || url.searchParams.get('include');
     
     let fixture = 'branches.json';
     if (includeParam?.includes('sections')) {
@@ -104,8 +105,8 @@ export async function setupOfflineMode(page: Page): Promise<void> {
   await interceptBranchMutations(page, interceptedRequests);
   await interceptBranchesGet(page, interceptedRequests);
 
-  // Add a small delay to ensure routes are fully registered
-  await page.waitForTimeout(50);
+  // Small delay to ensure routes are fully registered
+  await page.waitForFunction(() => true, { timeout: 100 });
 
   await page.evaluate(
     ({ intercepted, escaped }) => {
@@ -135,12 +136,11 @@ export async function setupOfflineModeWithDisabledBranches(page: Page): Promise<
     }
     interceptedRequests.push('GET /api/branches (with disabled)');
     const url = new URL(route.request().url());
-    const includeParam = url.searchParams.get('include');
+    // Check for include parameter but don't use it in this setup
+    url.searchParams.get('include[0]') || url.searchParams.get('include');
     
-    let fixture = 'branches-with-disabled.json';
-    if (includeParam?.includes('sections')) {
-      fixture = 'branches-with-sections.json';
-    }
+    // Always use disabled branches fixture for this setup
+    const fixture = 'branches-with-disabled-and-sections.json';
     
     await route.fulfill({
       status: 200,
@@ -149,8 +149,8 @@ export async function setupOfflineModeWithDisabledBranches(page: Page): Promise<
     });
   });
 
-  // Add a small delay to ensure routes are fully registered
-  await page.waitForTimeout(50);
+  // Small delay to ensure routes are fully registered
+  await page.waitForFunction(() => true, { timeout: 100 });
 
   await page.evaluate(
     ({ intercepted, escaped }) => {
@@ -185,8 +185,45 @@ export async function setupEmptyState(page: Page): Promise<void> {
     });
   });
 
-  // Add a small delay to ensure routes are fully registered
-  await page.waitForTimeout(50);
+  // Small delay to ensure routes are fully registered
+  await page.waitForFunction(() => true, { timeout: 100 });
+
+  await page.evaluate(
+    ({ intercepted, escaped }) => {
+      (window as unknown as { __e2eIntercepts?: { intercepted: string[]; escaped: string[] } }).__e2eIntercepts = {
+        intercepted,
+        escaped,
+      };
+    },
+    { intercepted: interceptedRequests, escaped: escapedRequests }
+  );
+}
+
+export async function setupOfflineModeWithSections(page: Page): Promise<void> {
+  const interceptedRequests: string[] = [];
+  const escapedRequests: string[] = [];
+
+  // Register in reverse order: catch-all first, then specific intercepts
+  await setupCatchAll(page, escapedRequests);
+  await interceptBranchMutations(page, interceptedRequests);
+  
+  // Override the branches GET to always use sections fixture
+  await page.route(/\/api\/branches(\?.*)?$/, async (route: Route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue();
+      return;
+    }
+    interceptedRequests.push('GET /api/branches (with sections)');
+    
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(loadFixture('branches-with-sections.json')),
+    });
+  });
+
+  // Small delay to ensure routes are fully registered
+  await page.waitForFunction(() => true, { timeout: 100 });
 
   await page.evaluate(
     ({ intercepted, escaped }) => {

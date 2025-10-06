@@ -144,12 +144,12 @@ describe('useBranchSelection', () => {
       const { selectedBranchIds, enableSelectedBranches } = useBranchSelection(isOpen);
 
       selectedBranchIds.value = ['1', '2'];
-      mockBranchesStore.enableBranches.mockResolvedValue(undefined);
+      mockBranchesStore.enableBranches.mockResolvedValue({ ok: true, enabled: ['1', '2'], failed: [] });
 
       const result = await enableSelectedBranches();
 
       expect(result).toEqual({ ok: true, enabled: ['1', '2'], failed: [] });
-      expect(mockBranchesStore.enableBranches).toHaveBeenCalledTimes(2);
+      expect(mockBranchesStore.enableBranches).toHaveBeenCalledWith(['1', '2']);
       expect(mockToast.success).toHaveBeenCalledWith('Successfully enabled 2 branches.');
       expect(selectedBranchIds.value).toEqual([]);
     });
@@ -160,11 +160,8 @@ describe('useBranchSelection', () => {
 
       selectedBranchIds.value = ['1', '2', '3'];
       
-      // Mock first branch succeeds, second fails, third succeeds
-      mockBranchesStore.enableBranches
-        .mockResolvedValueOnce(undefined) // branch 1
-        .mockRejectedValueOnce(new Error('Failed')) // branch 2
-        .mockResolvedValueOnce(undefined); // branch 3
+      // Mock partial failure: branches 1 and 3 succeed, branch 2 fails
+      mockBranchesStore.enableBranches.mockResolvedValue({ ok: false, enabled: ['1', '3'], failed: ['2'] });
 
       const result = await enableSelectedBranches();
 

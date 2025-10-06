@@ -63,7 +63,7 @@ function handleApplyToAll(): void {
         :to="slot[1]"
         :editable="true"
         :removable="true"
-        :data-testid="`slot-${day}-${idx}`"
+        :data-testid="`settings-slot-row-${day}-${idx}`"
         @update:from="(val) => handleUpdateSlot(idx, 'from', val)"
         @update:to="(val) => handleUpdateSlot(idx, 'to', val)"
         @remove="handleRemove(idx)"

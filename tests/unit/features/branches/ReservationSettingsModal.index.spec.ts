@@ -9,6 +9,9 @@ const i18n = createI18n({
   locale: 'en',
   messages: {
     en: {
+      app: {
+        remove: 'Remove',
+      },
       settings: {
         title: 'Edit {branchName} branch reservation settings',
         noBranch: 'No branch selected',

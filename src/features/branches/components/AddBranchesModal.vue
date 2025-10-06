@@ -5,7 +5,7 @@
     size="lg"
     @close="handleClose">
     <template #title>
-      <span id="add-branches-title">{{ $t('addBranches.title') }}</span>
+      <span>{{ $t('addBranches.title') }}</span>
     </template>
     <div data-testid="add-branches-modal">
       <EmptyState

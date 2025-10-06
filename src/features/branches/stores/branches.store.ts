@@ -71,9 +71,10 @@ function useEnableAction(branches: Ref<Branch[]>, error: Ref<string | null>) {
       .map((r) => (r as PromiseFulfilledResult<string>).value);
 
     const failed = results
-      .filter((r) => r.status === 'rejected')
-      .map((_, index) => ids[index] ?? '')
-      .filter((id) => id !== '');
+      .map((result, index) => ({ result, id: ids[index] }))
+      .filter(({ result }) => result.status === 'rejected')
+      .map(({ id }) => id)
+      .filter((id): id is string => id !== undefined);
 
     if (failed.length > 0) {
       branches.value = snapshot.map((b) =>
@@ -84,6 +85,7 @@ function useEnableAction(branches: Ref<Branch[]>, error: Ref<string | null>) {
         const firstError = results.find((r) => r.status === 'rejected') as PromiseRejectedResult;
         const apiError = firstError?.reason as ApiError;
         error.value = apiError?.message ?? 'Failed to enable branches';
+        throw apiError;
       }
 
       return { ok: false, enabled, failed };

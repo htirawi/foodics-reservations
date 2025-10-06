@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import TimePill from '@/components/ui/TimePill.vue';
@@ -93,6 +93,15 @@ function emitValidity(times: ReservationTimes): void {
   });
   emit('update:valid', allValid);
 }
+
+// Emit validity when component mounts and when props change
+onMounted(() => {
+  emitValidity(props.modelValue);
+});
+
+watch(() => props.modelValue, (newValue) => {
+  emitValidity(newValue);
+});
 </script>
 
 <template>

@@ -1,0 +1,129 @@
+{
+  "data": [
+    {
+      "id": "test-branch-1",
+      "name": "Downtown Branch",
+      "reference": "DT-001",
+      "type": 1,
+      "accepts_reservations": true,
+      "receives_online_orders": true,
+      "reservation_duration": 90,
+      "opening_from": "09:00:00",
+      "opening_to": "23:00:00",
+      "reservation_times": {
+        "saturday": [["09:00", "12:00"], ["15:00", "18:00"], ["18:00", "21:00"]],
+        "sunday": [["09:00", "12:00"], ["15:00", "18:00"], ["18:00", "21:00"]],
+        "monday": [["09:00", "12:00"], ["15:00", "18:00"], ["18:00", "21:00"]],
+        "tuesday": [["09:00", "12:00"], ["15:00", "18:00"], ["18:00", "21:00"]],
+        "wednesday": [["09:00", "12:00"], ["15:00", "18:00"], ["18:00", "21:00"]],
+        "thursday": [["09:00", "12:00"], ["15:00", "18:00"], ["18:00", "21:00"]],
+        "friday": [["12:00", "15:00"], ["15:00", "18:00"], ["18:00", "21:00"]]
+      },
+      "sections": [
+        {
+          "id": "test-section-1",
+          "branch_id": "test-branch-1",
+          "name": "Main Hall",
+          "tables": [
+            {
+              "id": "test-table-1",
+              "section_id": "test-section-1",
+              "name": "Table 1",
+              "accepts_reservations": true,
+              "seats": 4,
+              "status": 1
+            },
+            {
+              "id": "test-table-2",
+              "section_id": "test-section-1",
+              "name": "Table 2",
+              "accepts_reservations": true,
+              "seats": 6,
+              "status": 1
+            }
+          ]
+        }
+      ],
+      "created_at": "2024-01-01T00:00:00.000000Z",
+      "updated_at": "2024-01-15T10:30:00.000000Z"
+    },
+    {
+      "id": "branch-1",
+      "name": "Disabled Branch 1",
+      "reference": "DB-001",
+      "type": 1,
+      "accepts_reservations": false,
+      "receives_online_orders": false,
+      "reservation_duration": 60,
+      "opening_from": "10:00:00",
+      "opening_to": "22:00:00",
+      "reservation_times": {
+        "saturday": [["10:00", "13:00"], ["16:00", "19:00"]],
+        "sunday": [["10:00", "13:00"], ["16:00", "19:00"]],
+        "monday": [["10:00", "13:00"], ["16:00", "19:00"]],
+        "tuesday": [["10:00", "13:00"], ["16:00", "19:00"]],
+        "wednesday": [["10:00", "13:00"], ["16:00", "19:00"]],
+        "thursday": [["10:00", "13:00"], ["16:00", "19:00"]],
+        "friday": [["13:00", "16:00"], ["16:00", "19:00"]]
+      },
+      "sections": [
+        {
+          "id": "disabled-section-1",
+          "branch_id": "branch-1",
+          "name": "Disabled Section 1",
+          "tables": [
+            {
+              "id": "disabled-table-1",
+              "section_id": "disabled-section-1",
+              "name": "Disabled Table 1",
+              "accepts_reservations": false,
+              "seats": 4,
+              "status": 1
+            }
+          ]
+        }
+      ],
+      "created_at": "2024-01-05T00:00:00.000000Z",
+      "updated_at": "2024-01-20T14:15:00.000000Z"
+    },
+    {
+      "id": "branch-2",
+      "name": "Disabled Branch 2",
+      "reference": "DB-002",
+      "type": 1,
+      "accepts_reservations": false,
+      "receives_online_orders": false,
+      "reservation_duration": 45,
+      "opening_from": "06:00:00",
+      "opening_to": "00:00:00",
+      "reservation_times": {
+        "saturday": [],
+        "sunday": [],
+        "monday": [],
+        "tuesday": [],
+        "wednesday": [],
+        "thursday": [],
+        "friday": []
+      },
+      "sections": [
+        {
+          "id": "disabled-section-2",
+          "branch_id": "branch-2",
+          "name": "Disabled Section 2",
+          "tables": [
+            {
+              "id": "disabled-table-2",
+              "section_id": "disabled-section-2",
+              "name": "Disabled Table 2",
+              "accepts_reservations": false,
+              "seats": 2,
+              "status": 1
+            }
+          ]
+        }
+      ],
+      "created_at": "2024-01-10T00:00:00.000000Z",
+      "updated_at": "2024-01-25T08:45:00.000000Z"
+    }
+  ]
+}

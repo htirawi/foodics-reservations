@@ -1,52 +1,149 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, useId, watch, ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
-import BaseInput from '@/components/ui/BaseInput.vue';
-import { isValidDuration } from '@/features/branches/utils/reservation.validation';
+import { 
+  sanitizeDuration, 
+  isValidDuration,
+  type DurationOptions
+} from '@/features/branches/utils/reservation.validation';
 
-const props = defineProps<{
-  modelValue: number;
-  minDuration?: number;
-  maxDuration?: number;
-}>();
+const props = withDefaults(defineProps<{
+  modelValue: number | null;
+  min?: number;
+  max?: number;
+}>(), {
+  min: 1,
+  max: 480,
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: number];
-  'update:valid': [valid: boolean];
+  'update:modelValue': [value: number | null];
+  'valid:duration': [valid: boolean];
 }>();
 
 const { t } = useI18n();
+const inputId = useId();
+const errorId = useId();
+
+const options = computed<DurationOptions>(() => ({
+  min: props.min,
+  max: props.max,
+}));
+
+const rawValue = ref<string>('');
+
+// Initialize rawValue when modelValue changes
+watch(() => props.modelValue, (newValue) => {
+  if (newValue !== null && newValue !== undefined) {
+    rawValue.value = String(newValue);
+  }
+  // Don't reset rawValue to empty string when modelValue is null
+  // This preserves the user's input for validation purposes
+}, { immediate: true });
+
+const isValid = computed<boolean>(() => {
+  // If rawValue has content, validate it
+  if (rawValue.value !== '') {
+    const rawNum = parseInt(rawValue.value, 10);
+    if (!Number.isNaN(rawNum)) {
+      // Check if value is within bounds (values above max are clamped, so they're valid)
+      return rawNum >= props.min && Number.isInteger(rawNum);
+    }
+    return false;
+  }
+  
+  // If no rawValue, check modelValue
+  return isValidDuration(props.modelValue, options.value);
+});
+
+// Helper function to validate raw input
+function validateRawInput(rawValue: string, min: number, max: number): string | undefined {
+  const rawNum = parseInt(rawValue, 10);
+  
+  if (rawValue && !Number.isNaN(rawNum)) {
+    if (rawNum < min) return t('settings.duration.errors.min', { min });
+    if (rawNum > max) return t('settings.duration.errors.max', { max });
+    if (!Number.isInteger(rawNum)) return t('settings.duration.errors.integer');
+  }
+  
+  return undefined;
+}
 
 const error = computed<string | undefined>(() => {
-  if (!props.modelValue) {
-    return t('settings.validation.durationRequired');
+  // Check raw value for immediate error feedback
+  const rawError = validateRawInput(rawValue.value, props.min, props.max);
+  if (rawError) return rawError;
+
+  // No error if valid
+  if (isValid.value) return undefined;
+
+  // Required check
+  if (props.modelValue === null || props.modelValue === undefined) {
+    return t('settings.duration.errors.required');
   }
-  if (!isValidDuration(props.modelValue)) {
-    return t('settings.validation.durationMin');
-  }
+
   return undefined;
 });
 
-function handleUpdate(value: string | number): void {
-  const numericValue = typeof value === 'string' ? parseInt(value, 10) : value;
-  const finalValue = Number.isNaN(numericValue) ? 0 : numericValue;
-  emit('update:modelValue', finalValue);
-  emit('update:valid', isValidDuration(finalValue));
+// Emit validity changes
+watch(isValid, (valid) => {
+  // Always emit validity changes
+  emit('valid:duration', valid);
+}, { immediate: true });
+
+async function handleInput(event: Event): Promise<void> {
+  const target = event.target as HTMLInputElement;
+  rawValue.value = target.value;
+  const sanitized = sanitizeDuration(target.value, options.value);
+  
+  // If value was clamped, update rawValue to show the clamped value
+  if (sanitized !== null && sanitized !== parseInt(target.value, 10)) {
+    rawValue.value = String(sanitized);
+    // Wait for DOM update to ensure input shows clamped value
+    await nextTick();
+  }
+  
+  emit('update:modelValue', sanitized);
 }
 </script>
 
 <template>
   <div data-testid="settings-duration">
-    <BaseInput
-      :model-value="modelValue"
+    <label :for="inputId" class="mb-2 block text-sm font-medium text-neutral-700">
+      {{ t('settings.duration.label') }}
+      <span class="text-error-600">*</span>
+    </label>
+    
+    <input
+      :id="inputId"
+      v-model="rawValue"
       type="number"
-      :label="t('settings.duration.label')"
+      :min="min"
+      :max="max"
+      step="1"
       :placeholder="t('settings.duration.placeholder')"
-      :error="error"
-      :required="true"
-      data-testid="duration-input"
-      @update:model-value="handleUpdate"
+      :aria-invalid="!isValid"
+      :aria-describedby="error ? errorId : undefined"
+      class="block w-full rounded-xl border px-4 py-3 text-neutral-900 transition-colors focus:outline-none focus:ring-2"
+      :class="[
+        error 
+          ? 'border-error-300 focus:border-error-500 focus:ring-error-500/20' 
+          : 'border-neutral-300 focus:border-primary-500 focus:ring-primary-500/20'
+      ]"
+      data-testid="settings-duration-input"
+      @input="handleInput"
     />
+
+    <div
+      v-if="error"
+      :id="errorId"
+      role="alert"
+      aria-live="polite"
+      class="mt-2 text-sm text-error-600"
+      data-testid="settings-duration-error"
+    >
+      {{ error }}
+    </div>
   </div>
 </template>
 

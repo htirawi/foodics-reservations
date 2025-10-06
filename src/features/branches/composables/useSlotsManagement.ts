@@ -13,7 +13,12 @@ export function useSlotsManagement(weekSlots: Ref<ReservationTimes>) {
   }
 
   function removeSlot(day: Weekday, index: number): void {
-    weekSlots.value[day].splice(index, 1);
+    const slots = weekSlots.value[day];
+    if (index >= 0 && index < slots.length) {
+      slots.splice(index, 1);
+      // Force reactivity update
+      weekSlots.value = { ...weekSlots.value };
+    }
   }
 
   function updateSlot(day: Weekday, index: number, field: 'from' | 'to', value: string): void {

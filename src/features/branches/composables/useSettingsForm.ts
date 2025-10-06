@@ -29,7 +29,7 @@ export function useSettingsForm(branchId: Readonly<{ branchId: string | null }>,
       state.weekSlots.value = { ...state.branch.value.reservation_times };
       validation.clearAllErrors();
     }
-  });
+  }, { immediate: true });
 
   return {
     isOpen: state.isOpen,

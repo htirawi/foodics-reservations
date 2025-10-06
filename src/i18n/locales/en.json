@@ -61,7 +61,13 @@
     "workingHours": "Branch working hours are {from} - {to}",
     "duration": {
       "label": "Reservation Duration (minutes)",
-      "placeholder": "Enter duration in minutes"
+      "placeholder": "Enter duration in minutes",
+      "errors": {
+        "required": "Duration is required.",
+        "integer": "Use a whole number of minutes.",
+        "min": "Duration must be at least {min} minutes.",
+        "max": "Duration must be at most {max} minutes."
+      }
     },
     "tables": {
       "label": "Tables",

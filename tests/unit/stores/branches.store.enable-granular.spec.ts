@@ -4,6 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import type { ApiError } from '@/types/api';
 import { setActivePinia, createPinia } from 'pinia';
 import { useBranchesStore } from '@/features/branches/stores/branches.store';
 import { BranchesService } from '@/services/branches.service';
@@ -131,14 +132,14 @@ describe('useBranchesStore - enableBranches granular', () => {
       createBranch('2', 'Branch 2', false),
     ];
 
-    vi.mocked(BranchesService.enableBranch).mockRejectedValue(new Error('Network error'));
+    vi.mocked(BranchesService.enableBranch).mockRejectedValue({
+      message: 'Network error',
+      status: 500,
+    } as ApiError);
 
-    const result = await store.enableBranches(['1', '2']);
-
-    expect(result).toEqual({
-      ok: false,
-      enabled: [],
-      failed: ['1', '2'],
+    await expect(store.enableBranches(['1', '2'])).rejects.toMatchObject({
+      message: 'Network error',
+      status: 500,
     });
   });
 
@@ -150,7 +151,9 @@ describe('useBranchesStore - enableBranches granular', () => {
       message: 'API is down',
     });
 
-    await store.enableBranches(['1']);
+    await expect(store.enableBranches(['1'])).rejects.toMatchObject({
+      message: 'API is down',
+    });
 
     expect(store.error).toBe('API is down');
   });

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useAddBranchesModal } from '@/features/branches/composables/useAddBranchesModal';
 import type { Branch } from '@/types/foodics';
 
@@ -198,18 +198,19 @@ describe('useAddBranchesModal', () => {
   });
 
   describe('watcher', () => {
-    it('removes invalid IDs when disabled branches change', () => {
+    it('removes invalid IDs when disabled branches change', async () => {
       const { toggleOne, selectedIds } = useAddBranchesModal(disabledBranches);
       toggleOne('1');
       toggleOne('2');
       toggleOne('3');
 
       disabledBranches.value = [createBranch('1', 'Branch One', 'BR-001')];
+      await nextTick(); // Wait for watcher to run
 
       expect(selectedIds.value).toEqual(['1']);
     });
 
-    it('keeps valid IDs when disabled branches change', () => {
+    it('keeps valid IDs when disabled branches change', async () => {
       const { toggleOne, selectedIds } = useAddBranchesModal(disabledBranches);
       toggleOne('2');
 
@@ -217,6 +218,7 @@ describe('useAddBranchesModal', () => {
         createBranch('2', 'Branch Two', 'BR-002'),
         createBranch('4', 'Branch Four', 'BR-004'),
       ];
+      await nextTick(); // Wait for watcher to run
 
       expect(selectedIds.value).toEqual(['2']);
     });

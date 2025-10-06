@@ -13,7 +13,9 @@ function filterBranches(branches: Branch[] | undefined, query: string): Branch[]
   return branches.filter((branch) => {
     const name = branch.name?.toLowerCase() ?? '';
     const reference = branch.reference?.toLowerCase() ?? '';
-    return name.includes(q) || reference.includes(q);
+    
+    // Check if name or reference starts with the query
+    return name.startsWith(q) || reference.startsWith(q);
   });
 }
 

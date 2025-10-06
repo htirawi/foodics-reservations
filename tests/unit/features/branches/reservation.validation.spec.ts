@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  sanitizeDuration,
   isValidDuration,
   isValidTimeFormat,
   timeToMinutes,
@@ -11,20 +12,98 @@ import {
 import type { SlotTuple, ReservationTimes } from '@/types/foodics';
 
 describe('reservation.validation', () => {
+  describe('sanitizeDuration', () => {
+    it('returns null for null/undefined', () => {
+      expect(sanitizeDuration(null)).toBe(null);
+      expect(sanitizeDuration(undefined)).toBe(null);
+    });
+
+    it('returns null for empty strings', () => {
+      expect(sanitizeDuration('')).toBe(null);
+      expect(sanitizeDuration('   ')).toBe(null);
+    });
+
+    it('parses valid string numbers', () => {
+      expect(sanitizeDuration('60')).toBe(60);
+      expect(sanitizeDuration('120')).toBe(120);
+      expect(sanitizeDuration('  90  ')).toBe(90);
+    });
+
+    it('handles non-digit characters in strings', () => {
+      expect(sanitizeDuration('abc')).toBe(null);
+      expect(sanitizeDuration('12abc34')).toBe(1234); // removes non-digits
+    });
+
+    it('returns null for negative values', () => {
+      expect(sanitizeDuration('-5')).toBe(null);
+      expect(sanitizeDuration(-10)).toBe(null);
+    });
+
+    it('clamps to min/max bounds for strings', () => {
+      expect(sanitizeDuration('0', { min: 1, max: 480 })).toBe(null);
+      expect(sanitizeDuration('500', { min: 1, max: 480 })).toBe(480);
+      expect(sanitizeDuration('999', { min: 1, max: 480 })).toBe(480);
+    });
+
+    it('handles number inputs correctly', () => {
+      expect(sanitizeDuration(60)).toBe(60);
+      expect(sanitizeDuration(120.5)).toBe(120); // floors decimals
+      expect(sanitizeDuration(500, { max: 480 })).toBe(480);
+    });
+
+    it('returns null for invalid number types', () => {
+      expect(sanitizeDuration(NaN)).toBe(null);
+      expect(sanitizeDuration(Infinity)).toBe(null);
+      expect(sanitizeDuration(-Infinity)).toBe(null);
+    });
+
+    it('returns null for unknown types', () => {
+      expect(sanitizeDuration({})).toBe(null);
+      expect(sanitizeDuration([])).toBe(null);
+      expect(sanitizeDuration(true)).toBe(null);
+    });
+
+    it('respects custom min/max options', () => {
+      expect(sanitizeDuration(50, { min: 30, max: 120 })).toBe(50);
+      expect(sanitizeDuration(25, { min: 30, max: 120 })).toBe(null);
+      expect(sanitizeDuration(150, { min: 30, max: 120 })).toBe(120);
+    });
+  });
+
   describe('isValidDuration', () => {
-    it('returns true for valid durations', () => {
+    it('returns true for valid durations with default bounds', () => {
       expect(isValidDuration(1)).toBe(true);
       expect(isValidDuration(30)).toBe(true);
       expect(isValidDuration(60)).toBe(true);
       expect(isValidDuration(1440)).toBe(true);
     });
 
-    it('returns false for invalid durations', () => {
+    it('returns false for invalid durations with default bounds', () => {
       expect(isValidDuration(0)).toBe(false);
       expect(isValidDuration(-1)).toBe(false);
       expect(isValidDuration(1441)).toBe(false);
       expect(isValidDuration(NaN)).toBe(false);
       expect(isValidDuration(Infinity)).toBe(false);
+    });
+
+    it('returns false for non-integers', () => {
+      expect(isValidDuration(30.5)).toBe(false);
+      expect(isValidDuration(120.1)).toBe(false);
+    });
+
+    it('returns false for non-number types', () => {
+      expect(isValidDuration(null)).toBe(false);
+      expect(isValidDuration(undefined)).toBe(false);
+      expect(isValidDuration('60')).toBe(false);
+      expect(isValidDuration({})).toBe(false);
+    });
+
+    it('respects custom min/max options', () => {
+      expect(isValidDuration(50, { min: 30, max: 120 })).toBe(true);
+      expect(isValidDuration(30, { min: 30, max: 120 })).toBe(true);
+      expect(isValidDuration(120, { min: 30, max: 120 })).toBe(true);
+      expect(isValidDuration(29, { min: 30, max: 120 })).toBe(false);
+      expect(isValidDuration(121, { min: 30, max: 120 })).toBe(false);
     });
   });
 
