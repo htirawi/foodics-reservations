@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="w-full">
     <label
@@ -24,11 +23,16 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue';
-
-const props = withDefaults(
-  defineProps<{
+<script setup lang="ts">/**
+ * @file BaseInput.vue
+ * @summary Module: src/components/ui/BaseInput.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import { computed } from "vue";
+const props = withDefaults(defineProps<{
     modelValue?: string | number;
     type?: string;
     label?: string;
@@ -37,28 +41,23 @@ const props = withDefaults(
     required?: boolean;
     error?: string | undefined;
     dataTestid?: string;
-  }>(),
-  {
-    modelValue: '',
-    type: 'text',
-    label: '',
-    placeholder: '',
+}>(), {
+    modelValue: "",
+    type: "text",
+    label: "",
+    placeholder: "",
     disabled: false,
     required: false,
     error: undefined,
-    dataTestid: '',
-  }
-);
-
+    dataTestid: "",
+});
 defineEmits<{
-  (e: 'update:modelValue', value: string): void;
+    (e: "update:modelValue", value: string): void;
 }>();
-
 const inputId = computed(() => `input-${Math.random().toString(36).slice(2, 9)}`);
-
 const inputClasses = computed(() => {
-  const base = 'block w-full rounded-lg border px-4 py-3 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-neutral-100 disabled:cursor-not-allowed';
-  const errorClass = props.error ? 'border-danger-300' : 'border-neutral-300';
-  return `${base} ${errorClass}`;
+    const base = "block w-full rounded-lg border px-4 py-3 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-neutral-100 disabled:cursor-not-allowed";
+    const errorClass = props.error ? "border-danger-300" : "border-neutral-300";
+    return `${base} ${errorClass}`;
 });
 </script>

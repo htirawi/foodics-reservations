@@ -1,69 +1,67 @@
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-
-export type SupportedLocale = 'en' | 'ar';
-
-const LOCALE_STORAGE_KEY = 'foodics-locale';
-
 /**
- * Locale composable
- * Manages i18n locale with persistence and <html dir/lang> attributes
+ * @file useLocale.ts
+ * @summary Module: src/composables/useLocale.ts
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useToast } from "@/composables/useToast";
+
+export type SupportedLocale = "en" | "ar";
+const LOCALE_STORAGE_KEY = "foodics-locale";
+
+const persistLocale = (locale: SupportedLocale, showToast: ReturnType<typeof useToast>['show']): void => {
+  try {
+    localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+  } catch {
+    if (import.meta.env.DEV) {
+      showToast("Failed to save language preference. Settings may not persist between sessions.", "warning");
+    }
+  }
+};
+
+const restoreStoredLocale = (showToast: ReturnType<typeof useToast>['show']): SupportedLocale | null => {
+  try {
+    const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
+    if (stored === "en" || stored === "ar") {
+      return stored;
+    }
+  } catch {
+    if (import.meta.env.DEV) {
+      showToast("Failed to restore language preference. Using default language.", "warning");
+    }
+  }
+  return null;
+};
 export const useLocale = () => {
   const { locale, availableLocales } = useI18n();
+  const { show } = useToast();
+  const currentLocale = computed<SupportedLocale>(() => locale.value as SupportedLocale);
+  const isRTL = computed(() => currentLocale.value === "ar");
 
-  const currentLocale = computed<SupportedLocale>(
-    () => locale.value as SupportedLocale
-  );
-
-  const isRTL = computed(() => currentLocale.value === 'ar');
-
-  /**
-   * Set locale and persist
-   * Updates i18n, localStorage, and <html dir/lang> attributes
-   */
   const setLocale = (newLocale: SupportedLocale) => {
     locale.value = newLocale;
-    
-    // Update HTML attributes
-    const dir = newLocale === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.setAttribute('dir', dir);
-    document.documentElement.setAttribute('lang', newLocale);
-    
-    // Persist to localStorage
-    try {
-      localStorage.setItem(LOCALE_STORAGE_KEY, newLocale);
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.warn('Failed to persist locale:', error);
-      }
-    }
+    const dir = newLocale === "ar" ? "rtl" : "ltr";
+    document.documentElement.setAttribute("dir", dir);
+    document.documentElement.setAttribute("lang", newLocale);
+    persistLocale(newLocale, show);
   };
 
-  /**
-   * Restore locale from localStorage
-   * Falls back to 'en' if not found or invalid
-   */
   const restoreLocale = (): SupportedLocale => {
-    try {
-      const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
-      if (stored === 'en' || stored === 'ar') {
-        setLocale(stored);
-        return stored;
-      }
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.warn('Failed to restore locale:', error);
-      }
+    const stored = restoreStoredLocale(show);
+    if (stored) {
+      setLocale(stored);
+      return stored;
     }
-    
-    // Default to 'en'
-    setLocale('en');
-    return 'en';
+    setLocale("en");
+    return "en";
   };
 
   const toggleLocale = () => {
-    const newLocale = currentLocale.value === 'en' ? 'ar' : 'en';
+    const newLocale = currentLocale.value === "en" ? "ar" : "en";
     setLocale(newLocale);
   };
 

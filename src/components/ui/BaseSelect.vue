@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="w-full">
     <label
@@ -24,31 +23,32 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue';
-
-withDefaults(
-  defineProps<{
+<script setup lang="ts">/**
+ * @file BaseSelect.vue
+ * @summary Module: src/components/ui/BaseSelect.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import { computed } from "vue";
+withDefaults(defineProps<{
     modelValue?: string | number;
     label?: string;
     placeholder?: string;
     disabled?: boolean;
     required?: boolean;
     dataTestid?: string;
-  }>(),
-  {
-    modelValue: '',
-    label: '',
-    placeholder: '',
+}>(), {
+    modelValue: "",
+    label: "",
+    placeholder: "",
     disabled: false,
     required: false,
-    dataTestid: '',
-  }
-);
-
+    dataTestid: "",
+});
 defineEmits<{
-  (e: 'update:modelValue', value: string): void;
+    (e: "update:modelValue", value: string): void;
 }>();
-
 const selectId = computed(() => `select-${Math.random().toString(36).slice(2, 9)}`);
 </script>

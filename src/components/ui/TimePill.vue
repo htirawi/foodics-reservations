@@ -1,41 +1,46 @@
-<script setup lang="ts">
-withDefaults(
-  defineProps<{
+<script setup lang="ts">/**
+ * @file TimePill.vue
+ * @summary Module: src/components/ui/TimePill.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+withDefaults(defineProps<{
     from?: string;
     to?: string;
     timeRange?: string;
     removable?: boolean;
     editable?: boolean;
     dataTestid?: string | undefined;
-  }>(),
-  {
-    from: '',
-    to: '',
-    timeRange: '',
+}>(), {
+    from: "",
+    to: "",
+    timeRange: "",
     removable: false,
     editable: false,
-    dataTestid: '',
-  }
-);
-
+    dataTestid: "",
+});
 const emit = defineEmits<{
-  'update:from': [value: string];
-  'update:to': [value: string];
-  remove: [];
+    "update:from": [
+        value: string
+    ];
+    "update:to": [
+        value: string
+    ];
+    remove: [
+    ];
 }>();
-
 function handleFromChange(event: Event): void {
-  const target = event.target as HTMLInputElement;
-  emit('update:from', target.value);
+    const target = event.target as HTMLInputElement;
+    emit("update:from", target.value);
 }
-
 function handleToChange(event: Event): void {
-  const target = event.target as HTMLInputElement;
-  emit('update:to', target.value);
+    const target = event.target as HTMLInputElement;
+    emit("update:to", target.value);
 }
-
 function handleRemove(): void {
-  emit('remove');
+    emit("remove");
 }
 </script>
 

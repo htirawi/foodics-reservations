@@ -1,17 +1,16 @@
 /**
- * Vitest Global Setup
- * Ensures no real HTTP calls in unit tests
+ * @file setup.ts
+ * @summary Module: tests/setup.ts
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-
-import { afterEach, vi } from 'vitest';
-import { createPinia, setActivePinia } from 'pinia';
-
-// Create a fresh Pinia instance for each test
+import { afterEach, vi } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
 const pinia = createPinia();
 setActivePinia(pinia);
-
 afterEach(() => {
-  // Reset all mocks after each test
-  vi.clearAllMocks();
-  vi.restoreAllMocks();
+    vi.clearAllMocks();
+    vi.restoreAllMocks();
 });

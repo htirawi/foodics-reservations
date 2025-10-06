@@ -16,6 +16,12 @@
   </div>
 </template>
 
-<script setup lang="ts">
-// Empty - purely presentational component
+<script setup lang="ts">/**
+ * @file PageLoading.vue
+ * @summary Module: src/components/ui/PageLoading.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
 </script>

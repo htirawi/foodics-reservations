@@ -18,11 +18,32 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'vue'],
+  plugins: ['@typescript-eslint', 'vue', 'eslint-comments'],
   rules: {
     // Strict rules - no any/unknown
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/consistent-type-imports': 'error',
+    
+    // Forbid TS comments - ban all @ts-* comments
+    '@typescript-eslint/ban-ts-comment': ['error', {
+      'ts-ignore': true,
+      'ts-nocheck': true,
+      'ts-expect-error': true,
+      'minimumDescriptionLength': 999 // effectively disallow
+    }],
+
+    // Forbid eslint directives globally (JS/TS/Vue)
+    'eslint-comments/no-use': ['error', { allow: [] }],
+    'eslint-comments/no-unlimited-disable': 'error',
+    'eslint-comments/disable-enable-pair': ['error', { allowWholeFile: false }],
+    'eslint-comments/no-restricted-disable': 'error',
+    'eslint-comments/require-description': 'error',
+
+    // Vue comment directives validation (catches HTML <!-- eslint-... -->)
+    'vue/comment-directive': ['error', { reportUnusedDisableDirectives: true }],
+
+    // Prevent warning comments in code
+    'no-warning-comments': ['error', { terms: ['todo', 'fixme'], location: 'anywhere' }],
 
     // Complexity limits
     complexity: ['error', 8],
@@ -39,7 +60,9 @@ module.exports = {
     'max-nested-callbacks': ['error', 2],
 
     // Vue specific
-    'vue/multi-word-component-names': 'error',
+    'vue/multi-word-component-names': ['error', {
+      ignores: ['App', 'Home', 'Index', 'Error', 'BaseButton', 'BaseCard', 'BaseInput', 'BaseModal', 'BaseSelect', 'BaseTable', 'ConfirmDialog', 'EmptyState', 'LocaleSwitcher', 'PageLoading', 'TimePill', 'UiModal', 'Toaster'] // tiny, explicit allowlist only
+    }],
     'vue/no-v-html': 'error',
     'vue/no-mutating-props': 'error',
     'vue/max-attributes-per-line': [
@@ -109,6 +132,26 @@ module.exports = {
       },
     },
     {
+      // Relax rules for build scripts and config files
+      files: [
+        'scripts/**/*.{js,mjs,ts}',
+        '*.config.{js,cjs,mjs,ts}',
+        '*.config.*.{js,cjs,mjs,ts}',
+        '.eslintrc.cjs',
+      ],
+      rules: {
+        'no-restricted-syntax': 'off',
+        'complexity': 'off',
+        'max-depth': 'off',
+        'max-lines-per-function': 'off',
+        'no-console': 'off',
+        'eslint-comments/no-use': 'off',
+        'eslint-comments/require-description': 'off',
+        'no-warning-comments': 'off',
+        'max-lines': 'off',
+      },
+    },
+    {
       // Test-specific overrides - maintain strict bans but allow test patterns
       files: [
         '**/*.spec.{ts,tsx,js,jsx}',
@@ -134,16 +177,22 @@ module.exports = {
         'no-restricted-imports': 'off',
         'no-restricted-syntax': 'off',
         
-        // Keep ts-comment bans even in tests - they should include descriptions
-        '@typescript-eslint/ban-ts-comment': [
-          'error',
-          {
-            'ts-ignore': true,
-            'ts-nocheck': true,
-            'ts-expect-error': true,
-            minimumDescriptionLength: 10
-          }
-        ],
+        // Keep ts-comment bans even in tests - ban all @ts-* comments
+        '@typescript-eslint/ban-ts-comment': ['error', {
+          'ts-ignore': true,
+          'ts-nocheck': true,
+          'ts-expect-error': true,
+          'minimumDescriptionLength': 999 // effectively disallow
+        }],
+        
+        // Keep strict bans even in tests
+        'eslint-comments/no-use': ['error', { allow: [] }],
+        'eslint-comments/no-unlimited-disable': 'error',
+        'eslint-comments/disable-enable-pair': ['error', { allowWholeFile: false }],
+        'eslint-comments/no-restricted-disable': 'error',
+        'eslint-comments/require-description': 'error',
+        'vue/comment-directive': ['error', { reportUnusedDisableDirectives: true }],
+        'no-warning-comments': ['error', { terms: ['todo', 'fixme'], location: 'anywhere' }],
         
         // Relax complexity rules for test files
         'max-lines-per-function': 'off',

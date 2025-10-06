@@ -17,6 +17,13 @@
   </header>
 </template>
 
-<script setup lang="ts">
-import LocaleSwitcher from '@/components/ui/LocaleSwitcher.vue';
+<script setup lang="ts">/**
+ * @file AppHeader.vue
+ * @summary Module: src/layouts/AppHeader.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import LocaleSwitcher from "@/components/ui/LocaleSwitcher.vue";
 </script>

@@ -27,96 +27,93 @@
   </Teleport>
 </template>
 
-<script setup lang="ts">
-import { ref, watch, onUnmounted, computed } from 'vue';
-
+<script setup lang="ts">/**
+ * @file UiModal.vue
+ * @summary Module: src/components/ui/UiModal.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import { ref, watch, onUnmounted, computed } from "vue";
 interface UiModalProps {
-  isOpen: boolean;
-  ariaLabelledby?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
-  closeOnBackdrop?: boolean;
-  closeOnEscape?: boolean;
+    isOpen: boolean;
+    ariaLabelledby?: string;
+    size?: "sm" | "md" | "lg" | "xl";
+    closeOnBackdrop?: boolean;
+    closeOnEscape?: boolean;
 }
-
 const props = withDefaults(defineProps<UiModalProps>(), {
-  ariaLabelledby: undefined,
-  size: 'md',
-  closeOnBackdrop: true,
-  closeOnEscape: true,
+    ariaLabelledby: undefined,
+    size: "md",
+    closeOnBackdrop: true,
+    closeOnEscape: true,
 });
-
 const emit = defineEmits<{
-  close: [];
+    close: [
+    ];
 }>();
-
 const modalRef = ref<HTMLElement | null>(null);
 const previousActiveElement = ref<HTMLElement | null>(null);
-
 const sizeClasses = computed(() => {
-  const sizes = {
-    sm: 'max-w-md',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl',
-  };
-  return sizes[props.size];
+    const sizes = {
+        sm: "max-w-md",
+        md: "max-w-lg",
+        lg: "max-w-2xl",
+        xl: "max-w-4xl",
+    };
+    return sizes[props.size];
 });
-
 function handleBackdropClick(): void {
-  if (props.closeOnBackdrop) {
-    emit('close');
-  }
-}
-
-function handleEscape(event: KeyboardEvent): void {
-  if (event.key === 'Escape' && props.closeOnEscape) {
-    emit('close');
-  }
-}
-
-function trapFocus(): void {
-  previousActiveElement.value = document.activeElement as HTMLElement;
-  if (!modalRef.value) return;
-  const focusableElements = modalRef.value.querySelectorAll<HTMLElement>(
-    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-  );
-  if (focusableElements.length > 0) focusableElements[0]?.focus();
-  const firstElement = focusableElements[0];
-  const lastElement = focusableElements[focusableElements.length - 1];
-  function handleTabKey(e: KeyboardEvent): void {
-    if (e.key !== 'Tab') return;
-    if (e.shiftKey && document.activeElement === firstElement) {
-      e.preventDefault();
-      lastElement?.focus();
-    } else if (!e.shiftKey && document.activeElement === lastElement) {
-      e.preventDefault();
-      firstElement?.focus();
+    if (props.closeOnBackdrop) {
+        emit("close");
     }
-  }
-  modalRef.value.addEventListener('keydown', handleTabKey);
-  onUnmounted(() => modalRef.value?.removeEventListener('keydown', handleTabKey));
 }
-
+function handleEscape(event: KeyboardEvent): void {
+    if (event.key === "Escape" && props.closeOnEscape) {
+        emit("close");
+    }
+}
+function trapFocus(): void {
+    previousActiveElement.value = document.activeElement as HTMLElement;
+    if (!modalRef.value)
+        return;
+    const focusableElements = modalRef.value.querySelectorAll<HTMLElement>("button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])");
+    if (focusableElements.length > 0)
+        focusableElements[0]?.focus();
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    function handleTabKey(e: KeyboardEvent): void {
+        if (e.key !== "Tab")
+            return;
+        if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement?.focus();
+        }
+        else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement?.focus();
+        }
+    }
+    modalRef.value.addEventListener("keydown", handleTabKey);
+    onUnmounted(() => modalRef.value?.removeEventListener("keydown", handleTabKey));
+}
 function restoreFocus(): void {
-  previousActiveElement.value?.focus();
-  previousActiveElement.value = null;
+    previousActiveElement.value?.focus();
+    previousActiveElement.value = null;
 }
-
 watch(() => props.isOpen, (isOpen) => {
-  document.body.style.overflow = isOpen ? 'hidden' : '';
-  
-  if (isOpen) {
-    // Add document-level escape key listener when modal opens
-    document.addEventListener('keydown', handleEscape);
-  } else {
-    // Remove document-level escape key listener when modal closes
-    document.removeEventListener('keydown', handleEscape);
-  }
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    if (isOpen) {
+        document.addEventListener("keydown", handleEscape);
+    }
+    else {
+        document.removeEventListener("keydown", handleEscape);
+    }
 });
-
-onUnmounted(() => { 
-  document.body.style.overflow = '';
-  document.removeEventListener('keydown', handleEscape);
+onUnmounted(() => {
+    document.body.style.overflow = "";
+    document.removeEventListener("keydown", handleEscape);
 });
 </script>
 

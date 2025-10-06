@@ -40,16 +40,22 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import BaseButton from '@/components/ui/BaseButton.vue';
-
+<script setup lang="ts">/**
+ * @file EmptyState.vue
+ * @summary Module: src/components/ui/EmptyState.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import BaseButton from "@/components/ui/BaseButton.vue";
 defineProps<{
-  title?: string;
-  description?: string;
-  actionText?: string;
+    title?: string;
+    description?: string;
+    actionText?: string;
 }>();
-
 defineEmits<{
-  action: [];
+    action: [
+    ];
 }>();
 </script>

@@ -50,29 +50,31 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import type { Branch } from '@/types/foodics';
-
+<script setup lang="ts">/**
+ * @file BranchesTable.vue
+ * @summary Module: src/features/branches/components/BranchesTable.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import { useI18n } from "vue-i18n";
+import type { Branch } from "@/types/foodics";
 interface Props {
-  branches: Branch[];
-  reservableCount: (branch: Branch) => number;
+    branches: Branch[];
+    reservableCount: (branch: Branch) => number;
 }
-
 interface Emits {
-  (e: 'open-settings', branchId: string): void;
+    (e: "open-settings", branchId: string): void;
 }
-
 defineProps<Props>();
 const emit = defineEmits<Emits>();
 const { t } = useI18n();
-
 function handleRowClick(branchId: string): void {
-  emit('open-settings', branchId);
+    emit("open-settings", branchId);
 }
-
 function formatDuration(minutes: number): string {
-  return t('reservations.duration.minutes', { count: minutes });
+    return t("reservations.duration.minutes", { count: minutes });
 }
 </script>
 

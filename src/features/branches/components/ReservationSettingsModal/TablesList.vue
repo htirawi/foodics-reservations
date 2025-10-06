@@ -1,11 +1,16 @@
-<script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import type { Section } from '@/types/foodics';
-
+<script setup lang="ts">/**
+ * @file TablesList.vue
+ * @summary Module: src/features/branches/components/ReservationSettingsModal/TablesList.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import { useI18n } from "vue-i18n";
+import type { Section } from "@/types/foodics";
 defineProps<{
-  sections: Section[] | undefined;
+    sections: Section[] | undefined;
 }>();
-
 const { t } = useI18n();
 </script>
 

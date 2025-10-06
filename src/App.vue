@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-neutral-50">
-    <!-- Skip Link for Accessibility -->
+    
     <a
       data-testid="skip-to-main"
       href="#main"
@@ -25,42 +25,40 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { onMounted } from 'vue';
-import AppHeader from '@/layouts/AppHeader.vue';
-import Toaster from '@/layouts/Toaster.vue';
-import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
-import BranchesListView from '@/features/branches/views/BranchesListView.vue';
-import { useLocale } from '@/composables/useLocale';
-import { useUIStore } from '@/stores/ui.store';
-
+<script setup lang="ts">/**
+ * @file App.vue
+ * @summary Module: src/App.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import { onMounted } from "vue";
+import AppHeader from "@/layouts/AppHeader.vue";
+import Toaster from "@/layouts/Toaster.vue";
+import ConfirmDialog from "@/components/ui/ConfirmDialog.vue";
+import BranchesListView from "@/features/branches/views/BranchesListView.vue";
+import { useLocale } from "@/composables/useLocale";
+import { useUIStore } from "@/stores/ui.store";
 const { restoreLocale } = useLocale();
 const uiStore = useUIStore();
-
-// Handle skip link navigation
 const handleSkipToMain = (event: Event) => {
-  event.preventDefault();
-  const mainElement = document.getElementById('main');
-  if (mainElement) {
-    // Use focus with preventScroll for better cross-browser compatibility
-    mainElement.focus({ preventScroll: true });
-    // Scroll after focus is set
-    setTimeout(() => {
-      mainElement.scrollIntoView({ behavior: 'smooth' });
-    }, 0);
-  }
-};
-
-// Restore locale from localStorage on mount
-onMounted(() => {
-  restoreLocale();
-  
-  // Expose UI store to window for E2E testing
-  if (typeof window !== 'undefined') {
-    interface WindowWithStore extends Window {
-      __uiStore?: typeof uiStore;
+    event.preventDefault();
+    const mainElement = document.getElementById("main");
+    if (mainElement) {
+        mainElement.focus({ preventScroll: true });
+        setTimeout(() => {
+            mainElement.scrollIntoView({ behavior: "smooth" });
+        }, 0);
     }
-    (window as unknown as WindowWithStore).__uiStore = uiStore;
-  }
+};
+onMounted(() => {
+    restoreLocale();
+    if (typeof window !== "undefined") {
+        interface WindowWithStore extends Window {
+            __uiStore?: typeof uiStore;
+        }
+        (window as unknown as WindowWithStore).__uiStore = uiStore;
+    }
 });
 </script>

@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <BaseModal
     :model-value="confirmDialog.isOpen"
@@ -29,25 +28,28 @@
   </BaseModal>
 </template>
 
-<script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useUIStore } from '@/stores/ui.store';
-import BaseModal from '@/components/ui/BaseModal.vue';
-import BaseButton from '@/components/ui/BaseButton.vue';
-
+<script setup lang="ts">/**
+ * @file ConfirmDialog.vue
+ * @summary Module: src/components/ui/ConfirmDialog.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import { storeToRefs } from "pinia";
+import { useUIStore } from "@/stores/ui.store";
+import BaseModal from "@/components/ui/BaseModal.vue";
+import BaseButton from "@/components/ui/BaseButton.vue";
 const uiStore = useUIStore();
 const { confirmDialog } = storeToRefs(uiStore);
 const { resolveConfirm } = uiStore;
-
 function handleConfirm() {
-  resolveConfirm(true);
+    resolveConfirm(true);
 }
-
 function handleCancel() {
-  resolveConfirm(false);
+    resolveConfirm(false);
 }
-
 function handleClose() {
-  resolveConfirm(false);
+    resolveConfirm(false);
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div data-test-id="branches-page" class="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
-    <!-- Header -->
+    
     <div class="mx-auto max-w-7xl mb-6 flex items-center justify-between">
       <h1 class="text-2xl font-semibold text-gray-900">
         {{ $t('reservations.title') }}
@@ -10,10 +10,10 @@
       />
     </div>
 
-    <!-- Main Content Card -->
+    
     <div class="mx-auto max-w-7xl">
       <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-        <!-- Actions Bar -->
+        
         <div class="flex justify-end px-6 py-4 border-b border-gray-200">
           <BaseButton
             data-testid="add-branches"
@@ -24,7 +24,7 @@
           </BaseButton>
         </div>
 
-        <!-- Loading State -->
+        
         <div 
           v-if="loading" 
           data-testid="branches-loading"
@@ -33,7 +33,7 @@
           <PageLoading />
         </div>
 
-        <!-- Error State -->
+        
         <div 
           v-else-if="error" 
           data-testid="branches-error"
@@ -62,7 +62,7 @@ aria-hidden="true">
           </div>
         </div>
 
-        <!-- Empty State -->
+        
         <div 
           v-else-if="enabledBranches.length === 0" 
           data-testid="branches-empty"
@@ -76,9 +76,9 @@ aria-hidden="true">
           />
         </div>
 
-        <!-- Content - Desktop and Mobile -->
+        
         <div v-else>
-          <!-- Table - Desktop -->
+          
           <div class="hidden md:block">
             <BranchesTable
               :branches="enabledBranches"
@@ -87,7 +87,7 @@ aria-hidden="true">
             />
           </div>
 
-          <!-- Cards - Mobile -->
+          
           <div class="md:hidden">
             <BranchesCards
               :branches="enabledBranches"
@@ -99,7 +99,7 @@ aria-hidden="true">
       </div>
     </div>
 
-    <!-- Modals -->
+    
     <AddBranchesModal
       v-model="modals.showAddModal.value"
     />
@@ -112,35 +112,40 @@ aria-hidden="true">
   </div>
 </template>
 
-<script setup lang="ts">
-import { onMounted, computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useBranchesStore } from '@/features/branches/stores/branches.store';
-import { useToast } from '@/composables/useToast';
-import { useModals } from '@/features/branches/composables/useModals';
-import BaseButton from '@/components/ui/BaseButton.vue';
-import PageLoading from '@/components/ui/PageLoading.vue';
-import EmptyState from '@/components/ui/EmptyState.vue';
-import BranchesTable from '@/features/branches/components/BranchesTable.vue';
-import BranchesCards from '@/features/branches/components/BranchesCards.vue';
-import DisableAllButton from '@/features/branches/components/DisableAllButton.vue';
-import AddBranchesModal from '@/features/branches/components/AddBranchesModal.vue';
-import BranchSettingsModal from '@/features/branches/components/BranchSettingsModal.vue';
-
+<script setup lang="ts">/**
+ * @file BranchesListView.vue
+ * @summary Module: src/features/branches/views/BranchesListView.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import { onMounted, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
+import { useToast } from "@/composables/useToast";
+import { useModals } from "@/features/branches/composables/useModals";
+import BaseButton from "@/components/ui/BaseButton.vue";
+import PageLoading from "@/components/ui/PageLoading.vue";
+import EmptyState from "@/components/ui/EmptyState.vue";
+import BranchesTable from "@/features/branches/components/BranchesTable.vue";
+import BranchesCards from "@/features/branches/components/BranchesCards.vue";
+import DisableAllButton from "@/features/branches/components/DisableAllButton.vue";
+import AddBranchesModal from "@/features/branches/components/AddBranchesModal.vue";
+import BranchSettingsModal from "@/features/branches/components/BranchSettingsModal.vue";
 const { t } = useI18n();
 const branchesStore = useBranchesStore();
 const toast = useToast();
 const modals = useModals();
-
 const loading = computed(() => branchesStore.loading);
 const error = computed(() => branchesStore.error);
 const enabledBranches = computed(() => branchesStore.enabledBranches);
-
 onMounted(async () => {
-  try {
-    await branchesStore.fetchBranches(true);
-  } catch {
-    toast.error(t('reservations.toast.fetchError'));
-  }
+    try {
+        await branchesStore.fetchBranches(true);
+    }
+    catch {
+        toast.error(t("reservations.toast.fetchError"));
+    }
 });
 </script>

@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div
     :data-testid="dataTestid"
@@ -8,8 +7,15 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts">/**
+ * @file BaseCard.vue
+ * @summary Module: src/components/ui/BaseCard.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
 defineProps<{
-  dataTestid?: string;
+    dataTestid?: string;
 }>();
 </script>

@@ -1,38 +1,46 @@
-<script setup lang="ts">
-import BaseButton from '@/components/ui/BaseButton.vue';
-import TimePill from '@/components/ui/TimePill.vue';
-import { useI18n } from 'vue-i18n';
-import type { Weekday, SlotTuple } from '@/types/foodics';
-
+<script setup lang="ts">/**
+ * @file DaySlots.vue
+ * @summary Module: src/features/branches/components/DaySlots.vue
+ * @remarks
+ *   - Tiny components; logic in composables/services.
+ *   - TypeScript strict; no any/unknown; use ?./??.
+ *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ */
+import BaseButton from "@/components/ui/BaseButton.vue";
+import TimePill from "@/components/ui/TimePill.vue";
+import { useI18n } from "vue-i18n";
+import type { Weekday, SlotTuple } from "@/types/foodics";
 defineProps<{
-  day: Weekday;
-  slots: SlotTuple[];
-  error?: string | undefined;
+    day: Weekday;
+    slots: SlotTuple[];
+    error?: string | undefined;
 }>();
-
 const emit = defineEmits<{
-  'update:slot': [index: number, field: 'from' | 'to', value: string];
-  'add': [];
-  'remove': [index: number];
-  'apply-to-all': [];
+    "update:slot": [
+        index: number,
+        field: "from" | "to",
+        value: string
+    ];
+    "add": [
+    ];
+    "remove": [
+        index: number
+    ];
+    "apply-to-all": [
+    ];
 }>();
-
 const { t } = useI18n();
-
-function handleUpdateSlot(index: number, field: 'from' | 'to', value: string): void {
-  emit('update:slot', index, field, value);
+function handleUpdateSlot(index: number, field: "from" | "to", value: string): void {
+    emit("update:slot", index, field, value);
 }
-
 function handleAdd(): void {
-  emit('add');
+    emit("add");
 }
-
 function handleRemove(index: number): void {
-  emit('remove', index);
+    emit("remove", index);
 }
-
 function handleApplyToAll(): void {
-  emit('apply-to-all');
+    emit("apply-to-all");
 }
 </script>
 
