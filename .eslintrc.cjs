@@ -57,6 +57,9 @@ module.exports = {
       },
     ],
     'vue/require-explicit-emits': 'error',
+    'vue/require-v-for-key': 'error',
+    'vue/no-use-v-if-with-v-for': 'error',
+    'vue/attribute-hyphenation': ['error', 'always'],
 
     // Prevent service imports in Vue components
     'no-restricted-imports': [
@@ -114,7 +117,9 @@ module.exports = {
       ],
       env: {
         node: true,
+        'vitest-globals/env': true,
       },
+      extends: ['plugin:vitest-globals/recommended'],
       rules: {
         // Allow console in tests for debugging
         'no-console': 'off',

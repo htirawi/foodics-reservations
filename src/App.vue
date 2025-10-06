@@ -1,10 +1,21 @@
 <template>
   <div class="min-h-screen bg-neutral-50">
+    <!-- Skip Link for Accessibility -->
+    <a
+      data-testid="skip-to-main"
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      @click="handleSkipToMain"
+    >
+      {{ $t('app.skipToMain') }}
+    </a>
+    
     <AppHeader />
     <main
       id="main"
       role="main"
       tabindex="-1"
+      class="focus:outline-none"
     >
       <BranchesListView />
     </main>
@@ -24,6 +35,16 @@ import { useUIStore } from '@/stores/ui.store';
 
 const { restoreLocale } = useLocale();
 const uiStore = useUIStore();
+
+// Handle skip link navigation
+const handleSkipToMain = (event: Event) => {
+  event.preventDefault();
+  const mainElement = document.getElementById('main');
+  if (mainElement) {
+    mainElement.focus();
+    mainElement.scrollIntoView({ behavior: 'smooth' });
+  }
+};
 
 // Restore locale from localStorage on mount
 onMounted(() => {

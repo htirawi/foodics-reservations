@@ -7,7 +7,8 @@
     "close": "Close",
     "remove": "Remove",
     "selectAll": "Select All",
-    "deselectAll": "Deselect All"
+    "deselectAll": "Deselect All",
+    "skipToMain": "Skip to main content"
   },
   "reservations": {
     "title": "Reservations",

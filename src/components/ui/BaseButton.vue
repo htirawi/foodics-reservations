@@ -45,9 +45,9 @@ const buttonClasses = computed(() => {
   };
   
   const sizes = {
-    sm: 'px-3 py-1.5 text-sm rounded-lg',
-    md: 'px-6 py-3 text-base rounded-xl',
-    lg: 'px-8 py-4 text-lg rounded-xl',
+    sm: 'px-3 py-1.5 text-sm rounded-button',
+    md: 'px-6 py-3 text-base rounded-button',
+    lg: 'px-8 py-4 text-lg rounded-button',
   };
   
   return [base, variants[props.variant], sizes[props.size]].join(' ');
