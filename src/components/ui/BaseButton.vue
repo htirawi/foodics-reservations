@@ -27,6 +27,7 @@ const props = withDefaults(
     size: 'md',
     type: 'button',
     disabled: false,
+    dataTestid: '',
   }
 );
 

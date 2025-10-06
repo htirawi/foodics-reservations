@@ -1,150 +1,148 @@
 <template>
-  <div class="min-h-screen bg-neutral-50">
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between mb-8">
-        <h1 class="text-3xl font-bold text-neutral-900">
-          {{ $t('reservations.title') }}
-        </h1>
-        <BaseButton
-          v-if="enabledBranches.length > 0"
-          variant="primary"
-          data-testid="disable-all"
-          @click="handleDisableAll"
-        >
-          {{ $t('reservations.disableAll') }}
-        </BaseButton>
-      </div>
+  <div data-test-id="branches-page" class="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mx-auto max-w-7xl mb-6 flex items-center justify-between">
+      <h1 class="text-2xl font-semibold text-gray-900">
+        {{ $t('reservations.title') }}
+      </h1>
+      <DisableAllButton 
+        :disabled="enabledBranches.length === 0"
+      />
+    </div>
 
-      <PageLoading v-if="loading" />
-
-      <EmptyState
-        v-else-if="branches.length === 0"
-        :title="$t('reservations.empty.title')"
-        :description="$t('reservations.empty.description')"
-      >
-        <template #action>
-          <BaseButton data-testid="add-branches" @click="handleAddBranches">
-            {{ $t('reservations.empty.action') }}
+    <!-- Main Content Card -->
+    <div class="mx-auto max-w-7xl">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <!-- Actions Bar -->
+        <div class="flex justify-end px-6 py-4 border-b border-gray-200">
+          <BaseButton
+            data-testid="add-branches"
+            variant="ghost"
+            @click="modals.openAddModal"
+          >
+            {{ $t('reservations.addBranches') }}
           </BaseButton>
-        </template>
-      </EmptyState>
+        </div>
 
-      <BaseCard v-else data-testid="branches-card">
-        <div class="p-6">
-          <div class="flex justify-end mb-4">
-            <BaseButton
-              variant="ghost"
-              size="sm"
-              data-testid="add-branches"
-              @click="handleAddBranches"
-            >
-              {{ $t('reservations.addBranches') }}
-            </BaseButton>
+        <!-- Loading State -->
+        <div 
+          v-if="loading" 
+          data-testid="branches-loading"
+          class="px-6 py-12"
+        >
+          <PageLoading />
+        </div>
+
+        <!-- Error State -->
+        <div 
+          v-else-if="error" 
+          data-testid="branches-error"
+          class="px-6 py-8"
+        >
+          <div class="rounded-md bg-red-50 border border-red-200 p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg
+class="h-5 w-5 text-red-400"
+viewBox="0 0 20 20"
+fill="currentColor"
+aria-hidden="true">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ms-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  {{ $t('reservations.error.title') }}
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                  {{ error }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div 
+          v-else-if="enabledBranches.length === 0" 
+          data-testid="branches-empty"
+          class="px-6 py-12"
+        >
+          <EmptyState
+            :title="$t('reservations.empty.title')"
+            :description="$t('reservations.empty.description')"
+            :action-text="$t('reservations.empty.action')"
+            @action="modals.openAddModal"
+          />
+        </div>
+
+        <!-- Content - Desktop and Mobile -->
+        <div v-else>
+          <!-- Table - Desktop -->
+          <div class="hidden md:block">
+            <BranchesTable
+              :branches="enabledBranches"
+              :reservable-count="(branch) => branchesStore.reservableTablesCount(branch)"
+              @open-settings="modals.openSettingsModal"
+            />
           </div>
 
-          <BaseTable data-testid="branches-table">
-            <template #head>
-              <th scope="col" class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
-                {{ $t('reservations.table.branch') }}
-              </th>
-              <th scope="col" class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
-                {{ $t('reservations.table.reference') }}
-              </th>
-              <th scope="col" class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
-                {{ $t('reservations.table.tablesCount') }}
-              </th>
-              <th scope="col" class="px-6 py-4 text-start text-sm font-medium text-neutral-700">
-                {{ $t('reservations.table.duration') }}
-              </th>
-            </template>
-            <tr
-              v-for="branch in branches"
-              :key="branch.id"
-              :data-testid="`branch-row-${branch.id}`"
-              class="cursor-pointer border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
-              @click="handleRowClick(branch.id)"
-            >
-              <td class="px-6 py-4 text-sm text-neutral-900">
-                {{ branch.name }}
-              </td>
-              <td class="px-6 py-4 text-sm text-neutral-600">
-                {{ branch.reference }}
-              </td>
-              <td class="px-6 py-4 text-sm text-neutral-900">
-                {{ reservableTablesCount(branch) }}
-              </td>
-              <td class="px-6 py-4 text-sm text-neutral-900">
-                {{ $t('reservations.duration.minutes', { count: branch.reservation_duration }) }}
-              </td>
-            </tr>
-          </BaseTable>
+          <!-- Cards - Mobile -->
+          <div class="md:hidden">
+            <BranchesCards
+              :branches="enabledBranches"
+              :reservable-count="(branch) => branchesStore.reservableTablesCount(branch)"
+              @open-settings="modals.openSettingsModal"
+            />
+          </div>
         </div>
-      </BaseCard>
+      </div>
     </div>
 
     <!-- Modals -->
-    <BranchSettingsModal
-      :branch-id="selectedBranchId"
-      @close="handleCloseSettingsModal"
-    />
     <AddBranchesModal
-      :is-open="isAddBranchesModalOpen"
-      @close="handleCloseAddBranchesModal"
+      :is-open="modals.showAddModal.value"
+      @close="modals.closeAddModal"
+      @saved="modals.closeAddModal"
+    />
+    <BranchSettingsModal
+      v-if="modals.selectedBranchId.value"
+      :branch-id="modals.selectedBranchId.value"
+      @close="modals.closeSettingsModal"
+      @saved="modals.closeSettingsModal"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { storeToRefs } from 'pinia';
+import { onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useBranchesStore } from '@/features/branches/stores/branches.store';
-import { useUIStore } from '@/stores/ui.store';
+import { useToast } from '@/composables/useToast';
+import { useModals } from '@/features/branches/composables/useModals';
 import BaseButton from '@/components/ui/BaseButton.vue';
-import BaseCard from '@/components/ui/BaseCard.vue';
-import BaseTable from '@/components/ui/BaseTable.vue';
-import EmptyState from '@/components/ui/EmptyState.vue';
 import PageLoading from '@/components/ui/PageLoading.vue';
-import BranchSettingsModal from '@/features/branches/components/BranchSettingsModal.vue';
+import EmptyState from '@/components/ui/EmptyState.vue';
+import BranchesTable from '@/features/branches/components/BranchesTable.vue';
+import BranchesCards from '@/features/branches/components/BranchesCards.vue';
+import DisableAllButton from '@/features/branches/components/DisableAllButton.vue';
 import AddBranchesModal from '@/features/branches/components/AddBranchesModal.vue';
+import BranchSettingsModal from '@/features/branches/components/BranchSettingsModal.vue';
 
+const { t } = useI18n();
 const branchesStore = useBranchesStore();
-const uiStore = useUIStore();
+const toast = useToast();
+const modals = useModals();
 
-const { branches, enabledBranches, loading, reservableTablesCount } = storeToRefs(branchesStore);
-
-const selectedBranchId = ref<string | null>(null);
-const isAddBranchesModalOpen = ref(false);
+const loading = computed(() => branchesStore.loading);
+const error = computed(() => branchesStore.error);
+const enabledBranches = computed(() => branchesStore.enabledBranches);
 
 onMounted(async () => {
   try {
     await branchesStore.fetchBranches(true);
-  } catch (err) {
-    uiStore.notify('Failed to load branches', 'error');
+  } catch {
+    toast.error(t('reservations.toast.fetchError'));
   }
 });
-
-async function handleDisableAll(): Promise<void> {
-  try {
-    await branchesStore.disableAll();
-    uiStore.notify('All reservations disabled successfully', 'success');
-  } catch (err) {
-    uiStore.notify('Failed to disable reservations', 'error');
-  }
-}
-
-function handleAddBranches(): void {
-  isAddBranchesModalOpen.value = true;
-}
-
-function handleRowClick(branchId: string): void {
-  selectedBranchId.value = branchId;
-}
-
-function handleCloseSettingsModal(): void {
-  selectedBranchId.value = null;
-}
-
-function handleCloseAddBranchesModal(): void {
-  isAddBranchesModalOpen.value = false;
-}
 </script>

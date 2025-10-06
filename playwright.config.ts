@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 
 // Load .env.e2e for E2E tests (offline mode by default)
 // This ensures we never accidentally use real tokens in tests

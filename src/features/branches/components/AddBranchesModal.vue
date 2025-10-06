@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { useBranchesStore } from '@/features/branches/stores/branches.store';
+import { toRef } from 'vue';
 import BaseModal from '@/components/ui/BaseModal.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import { useI18n } from 'vue-i18n';
+import { useBranchSelection } from '@/features/branches/composables/useBranchSelection';
 
 const props = withDefaults(
   defineProps<{
@@ -19,59 +19,32 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const branchesStore = useBranchesStore();
 
-const selectedBranchIds = ref<string[]>([]);
+// Extract complex logic to composable
+const {
+  selectedBranchIds,
+  selectedIdsSet,
+  disabledBranches,
+  isAllSelected,
+  saving,
+  toggleBranch,
+  toggleSelectAll,
+  enableSelectedBranches,
+} = useBranchSelection(toRef(props, 'isOpen'));
 
-const disabledBranches = computed(() => branchesStore.disabledBranches);
-
-watch(
-  () => props.isOpen,
-  (open) => {
-    if (open) {
-      selectedBranchIds.value = [];
+function handleSave(): void {
+  enableSelectedBranches().then((result) => {
+    // Only close modal if all branches were successfully enabled
+    if (result.ok) {
+      emit('close');
     }
-  }
-);
-
-function toggleBranch(branchId: string): void {
-  const index = selectedBranchIds.value.indexOf(branchId);
-  if (index > -1) {
-    selectedBranchIds.value.splice(index, 1);
-  } else {
-    selectedBranchIds.value.push(branchId);
-  }
-}
-
-function toggleSelectAll(): void {
-  if (selectedBranchIds.value.length === disabledBranches.value.length) {
-    selectedBranchIds.value = [];
-  } else {
-    selectedBranchIds.value = disabledBranches.value.map((b) => b.id);
-  }
-}
-
-const isAllSelected = computed(
-  () => selectedBranchIds.value.length > 0 &&
-    selectedBranchIds.value.length === disabledBranches.value.length
-);
-
-async function handleSave(): Promise<void> {
-  if (selectedBranchIds.value.length === 0) {
-    emit('close');
-    return;
-  }
-
-  try {
-    await branchesStore.enableBranches(selectedBranchIds.value);
-    emit('close');
-  } catch (err) {
-    // Error already handled by store
-  }
+  });
 }
 
 function handleClose(): void {
-  emit('close');
+  if (!saving.value) {
+    emit('close');
+  }
 }
 </script>
 
@@ -86,7 +59,7 @@ function handleClose(): void {
       {{ t('addBranches.title') }}
     </template>
 
-    <div class="space-y-4">
+    <div class="space-y-4" :aria-busy="saving">
       <div>
         <div class="mb-2 flex items-center justify-between">
           <label class="block text-sm font-medium text-neutral-700">
@@ -95,11 +68,12 @@ function handleClose(): void {
           <button
             v-if="disabledBranches.length > 0"
             type="button"
-            class="text-sm text-primary-600 hover:text-primary-700"
+            class="text-sm text-primary-600 hover:text-primary-700 disabled:text-neutral-400 disabled:cursor-not-allowed"
+            :disabled="saving"
             data-testid="select-all"
             @click="toggleSelectAll"
           >
-            {{ isAllSelected ? t('app.deselectAll', 'Deselect All') : t('app.selectAll', 'Select All') }}
+            {{ isAllSelected ? t('app.deselectAll') : t('app.selectAll') }}
           </button>
         </div>
 
@@ -107,13 +81,16 @@ function handleClose(): void {
           <label
             v-for="branch in disabledBranches"
             :key="branch.id"
-            class="flex cursor-pointer items-center gap-3 rounded-lg border border-neutral-200 p-3 hover:bg-neutral-50"
+            class="flex cursor-pointer items-center gap-3 rounded-lg border border-neutral-200 p-3 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50"
             :data-testid="`branch-${branch.id}`"
+            :for="branch.id"
           >
             <input
+              :id="branch.id"
               type="checkbox"
-              :checked="selectedBranchIds.includes(branch.id)"
-              class="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-2 focus:ring-primary-500"
+              :checked="selectedIdsSet.has(branch.id)"
+              :disabled="saving"
+              class="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-2 focus:ring-primary-500 disabled:cursor-not-allowed"
               @change="toggleBranch(branch.id)"
             />
             <span class="text-sm text-neutral-900">
@@ -131,6 +108,7 @@ function handleClose(): void {
     <template #actions>
       <BaseButton
         variant="ghost"
+        :disabled="saving"
         data-testid="close-button"
         @click="handleClose"
       >
@@ -138,7 +116,8 @@ function handleClose(): void {
       </BaseButton>
       <BaseButton
         variant="primary"
-        :disabled="selectedBranchIds.length === 0"
+        :disabled="selectedBranchIds.length === 0 || saving"
+        :loading="saving"
         data-testid="save-button"
         @click="handleSave"
       >

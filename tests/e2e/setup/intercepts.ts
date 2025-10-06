@@ -99,6 +99,9 @@ export async function setupOfflineMode(page: Page): Promise<void> {
   await interceptBranchMutations(page, interceptedRequests);
   await interceptBranchesGet(page, interceptedRequests);
 
+  // Add a small delay to ensure routes are fully registered
+  await page.waitForTimeout(50);
+
   await page.evaluate(
     ({ intercepted, escaped }) => {
       (window as unknown as { __e2eIntercepts?: { intercepted: string[]; escaped: string[] } }).__e2eIntercepts = {

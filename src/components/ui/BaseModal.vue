@@ -64,7 +64,9 @@ const props = withDefaults(
     dataTestid?: string;
   }>(),
   {
+    title: '',
     size: 'md',
+    dataTestid: '',
   }
 );
 

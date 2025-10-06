@@ -209,7 +209,7 @@ test.describe('Branches API Contract @online', () => {
         // Should have message or error field
         const hasErrorField = 'message' in body || 'error' in body;
         expect(hasErrorField).toBeTruthy();
-      } catch (e) {
+      } catch {
         // Some 404s might return HTML, that's also fine
         expect([404, 500]).toContain(response.status());
       }

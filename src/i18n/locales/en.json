@@ -5,7 +5,9 @@
     "switchToArabic": "العربية",
     "switchToEnglish": "English",
     "close": "Close",
-    "remove": "Remove"
+    "remove": "Remove",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All"
   },
   "reservations": {
     "title": "Reservations",
@@ -22,8 +24,27 @@
       "description": "Add branches to start managing reservations.",
       "action": "Add Branches"
     },
+    "error": {
+      "title": "Failed to load branches"
+    },
     "duration": {
       "minutes": "{count} Minutes"
+    },
+    "confirm": {
+      "disableAll": {
+        "title": "Disable All Reservations",
+        "message": "Are you sure you want to disable reservations for all branches? This action can be reversed later.",
+        "confirm": "Disable All",
+        "cancel": "Cancel"
+      }
+    },
+    "toast": {
+      "fetchError": "Failed to load branches. Please try again.",
+      "disableAllSuccess": "All branch reservations have been disabled.",
+      "disableAllError": "Failed to disable all reservations. Please try again.",
+      "enablePartialSuccess": "Enabled {enabledCount} branches. Failed to enable {failedCount} branches.",
+      "enableAllSuccess": "Successfully enabled {count} branches.",
+      "enableError": "Failed to enable branches. Please try again."
     }
   },
   "empty": {

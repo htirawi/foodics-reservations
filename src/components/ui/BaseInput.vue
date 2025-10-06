@@ -39,9 +39,14 @@ const props = withDefaults(
     dataTestid?: string;
   }>(),
   {
+    modelValue: '',
     type: 'text',
+    label: '',
+    placeholder: '',
     disabled: false,
     required: false,
+    error: undefined,
+    dataTestid: '',
   }
 );
 

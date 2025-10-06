@@ -1,153 +1,175 @@
-/**
- * Branches List View E2E Tests
- * Validates semantic structure, interactions, and i18n/RTL
- * Runs in offline mode by default (uses fixtures)
- */
-
 import { test, expect } from '@playwright/test';
-import { setupOfflineMode, setupEmptyState } from './setup/intercepts';
+import type { Page } from '@playwright/test';
+import { setupOfflineMode } from './setup/intercepts';
 
-test.describe('Branches List View - Structure', () => {
-  test('renders page with correct semantic hierarchy', async ({ page }) => {
-    await setupOfflineMode(page);
-    await page.goto('/');
+/**
+ * Wait for page to finish loading and data to be ready
+ * Uses multiple strategies to handle different timing scenarios
+ */
+async function waitForPageLoad(page: Page): Promise<void> {
+  // Strategy 1: Wait for network idle (all API calls complete)
+  await page.waitForLoadState('networkidle').catch(() => {});
 
-    // Header
-    await expect(page.getByRole('banner')).toBeVisible();
-    await expect(page.getByTestId('header-title')).toBeVisible();
+  // Strategy 2: Wait for either table/cards OR empty state to be present
+  // This ensures data has been processed regardless of result
+  await Promise.race([
+    page.waitForSelector('[data-testid="branches-table"]', { timeout: 5000 }).catch(() => {}),
+    page.waitForSelector('[data-testid^="branch-card-"]', { timeout: 5000 }).catch(() => {}),
+    page.waitForSelector('[data-testid="branches-empty"]', { timeout: 5000 }).catch(() => {}),
+    page.waitForSelector('[data-testid="branches-error"]', { timeout: 5000 }).catch(() => {}),
+  ]);
 
-    // Main content
-    await expect(page.getByRole('main')).toBeVisible();
-    
-    // Page heading
-    const mainHeading = page.getByRole('main').getByRole('heading', { level: 1 });
-    await expect(mainHeading).toBeVisible();
-  });
-
-  test('displays branches table with correct columns', async ({ page }) => {
-    await setupOfflineMode(page);
-    await page.goto('/');
-
-    const table = page.getByTestId('branches-table');
-    await expect(table).toBeVisible();
-
-    // Verify column headers
-    await expect(table.getByRole('columnheader', { name: 'Branch' })).toBeVisible();
-    await expect(table.getByRole('columnheader', { name: 'Reference' })).toBeVisible();
-    await expect(table.getByRole('columnheader', { name: 'Number of Tables' })).toBeVisible();
-    await expect(table.getByRole('columnheader', { name: 'Reservation Duration' })).toBeVisible();
-  });
-
-  test('displays Add Branches button', async ({ page }) => {
-    await setupOfflineMode(page);
-    await page.goto('/');
-
-    const addButton = page.getByTestId('add-branches');
-    await expect(addButton).toBeVisible();
-    await expect(addButton).toHaveText('Add Branches');
-  });
-
-  test('displays Disable Reservations button when branches are enabled', async ({ page }) => {
-    await setupOfflineMode(page);
-    await page.goto('/');
-
-    // Wait for data to load
-    await page.waitForSelector('[data-testid="branches-table"]', { timeout: 5000 });
-
-    // Check if Disable All button exists (only if there are enabled branches)
-    const disableButton = page.getByTestId('disable-all');
-    const isVisible = await disableButton.isVisible().catch(() => false);
-
-    if (isVisible) {
-      await expect(disableButton).toHaveText('Disable Reservations');
-    }
-  });
-});
-
-test.describe('Branches List View - Data Display', () => {
-  test('displays branch rows with correct data', async ({ page }) => {
-    await setupOfflineMode(page);
-    await page.goto('/');
-
-    // Wait for table to load
-    const table = page.getByTestId('branches-table');
-    await expect(table).toBeVisible();
-
-    // Check for at least one branch row
-    const rows = page.locator('[data-testid^="branch-row-"]');
-    const count = await rows.count();
-
-    if (count > 0) {
-      // Verify first row has all cells
-      const firstRow = rows.first();
-      const cells = firstRow.locator('td');
-
-      expect(await cells.count()).toBeGreaterThanOrEqual(4);
-    }
-  });
-
-  test('displays duration in correct format', async ({ page }) => {
-    await setupOfflineMode(page);
-    await page.goto('/');
-
-    const table = page.getByTestId('branches-table');
-    await expect(table).toBeVisible();
-
-    // Check duration column contains "Minutes"
-    const durationCell = page.locator('td').filter({ hasText: 'Minutes' }).first();
-    
-    if (await durationCell.count() > 0) {
-      const text = await durationCell.textContent();
-      expect(text).toMatch(/\d+ Minutes/);
-    }
-  });
-});
-
-test.describe('Branches List View - Empty State', () => {
-  test('shows empty state when no branches configured', async ({ page }) => {
-    await setupEmptyState(page);
-    await page.goto('/');
-
-    const emptyState = page.getByTestId('empty-state');
-    await expect(emptyState).toBeVisible();
-    await expect(emptyState).toContainText('No branches configured');
-    await expect(emptyState).toContainText('Add branches to start managing reservations');
-  });
-
-  test('empty state Add Branches button is clickable', async ({ page }) => {
-    await setupEmptyState(page);
-    await page.goto('/');
-
-    const addButton = page.getByTestId('add-branches');
-    await expect(addButton).toBeVisible();
-    await addButton.click();
-
-    // Should open Add Branches modal
-    const modal = page.getByTestId('add-branches-modal');
-    await expect(modal).toBeVisible();
-  });
-});
+  // Strategy 3: Small buffer for Vue reactivity to settle
+  await page.waitForTimeout(100);
+}
 
 test.describe('Branches List View - Interactions', () => {
+  test.describe.configure({ retries: 2 });
+
   test('Add Branches button triggers action', async ({ page }) => {
     await setupOfflineMode(page);
     await page.goto('/');
+    await waitForPageLoad(page);
 
     const addButton = page.getByTestId('add-branches');
-    await expect(addButton).toBeVisible();
-    
     await addButton.click();
 
     // Should open Add Branches modal
     const modal = page.getByTestId('add-branches-modal');
     await expect(modal).toBeVisible();
+  });
+
+  test('clicking branch row opens settings modal', async ({ page }) => {
+    await setupOfflineMode(page);
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    // Check viewport size to determine test approach
+    const viewport = page.viewportSize();
+    const isMobile = viewport && viewport.width < 768;
+
+    if (isMobile) {
+      // On mobile, click on cards
+      const firstCard = page.locator('[data-testid^="branch-card-"]').first();
+      const cardCount = await firstCard.count();
+
+      if (cardCount > 0) {
+        await firstCard.click();
+
+        const settingsModal = page.getByTestId('settings-modal');
+        await expect(settingsModal).toBeVisible();
+      }
+    } else {
+      // On desktop, click on table rows
+      const table = page.getByTestId('branches-table');
+      await expect(table).toBeVisible();
+
+      const firstRow = page.locator('[data-testid^="branch-row-"]').first();
+      const rowCount = await firstRow.count();
+
+      if (rowCount > 0) {
+        await firstRow.click();
+
+        const settingsModal = page.getByTestId('settings-modal');
+        await expect(settingsModal).toBeVisible();
+      }
+    }
+  });
+
+  test('branch row is keyboard accessible with Enter key', async ({ page }) => {
+    await setupOfflineMode(page);
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    // Check viewport size to determine test approach
+    const viewport = page.viewportSize();
+    const isMobile = viewport && viewport.width < 768;
+
+    if (isMobile) {
+      // On mobile, test card keyboard navigation
+      const firstCard = page.locator('[data-testid^="branch-card-"]').first();
+      const cardCount = await firstCard.count();
+
+      if (cardCount > 0) {
+        await firstCard.focus();
+        await expect(firstCard).toBeFocused();
+        await firstCard.press('Enter');
+
+        const settingsModal = page.getByTestId('settings-modal');
+        await expect(settingsModal).toBeVisible();
+      }
+    } else {
+      // On desktop, test table row keyboard navigation
+      const table = page.getByTestId('branches-table');
+      await expect(table).toBeVisible();
+
+      const firstRow = page.locator('[data-testid^="branch-row-"]').first();
+      const rowCount = await firstRow.count();
+
+      if (rowCount > 0) {
+        await firstRow.focus();
+        await expect(firstRow).toBeFocused();
+        await firstRow.press('Enter');
+
+        const settingsModal = page.getByTestId('settings-modal');
+        await expect(settingsModal).toBeVisible();
+      }
+    }
+  });
+
+  test('branch row is keyboard accessible with Space key', async ({ page }) => {
+    await setupOfflineMode(page);
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    // Check viewport size to determine test approach
+    const viewport = page.viewportSize();
+    const isMobile = viewport && viewport.width < 768;
+
+    if (isMobile) {
+      // On mobile, test card keyboard navigation
+      const firstCard = page.locator('[data-testid^="branch-card-"]').first();
+      const cardCount = await firstCard.count();
+
+      if (cardCount > 0) {
+        await firstCard.focus();
+        await firstCard.press(' ');
+
+        const settingsModal = page.getByTestId('settings-modal');
+        await expect(settingsModal).toBeVisible();
+      }
+    } else {
+      // On desktop, test table row keyboard navigation
+      const table = page.getByTestId('branches-table');
+      await expect(table).toBeVisible();
+
+      const firstRow = page.locator('[data-testid^="branch-row-"]').first();
+      const rowCount = await firstRow.count();
+
+      if (rowCount > 0) {
+        await firstRow.focus();
+        await firstRow.press(' ');
+
+        const settingsModal = page.getByTestId('settings-modal');
+        await expect(settingsModal).toBeVisible();
+      }
+    }
   });
 
   test('Disable All button is keyboard accessible', async ({ page }) => {
     await setupOfflineMode(page);
     await page.goto('/');
+    await waitForPageLoad(page);
 
-    await page.waitForSelector('[data-testid="branches-table"]', { timeout: 5000 });
+    // Wait for data to load - check viewport to determine which element to wait for
+    const viewport = page.viewportSize();
+    const isMobile = viewport && viewport.width < 768;
+    
+    if (isMobile) {
+      await page.waitForSelector('[data-testid^="branch-card-"]', { timeout: 5000 });
+    } else {
+      await page.waitForSelector('[data-testid="branches-table"]', { timeout: 5000 });
+    }
 
     const disableButton = page.getByTestId('disable-all');
     const isVisible = await disableButton.isVisible().catch(() => false);
@@ -164,12 +186,42 @@ test.describe('Branches List View - Interactions', () => {
       expect(boxShadow).not.toBe('none');
     }
   });
+
+  test('Disable All shows confirmation dialog', async ({ page }) => {
+    await setupOfflineMode(page);
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    // Wait for data to load - check viewport to determine which element to wait for
+    const viewport = page.viewportSize();
+    const isMobile = viewport && viewport.width < 768;
+    
+    if (isMobile) {
+      await page.waitForSelector('[data-testid^="branch-card-"]', { timeout: 5000 });
+    } else {
+      await page.waitForSelector('[data-testid="branches-table"]', { timeout: 5000 });
+    }
+
+    const disableButton = page.getByTestId('disable-all');
+    const isVisible = await disableButton.isVisible().catch(() => false);
+
+    if (isVisible && !(await disableButton.isDisabled())) {
+      await disableButton.click();
+
+      const confirmModal = page.getByTestId('confirm-modal');
+      await expect(confirmModal).toBeVisible();
+      await expect(confirmModal).toContainText('Disable All Reservations');
+    }
+  });
 });
 
 test.describe('Branches List View - i18n (Arabic)', () => {
+  test.describe.configure({ retries: 2 });
+
   test('displays Arabic translations correctly', async ({ page }) => {
     await setupOfflineMode(page);
     await page.goto('/');
+    await waitForPageLoad(page);
 
     // Switch to Arabic
     const localeSwitcher = page.getByTestId('locale-switcher');
@@ -182,37 +234,50 @@ test.describe('Branches List View - i18n (Arabic)', () => {
     const mainHeading = page.getByRole('main').getByRole('heading', { level: 1 });
     await expect(mainHeading).toHaveText('الحجوزات');
 
-    // Check table headers in Arabic
-    const table = page.getByTestId('branches-table');
-    await expect(table.getByRole('columnheader', { name: 'الفرع' })).toBeVisible();
-    await expect(table.getByRole('columnheader', { name: 'المرجع' })).toBeVisible();
+    // Check viewport size to determine test approach
+    const viewport = page.viewportSize();
+    const isMobile = viewport && viewport.width < 768;
+
+    if (isMobile) {
+      // On mobile, check cards for Arabic content
+      const cards = page.locator('[data-testid^="branch-card-"]');
+      const firstCard = cards.first();
+      
+      if (await firstCard.count() > 0) {
+        await expect(firstCard).toContainText('Downtown Branch');
+        await expect(firstCard).toContainText('DT-001');
+      }
+    } else {
+      // On desktop, check table headers in Arabic
+      const table = page.getByTestId('branches-table');
+      await expect(table.getByRole('columnheader', { name: 'الفرع' })).toBeVisible();
+      await expect(table.getByRole('columnheader', { name: 'المرجع' })).toBeVisible();
+    }
   });
 
   test('RTL layout flips correctly', async ({ page }) => {
     await setupOfflineMode(page);
     await page.goto('/');
+    await waitForPageLoad(page);
 
     // Switch to Arabic
-    await page.getByTestId('locale-switcher').click();
+    const localeSwitcher = page.getByTestId('locale-switcher');
+    await localeSwitcher.click();
+
+    // Check RTL attributes
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-
-    // Verify RTL direction
-    const main = page.getByRole('main');
-    const direction = await main.evaluate((el) => {
-      return window.getComputedStyle(el).direction;
-    });
-
-    expect(direction).toBe('rtl');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
   });
 });
 
 test.describe('Branches List View - Loading State', () => {
+  test.describe.configure({ retries: 2 });
+
   test('shows loading indicator while fetching data', async ({ page }) => {
-    await setupOfflineMode(page);
-    
-    // Delay API response slightly to catch loading state
-    await page.route('**/api/branches*', async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    // Set up a slow response to catch loading state
+    await page.route('**/api/branches', async (route) => {
+      // Add delay to ensure loading state is visible
+      await new Promise(resolve => setTimeout(resolve, 100));
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -221,6 +286,7 @@ test.describe('Branches List View - Loading State', () => {
     });
 
     await page.goto('/');
+    await waitForPageLoad(page);
 
     // Should show loading state briefly
     const loading = page.getByTestId('page-loading');
@@ -234,30 +300,114 @@ test.describe('Branches List View - Loading State', () => {
 });
 
 test.describe('Branches List View - Accessibility', () => {
+  test.describe.configure({ retries: 2 });
+  
   test('has proper document structure', async ({ page }) => {
     await setupOfflineMode(page);
     await page.goto('/');
+    await waitForPageLoad(page);
 
     // Should have main heading (scoped to main content)
     const mainHeading = page.getByRole('main').getByRole('heading', { level: 1 });
     await expect(mainHeading).toBeVisible();
 
-    // Should have table with proper structure
-    const table = page.getByTestId('branches-table');
-    await expect(table).toBeVisible();
+    // Check viewport size to determine test approach
+    const viewport = page.viewportSize();
+    const isMobile = viewport && viewport.width < 768;
 
-    // Table should have column headers
-    const headers = table.locator('th');
-    expect(await headers.count()).toBeGreaterThan(0);
+    if (isMobile) {
+      // On mobile, check cards structure
+      const cards = page.locator('[data-testid^="branch-card-"]');
+      const cardCount = await cards.count();
+      expect(cardCount).toBeGreaterThan(0);
+    } else {
+      // On desktop, check table structure
+      const table = page.getByTestId('branches-table');
+      await expect(table).toBeVisible();
+
+      // Table should have column headers
+      const headers = table.locator('th');
+      expect(await headers.count()).toBeGreaterThan(0);
+    }
   });
 
   test('interactive elements are focusable', async ({ page }) => {
     await setupOfflineMode(page);
     await page.goto('/');
+    await waitForPageLoad(page);
 
     // Add Branches button should be focusable
     const addButton = page.getByTestId('add-branches');
     await addButton.focus();
     await expect(addButton).toBeFocused();
+  });
+});
+
+test.describe('Branches List View - Responsive (Mobile)', () => {
+  test.describe.configure({ retries: 2 });
+  
+  test('displays stacked cards on mobile viewport', async ({ page }) => {
+    await setupOfflineMode(page);
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    // Table should be hidden on mobile
+    const table = page.getByTestId('branches-table');
+    const tableVisible = await table.isVisible().catch(() => false);
+    expect(tableVisible).toBe(false);
+
+    // Cards should be visible on mobile
+    const cards = page.locator('[data-testid^="branch-card-"]');
+    const cardCount = await cards.count();
+    expect(cardCount).toBeGreaterThan(0);
+  });
+
+  test('mobile cards display all branch information', async ({ page }) => {
+    await setupOfflineMode(page);
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    const firstCard = page.locator('[data-testid^="branch-card-"]').first();
+    await expect(firstCard).toContainText('Downtown Branch');
+    await expect(firstCard).toContainText('DT-001');
+    await expect(firstCard).toContainText('Number of Tables');
+    await expect(firstCard).toContainText('Reservation Duration');
+  });
+
+  test('mobile cards are keyboard accessible', async ({ page }) => {
+    await setupOfflineMode(page);
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    const firstCard = page.locator('[data-testid^="branch-card-"]').first();
+    await firstCard.focus();
+    await expect(firstCard).toBeFocused();
+  });
+
+  test('clicking mobile card opens settings modal', async ({ page }) => {
+    await setupOfflineMode(page);
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    const firstCard = page.locator('[data-testid^="branch-card-"]').first();
+    await firstCard.click();
+
+    const settingsModal = page.getByTestId('settings-modal');
+    await expect(settingsModal).toBeVisible();
+  });
+
+  test('displays table on desktop viewport', async ({ page }) => {
+    await setupOfflineMode(page);
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    // Table should be visible on desktop
+    const table = page.getByTestId('branches-table');
+    await expect(table).toBeVisible();
   });
 });

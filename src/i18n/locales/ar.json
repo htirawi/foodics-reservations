@@ -5,7 +5,9 @@
     "switchToArabic": "العربية",
     "switchToEnglish": "English",
     "close": "إغلاق",
-    "remove": "إزالة"
+    "remove": "إزالة",
+    "selectAll": "اختيار الكل",
+    "deselectAll": "إلغاء اختيار الكل"
   },
   "reservations": {
     "title": "الحجوزات",
@@ -22,8 +24,27 @@
       "description": "أضف فروعًا لبدء إدارة الحجوزات.",
       "action": "إضافة فروع"
     },
+    "error": {
+      "title": "فشل تحميل الفروع"
+    },
     "duration": {
       "minutes": "{count} دقيقة"
+    },
+    "confirm": {
+      "disableAll": {
+        "title": "تعطيل جميع الحجوزات",
+        "message": "هل أنت متأكد من تعطيل الحجوزات لجميع الفروع؟ يمكن التراجع عن هذا الإجراء لاحقًا.",
+        "confirm": "تعطيل الكل",
+        "cancel": "إلغاء"
+      }
+    },
+    "toast": {
+      "fetchError": "فشل تحميل الفروع. يرجى المحاولة مرة أخرى.",
+      "disableAllSuccess": "تم تعطيل الحجوزات لجميع الفروع.",
+      "disableAllError": "فشل تعطيل جميع الحجوزات. يرجى المحاولة مرة أخرى.",
+      "enablePartialSuccess": "تم تفعيل {enabledCount} فروع. فشل تفعيل {failedCount} فروع.",
+      "enableAllSuccess": "تم تفعيل {count} فروع بنجاح.",
+      "enableError": "فشل تفعيل الفروع. يرجى المحاولة مرة أخرى."
     }
   },
   "empty": {

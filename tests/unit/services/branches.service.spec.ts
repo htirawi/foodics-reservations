@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import MockAdapter from 'axios-mock-adapter';
 import { httpClient } from '@/services/http';
 import { BranchesService } from '@/services/branches.service';
-import type { Branch, ReservationTimes } from '@/types/foodics';
+import type { Branch, ReservationTimes, SlotTuple } from '@/types/foodics';
 import type { ApiError } from '@/types/api';
 
 describe('BranchesService', () => {
@@ -215,7 +215,7 @@ describe('BranchesService', () => {
       reservation_duration: 120,
       reservation_times: {
         ...mockReservationTimes,
-        saturday: [['10:00', '14:00'], ['19:00', '23:00']],
+        saturday: [['10:00', '14:00'], ['19:00', '23:00']] as SlotTuple[],
       },
     };
 

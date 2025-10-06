@@ -9,6 +9,7 @@
       <BranchesListView />
     </main>
     <Toaster />
+    <ConfirmDialog />
   </div>
 </template>
 
@@ -16,6 +17,7 @@
 import { onMounted } from 'vue';
 import AppHeader from '@/layouts/AppHeader.vue';
 import Toaster from '@/layouts/Toaster.vue';
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue';
 import BranchesListView from '@/features/branches/views/BranchesListView.vue';
 import { useLocale } from '@/composables/useLocale';
 import { useUIStore } from '@/stores/ui.store';

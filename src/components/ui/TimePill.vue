@@ -14,6 +14,7 @@ withDefaults(
     timeRange: '',
     removable: false,
     editable: false,
+    dataTestid: '',
   }
 );
 

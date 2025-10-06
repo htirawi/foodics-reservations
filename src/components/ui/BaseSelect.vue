@@ -37,8 +37,12 @@ withDefaults(
     dataTestid?: string;
   }>(),
   {
+    modelValue: '',
+    label: '',
+    placeholder: '',
     disabled: false,
     required: false,
+    dataTestid: '',
   }
 );
 
