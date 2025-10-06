@@ -25,6 +25,7 @@
     "test:ci": "vitest run && playwright test"
   },
   "dependencies": {
+    "@vueuse/core": "^13.9.0",
     "axios": "^1.6.7",
     "pinia": "^2.1.7",
     "vue": "^3.4.19",

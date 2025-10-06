@@ -1,129 +1,147 @@
-<script setup lang="ts">
-import { toRef } from 'vue';
-import BaseModal from '@/components/ui/BaseModal.vue';
-import BaseButton from '@/components/ui/BaseButton.vue';
-import { useI18n } from 'vue-i18n';
-import { useBranchSelection } from '@/features/branches/composables/useBranchSelection';
-
-const props = withDefaults(
-  defineProps<{
-    isOpen: boolean;
-  }>(),
-  {
-    isOpen: false,
-  }
-);
-
-const emit = defineEmits<{
-  close: [];
-}>();
-
-const { t } = useI18n();
-
-// Extract complex logic to composable
-const {
-  selectedBranchIds,
-  selectedIdsSet,
-  disabledBranches,
-  isAllSelected,
-  saving,
-  toggleBranch,
-  toggleSelectAll,
-  enableSelectedBranches,
-} = useBranchSelection(toRef(props, 'isOpen'));
-
-function handleSave(): void {
-  enableSelectedBranches().then((result) => {
-    // Only close modal if all branches were successfully enabled
-    if (result.ok) {
-      emit('close');
-    }
-  });
-}
-
-function handleClose(): void {
-  if (!saving.value) {
-    emit('close');
-  }
-}
-</script>
-
 <template>
-  <BaseModal
-    :model-value="isOpen"
-    size="md"
-    data-testid="add-branches-modal"
-    :prevent-close="saving"
-    @update:model-value="handleClose"
-  >
+  <UiModal
+    :is-open="modelValue"
+    aria-labelledby="add-branches-title"
+    size="lg"
+    @close="handleClose">
     <template #title>
-      {{ t('addBranches.title') }}
+      <span id="add-branches-title">{{ $t('addBranches.title') }}</span>
     </template>
-
-    <div class="space-y-4" :aria-busy="saving">
-      <div>
-        <div class="mb-2 flex items-center justify-between">
-          <label class="block text-sm font-medium text-neutral-700">
-            {{ t('addBranches.branchesLabel') }}
-          </label>
+    <div data-testid="add-branches-modal">
+      <EmptyState
+        v-if="disabledBranches.length === 0"
+        data-testid="add-branches-empty"
+        :title="$t('addBranches.empty.title')"
+        :description="$t('addBranches.empty.description')"
+      />
+      <div v-else class="space-y-4">
+        <BaseInput
+          :model-value="debouncedQuery"
+          :placeholder="$t('addBranches.filter')"
+          data-testid="add-branches-filter"
+          @update:model-value="handleFilterChange"
+        />
+        <div class="flex items-center justify-between border-b border-gray-200 pb-3">
+          <span class="text-sm font-medium text-gray-700">{{ $t('addBranches.branchesLabel') }}</span>
           <button
-            v-if="disabledBranches.length > 0"
             type="button"
-            class="text-sm text-primary-600 hover:text-primary-700 disabled:text-neutral-400 disabled:cursor-not-allowed"
-            :disabled="saving"
-            data-testid="select-all"
-            @click="toggleSelectAll"
+            class="text-sm text-primary-600 hover:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded px-2 py-1"
+            data-testid="add-branches-select-all"
+            @click="toggleAll"
           >
-            {{ isAllSelected ? t('app.deselectAll') : t('app.selectAll') }}
+            {{ isAllSelected ? $t('app.deselectAll') : $t('app.selectAll') }}
           </button>
         </div>
-
-        <div v-if="disabledBranches.length > 0" class="space-y-2">
+        <div data-testid="add-branches-list" class="max-h-96 space-y-2 overflow-y-auto">
           <label
-            v-for="branch in disabledBranches"
+            v-for="branch in filtered"
             :key="branch.id"
-            class="flex cursor-pointer items-center gap-3 rounded-lg border border-neutral-200 p-3 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50"
-            :data-testid="`branch-${branch.id}`"
-            :for="branch.id"
+            :data-testid="`add-branches-item-${branch.id}`"
+            class="flex items-center gap-3 rounded-lg border border-gray-200 p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+            :class="{ 'bg-primary-50 border-primary-300': selectedIdsSet.has(branch.id) }"
           >
             <input
-              :id="branch.id"
+              :id="`branch-${branch.id}`"
               type="checkbox"
               :checked="selectedIdsSet.has(branch.id)"
-              :disabled="saving"
-              class="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-2 focus:ring-primary-500 disabled:cursor-not-allowed"
-              @change="toggleBranch(branch.id)"
-            />
-            <span class="text-sm text-neutral-900">
-              {{ branch.name }} ({{ branch.reference }})
-            </span>
+              class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-2 focus:ring-primary-500"
+              @change="toggleOne(branch.id)"
+            >
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-gray-900 truncate">{{ branch.name }}</p>
+              <p v-if="branch.reference" class="text-sm text-gray-500 truncate">{{ branch.reference }}</p>
+            </div>
           </label>
+          <p v-if="filtered.length === 0" class="py-8 text-center text-sm text-gray-500">
+            {{ $t('empty.title') }}
+          </p>
         </div>
-
-        <p v-else class="text-sm text-neutral-500" data-testid="no-branches">
-          {{ t('addBranches.noBranches') }}
-        </p>
       </div>
     </div>
 
     <template #actions>
-      <BaseButton
-        variant="ghost"
-        :disabled="saving"
-        data-testid="close-button"
-        @click="handleClose"
-      >
-        {{ t('addBranches.actions.close') }}
+      <BaseButton variant="ghost" data-testid="add-branches-close" @click="handleClose">
+        {{ $t('addBranches.actions.close') }}
       </BaseButton>
       <BaseButton
         variant="primary"
-        :disabled="selectedBranchIds.length === 0 || saving"
+        :disabled="selectedIds.length === 0 || saving"
         :loading="saving"
-        data-testid="save-button"
+        :aria-busy="saving"
+        data-testid="add-branches-save"
         @click="handleSave"
       >
-        {{ t('addBranches.actions.save') }}
+        <span v-if="saving" class="flex items-center gap-2">
+          <svg
+class="animate-spin h-4 w-4"
+xmlns="http://www.w3.org/2000/svg"
+fill="none"
+viewBox="0 0 24 24">
+            <circle
+class="opacity-25"
+cx="12"
+cy="12"
+r="10"
+stroke="currentColor"
+stroke-width="4" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
+          {{ $t('addBranches.actions.save') }}
+        </span>
+        <span v-else>{{ $t('addBranches.enableSelected') }}</span>
       </BaseButton>
     </template>
-  </BaseModal>
+  </UiModal>
 </template>
+
+<script setup lang="ts">
+import { ref, watch, computed } from 'vue';
+import { useDebounceFn } from '@vueuse/core';
+import { useI18n } from 'vue-i18n';
+import UiModal from '@/components/ui/UiModal.vue';
+import BaseInput from '@/components/ui/BaseInput.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
+import EmptyState from '@/components/ui/EmptyState.vue';
+import { useBranchesStore } from '@/features/branches/stores/branches.store';
+import { useAddBranchesModal } from '@/features/branches/composables/useAddBranchesModal';
+import { useAddBranchesEnabling } from '@/features/branches/composables/useAddBranchesEnabling';
+import { useToast } from '@/composables/useToast';
+
+const props = defineProps<{
+  modelValue: boolean;
+}>();
+
+const emit = defineEmits<{
+  'update:modelValue': [value: boolean];
+}>();
+
+const { t } = useI18n();
+const toast = useToast();
+const branchesStore = useBranchesStore();
+
+const {
+  setQuery,
+  filtered,
+  selectedIds,
+  selectedIdsSet,
+  isAllSelected,
+  toggleOne,
+  toggleAll,
+  clear,
+} = useAddBranchesModal(computed(() => branchesStore.disabledBranches));
+
+const { saving, handleEnable } = useAddBranchesEnabling(
+  selectedIds,
+  clear,
+  toast,
+  t
+);
+
+const debouncedQuery = ref('');
+const debouncedSetQuery = useDebounceFn((value: string) => setQuery(value), 200);
+function handleFilterChange(value: string): void { debouncedQuery.value = value; debouncedSetQuery(value); }
+function handleSave(): void { handleEnable(() => emit('update:modelValue', false)); }
+function handleClose(): void { if (!saving.value) { clear(); emit('update:modelValue', false); } }
+watch(() => props.modelValue, (isOpen) => { if (!isOpen) clear(); });
+const disabledBranches = branchesStore.disabledBranches;
+</script>

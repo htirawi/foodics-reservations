@@ -98,9 +98,15 @@
   },
   "addBranches": {
     "title": "إضافة فروع",
+    "filter": "البحث عن فروع...",
+    "enableSelected": "تفعيل المحدد",
     "branchesLabel": "الفروع",
     "placeholder": "اختر الفروع لتفعيلها",
     "noBranches": "لا توجد فروع معطلة متاحة",
+    "empty": {
+      "title": "لا توجد فروع معطلة",
+      "description": "جميع الفروع مفعلة بالفعل للحجوزات."
+    },
     "actions": {
       "save": "حفظ",
       "close": "إغلاق"

@@ -1,0 +1,247 @@
+/**
+ * UiModal Unit Tests
+ * Focus trap, ARIA, keyboard navigation, slots
+ */
+
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import type { VueWrapper } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import UiModal from '@/components/ui/UiModal.vue';
+
+describe('UiModal', () => {
+  let wrapper: VueWrapper;
+
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="app"></div>';
+  });
+
+  afterEach(() => {
+    wrapper?.unmount();
+    document.body.innerHTML = '';
+    document.body.style.overflow = '';
+  });
+
+  it('renders when isOpen is true', () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'test-title',
+      },
+      slots: {
+        title: '<span id="test-title">Test Title</span>',
+        default: '<p>Body content</p>',
+      },
+    });
+
+    expect(wrapper.find('[role="dialog"]').exists()).toBe(true);
+    expect(wrapper.text()).toContain('Test Title');
+    expect(wrapper.text()).toContain('Body content');
+  });
+
+  it('does not render when isOpen is false', () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: false,
+        ariaLabelledby: 'test-title',
+      },
+    });
+
+    expect(wrapper.find('[role="dialog"]').exists()).toBe(false);
+  });
+
+  it('has correct ARIA attributes', () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'modal-title',
+      },
+      slots: {
+        title: '<span id="modal-title">My Modal</span>',
+      },
+    });
+
+    const dialog = wrapper.find('[role="dialog"]');
+    expect(dialog.attributes('aria-modal')).toBe('true');
+    expect(dialog.attributes('aria-labelledby')).toBe('modal-title');
+  });
+
+  it('renders all three slots', () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'test-title',
+      },
+      slots: {
+        title: '<span id="test-title">Title</span>',
+        default: '<div data-testid="body">Body</div>',
+        actions: '<button data-testid="action-btn">Action</button>',
+      },
+    });
+
+    expect(wrapper.text()).toContain('Title');
+    expect(wrapper.find('[data-testid="body"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="action-btn"]').exists()).toBe(true);
+  });
+
+  it('emits close when Escape is pressed and closeOnEscape is true', async () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'test-title',
+        closeOnEscape: true,
+      },
+    });
+
+    const dialog = wrapper.find('[role="dialog"]');
+    await dialog.trigger('keydown.esc');
+
+    expect(wrapper.emitted('close')).toHaveLength(1);
+  });
+
+  it('does not emit close when Escape is pressed and closeOnEscape is false', async () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'test-title',
+        closeOnEscape: false,
+      },
+    });
+
+    const dialog = wrapper.find('[role="dialog"]');
+    await dialog.trigger('keydown.esc');
+
+    expect(wrapper.emitted('close')).toBeUndefined();
+  });
+
+  it('emits close when backdrop is clicked and closeOnBackdrop is true', async () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'test-title',
+        closeOnBackdrop: true,
+      },
+    });
+
+    const container = wrapper.find('.fixed.inset-0');
+    await container.trigger('click');
+
+    expect(wrapper.emitted('close')).toHaveLength(1);
+  });
+
+  it('does not emit close when backdrop is clicked and closeOnBackdrop is false', async () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'test-title',
+        closeOnBackdrop: false,
+      },
+    });
+
+    const container = wrapper.find('.fixed.inset-0');
+    await container.trigger('click');
+
+    expect(wrapper.emitted('close')).toBeUndefined();
+  });
+
+  it('applies correct size classes', () => {
+    const sizes: Array<'sm' | 'md' | 'lg' | 'xl'> = ['sm', 'md', 'lg', 'xl'];
+    const expectedClasses = {
+      sm: 'max-w-md',
+      md: 'max-w-lg',
+      lg: 'max-w-2xl',
+      xl: 'max-w-4xl',
+    };
+
+    sizes.forEach((size) => {
+      wrapper = mount(UiModal, {
+        props: {
+          isOpen: true,
+          ariaLabelledby: 'test-title',
+          size,
+        },
+      });
+
+      const dialog = wrapper.find('[role="dialog"]');
+      expect(dialog.classes()).toContain(expectedClasses[size]);
+      wrapper.unmount();
+    });
+  });
+
+  it('locks body scroll when open', async () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: false,
+        ariaLabelledby: 'test-title',
+      },
+    });
+
+    expect(document.body.style.overflow).toBe('');
+
+    await wrapper.setProps({ isOpen: true });
+    expect(document.body.style.overflow).toBe('hidden');
+
+    await wrapper.setProps({ isOpen: false });
+    expect(document.body.style.overflow).toBe('');
+  });
+
+  it('restores body scroll on unmount', () => {
+    document.body.style.overflow = 'hidden';
+
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'test-title',
+      },
+    });
+
+    wrapper.unmount();
+    expect(document.body.style.overflow).toBe('');
+  });
+
+  it('focuses first focusable element when opened', async () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'test-title',
+      },
+      slots: {
+        default: '<button data-testid="first-btn">First</button><button>Second</button>',
+      },
+      attachTo: document.body,
+    });
+
+    await wrapper.vm.$nextTick();
+
+    const firstButton = wrapper.find('[data-testid="first-btn"]').element as HTMLElement;
+    expect(document.activeElement).toBe(firstButton);
+  });
+
+  it('does not render title section if title slot is empty', () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'test-title',
+      },
+      slots: {
+        default: '<p>Body only</p>',
+      },
+    });
+
+    expect(wrapper.find('.border-b').exists()).toBe(false);
+  });
+
+  it('does not render actions section if actions slot is empty', () => {
+    wrapper = mount(UiModal, {
+      props: {
+        isOpen: true,
+        ariaLabelledby: 'test-title',
+      },
+      slots: {
+        default: '<p>Body only</p>',
+      },
+    });
+
+    expect(wrapper.find('.border-t').exists()).toBe(false);
+  });
+});
+

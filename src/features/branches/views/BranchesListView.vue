@@ -101,9 +101,7 @@ aria-hidden="true">
 
     <!-- Modals -->
     <AddBranchesModal
-      :is-open="modals.showAddModal.value"
-      @close="modals.closeAddModal"
-      @saved="modals.closeAddModal"
+      v-model="modals.showAddModal.value"
     />
     <BranchSettingsModal
       v-if="modals.selectedBranchId.value"

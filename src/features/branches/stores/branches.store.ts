@@ -26,37 +26,14 @@ function useBranchesState() {
   const selectedBranchId = ref<string | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
-
-  const enabledBranches = computed(() =>
-    branches.value.filter((b) => b.accepts_reservations)
-  );
-
-  const disabledBranches = computed(() =>
-    branches.value.filter((b) => !b.accepts_reservations)
-  );
-
+  const enabledBranches = computed(() => branches.value.filter((b) => b.accepts_reservations));
+  const disabledBranches = computed(() => branches.value.filter((b) => !b.accepts_reservations));
   const branchById = computed(() => (id: string) => findBranchById(branches.value, id));
-  const reservableTablesCount = computed(() => (branch: Branch) =>
-    countReservableTables(branch)
-  );
-
-  return {
-    branches,
-    selectedBranchId,
-    loading,
-    error,
-    enabledBranches,
-    disabledBranches,
-    branchById,
-    reservableTablesCount,
-  };
+  const reservableTablesCount = computed(() => (branch: Branch) => countReservableTables(branch));
+  return { branches, selectedBranchId, loading, error, enabledBranches, disabledBranches, branchById, reservableTablesCount };
 }
 
-function useFetchBranches(
-  branches: Ref<Branch[]>,
-  loading: Ref<boolean>,
-  error: Ref<string | null>
-) {
+function useFetchBranches(branches: Ref<Branch[]>, loading: Ref<boolean>, error: Ref<string | null>) {
   async function fetchBranches(includeSections = false): Promise<void> {
     loading.value = true;
     error.value = null;
@@ -74,28 +51,50 @@ function useFetchBranches(
 }
 
 function useEnableAction(branches: Ref<Branch[]>, error: Ref<string | null>) {
-  async function enableBranches(ids: string[]): Promise<void> {
+  async function enableBranches(
+    ids: string[]
+  ): Promise<{ ok: boolean; enabled: string[]; failed: string[] }> {
     const snapshot = branches.value.map((b) => ({ ...b }));
     branches.value = branches.value.map((b) =>
       ids.includes(b.id) ? { ...b, accepts_reservations: true } : b
     );
-    try {
-      await Promise.all(ids.map((id) => BranchesService.enableBranch(id)));
-    } catch (err) {
-      branches.value = snapshot;
-      const apiError = err as ApiError;
-      error.value = apiError.message ?? 'Failed to enable branches';
-      throw err;
+
+    const results = await Promise.allSettled(
+      ids.map(async (id) => {
+        await BranchesService.enableBranch(id);
+        return id;
+      })
+    );
+
+    const enabled = results
+      .filter((r) => r.status === 'fulfilled')
+      .map((r) => (r as PromiseFulfilledResult<string>).value);
+
+    const failed = results
+      .filter((r) => r.status === 'rejected')
+      .map((_, index) => ids[index] ?? '')
+      .filter((id) => id !== '');
+
+    if (failed.length > 0) {
+      branches.value = snapshot.map((b) =>
+        enabled.includes(b.id) ? { ...b, accepts_reservations: true } : b
+      );
+
+      if (enabled.length === 0) {
+        const firstError = results.find((r) => r.status === 'rejected') as PromiseRejectedResult;
+        const apiError = firstError?.reason as ApiError;
+        error.value = apiError?.message ?? 'Failed to enable branches';
+      }
+
+      return { ok: false, enabled, failed };
     }
+
+    return { ok: true, enabled, failed: [] };
   }
   return { enableBranches };
 }
 
-function useDisableAllAction(
-  branches: Ref<Branch[]>,
-  enabledBranches: ComputedRef<Branch[]>,
-  error: Ref<string | null>
-) {
+function useDisableAllAction(branches: Ref<Branch[]>, enabledBranches: ComputedRef<Branch[]>, error: Ref<string | null>) {
   async function disableAll(): Promise<void> {
     const snapshot = branches.value.map((b) => ({ ...b }));
     const enabledIds = enabledBranches.value.map((b) => b.id);

@@ -13,24 +13,11 @@ export interface EnableBranchesResult {
 
 function useBranchEnablingLogic(
   selectedBranchIds: Ref<string[]>,
-  branchesStore: { enableBranches: (ids: string[]) => Promise<void> }
+  branchesStore: { enableBranches: (ids: string[]) => Promise<{ ok: boolean; enabled: string[]; failed: string[] }> }
 ) {
   async function enableBranches(): Promise<{ enabled: string[]; failed: string[] }> {
-    const enabled: string[] = [];
-    const failed: string[] = [];
-
-    await Promise.allSettled(
-      selectedBranchIds.value.map(async (id) => {
-        try {
-          await branchesStore.enableBranches([id]);
-          enabled.push(id);
-        } catch {
-          failed.push(id);
-        }
-      })
-    );
-
-    return { enabled, failed };
+    const result = await branchesStore.enableBranches(selectedBranchIds.value);
+    return { enabled: result.enabled, failed: result.failed };
   }
 
   return { enableBranches };
@@ -38,7 +25,7 @@ function useBranchEnablingLogic(
 
 export function useBranchEnabling(
   selectedBranchIds: Ref<string[]>,
-  branchesStore: { enableBranches: (ids: string[]) => Promise<void> },
+  branchesStore: { enableBranches: (ids: string[]) => Promise<{ ok: boolean; enabled: string[]; failed: string[] }> },
   toast: { success: (msg: string) => void; error: (msg: string) => void },
   t: (key: string, params?: Record<string, unknown>) => string
 ) {

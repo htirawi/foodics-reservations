@@ -98,9 +98,15 @@
   },
   "addBranches": {
     "title": "Add Branches",
+    "filter": "Search branches...",
+    "enableSelected": "Enable Selected",
     "branchesLabel": "Branches",
     "placeholder": "Select branches to enable",
     "noBranches": "No disabled branches available",
+    "empty": {
+      "title": "No disabled branches",
+      "description": "All branches are already enabled for reservations."
+    },
     "actions": {
       "save": "Save",
       "close": "Close"

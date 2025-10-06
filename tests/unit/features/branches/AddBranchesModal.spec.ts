@@ -64,7 +64,7 @@ describe('AddBranchesModal', () => {
   const createWrapper = (props = {}) => {
     return mount(AddBranchesModal, {
       props: {
-        isOpen: true,
+        modelValue: true,
         ...props,
       },
       global: {
