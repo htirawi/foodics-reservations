@@ -57,6 +57,7 @@
   },
   "settings": {
     "title": "Edit {branchName} branch reservation settings",
+    "noBranch": "No branch selected",
     "workingHours": "Branch working hours are {from} - {to}",
     "duration": {
       "label": "Reservation Duration (minutes)",
@@ -65,7 +66,12 @@
     "tables": {
       "label": "Tables",
       "placeholder": "Select tables that accept reservations",
-      "noTables": "No tables available"
+      "noTables": "No tables available",
+      "noSections": "No sections available",
+      "seats": "seats"
+    },
+    "slots": {
+      "title": "Reservation Time Slots"
     },
     "days": {
       "saturday": "Saturday",
