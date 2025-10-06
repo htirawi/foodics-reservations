@@ -225,7 +225,7 @@ describe('AddBranchesModal', () => {
       const wrapper = createWrapper();
 
       const saveButton = wrapper.find('[data-testid="save-button"]');
-      expect(saveButton.attributes('loading')).toBeDefined();
+      expect(saveButton.attributes('aria-busy')).toBeDefined();
     });
   });
 

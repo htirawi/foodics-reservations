@@ -53,6 +53,7 @@ function handleClose(): void {
     :model-value="isOpen"
     size="md"
     data-testid="add-branches-modal"
+    :prevent-close="saving"
     @update:model-value="handleClose"
   >
     <template #title>

@@ -38,9 +38,14 @@ async function interceptBranchesGet(page: Page, tracker: string[]): Promise<void
     tracker.push('GET /api/branches');
     const url = new URL(route.request().url());
     const includeParam = url.searchParams.get('include');
-    const fixture = includeParam?.includes('sections')
-      ? 'branches-with-sections.json'
-      : 'branches.json';
+    
+    let fixture = 'branches.json';
+    if (includeParam?.includes('sections')) {
+      fixture = 'branches-with-sections.json';
+    } else if (url.pathname.includes('disabled') || url.search.includes('disabled=true')) {
+      fixture = 'branches-with-disabled.json';
+    }
+    
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -113,12 +118,83 @@ export async function setupOfflineMode(page: Page): Promise<void> {
   );
 }
 
+export async function setupOfflineModeWithDisabledBranches(page: Page): Promise<void> {
+  const interceptedRequests: string[] = [];
+  const escapedRequests: string[] = [];
+
+  // Register in reverse order: catch-all first, then specific intercepts
+  // Playwright checks routes LIFO (last registered = first checked)
+  await setupCatchAll(page, escapedRequests);
+  await interceptBranchMutations(page, interceptedRequests);
+  
+  // Override the branches GET to use disabled branches fixture
+  await page.route(/\/api\/branches(\?.*)?$/, async (route: Route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue();
+      return;
+    }
+    interceptedRequests.push('GET /api/branches (with disabled)');
+    const url = new URL(route.request().url());
+    const includeParam = url.searchParams.get('include');
+    
+    let fixture = 'branches-with-disabled.json';
+    if (includeParam?.includes('sections')) {
+      fixture = 'branches-with-sections.json';
+    }
+    
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(loadFixture(fixture)),
+    });
+  });
+
+  // Add a small delay to ensure routes are fully registered
+  await page.waitForTimeout(50);
+
+  await page.evaluate(
+    ({ intercepted, escaped }) => {
+      (window as unknown as { __e2eIntercepts?: { intercepted: string[]; escaped: string[] } }).__e2eIntercepts = {
+        intercepted,
+        escaped,
+      };
+    },
+    { intercepted: interceptedRequests, escaped: escapedRequests }
+  );
+}
+
 export async function setupEmptyState(page: Page): Promise<void> {
-  await page.route('**/api/branches*', async (route: Route) => {
+  const interceptedRequests: string[] = [];
+  const escapedRequests: string[] = [];
+
+  // Register in reverse order: catch-all first, then specific intercepts
+  await setupCatchAll(page, escapedRequests);
+  
+  // Override the branches GET to use empty fixture
+  await page.route(/\/api\/branches(\?.*)?$/, async (route: Route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue();
+      return;
+    }
+    interceptedRequests.push('GET /api/branches (empty)');
+    
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(loadFixture('empty.json')),
     });
   });
+
+  // Add a small delay to ensure routes are fully registered
+  await page.waitForTimeout(50);
+
+  await page.evaluate(
+    ({ intercepted, escaped }) => {
+      (window as unknown as { __e2eIntercepts?: { intercepted: string[]; escaped: string[] } }).__e2eIntercepts = {
+        intercepted,
+        escaped,
+      };
+    },
+    { intercepted: interceptedRequests, escaped: escapedRequests }
+  );
 }

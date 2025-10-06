@@ -5,6 +5,7 @@
     :disabled="disabled"
     :data-testid="dataTestid"
     :class="buttonClasses"
+    :aria-busy="loading"
     @click="$emit('click', $event)"
   >
     <slot />
@@ -20,6 +21,7 @@ const props = withDefaults(
     size?: 'sm' | 'md' | 'lg';
     type?: 'button' | 'submit' | 'reset';
     disabled?: boolean;
+    loading?: boolean;
     dataTestid?: string;
   }>(),
   {
@@ -27,6 +29,7 @@ const props = withDefaults(
     size: 'md',
     type: 'button',
     disabled: false,
+    loading: false,
     dataTestid: '',
   }
 );

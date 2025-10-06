@@ -24,17 +24,32 @@
       {{ description ?? $t('empty.description') }}
     </p>
     <div
-      v-if="$slots.action"
+      v-if="$slots.action || actionText"
       class="mt-6"
     >
-      <slot name="action" />
+      <slot name="action">
+        <BaseButton
+          v-if="actionText"
+          variant="primary"
+          @click="$emit('action')"
+        >
+          {{ actionText }}
+        </BaseButton>
+      </slot>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue';
+
 defineProps<{
   title?: string;
   description?: string;
+  actionText?: string;
+}>();
+
+defineEmits<{
+  action: [];
 }>();
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-x-auto">
     <table 
-      data-test-id="branches-table"
+      data-testid="branches-table"
       class="w-full border-collapse"
     >
       <thead>
@@ -24,7 +24,7 @@
         <tr
           v-for="branch in branches"
           :key="branch.id"
-          :data-test-id="`branch-row-${branch.id}`"
+          :data-testid="`branch-row-${branch.id}`"
           class="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-purple-500 focus-within:ring-offset-1"
           role="button"
           tabindex="0"

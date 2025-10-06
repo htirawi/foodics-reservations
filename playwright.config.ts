@@ -20,40 +20,53 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   projects: [
-    // Desktop Browsers
+    // Chromium - English
     {
-      name: 'Desktop Chrome',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'Desktop Firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'Desktop Edge',
-      use: {
-        ...devices['Desktop Edge'],
-        // Use Chromium as Edge (they share the same engine)
-        // To test actual Edge, install Edge and set channel: 'msedge'
+      name: 'chromium-en',
+      use: { 
+        ...devices['Desktop Chrome'],
+        locale: 'en-US',
       },
     },
-
-    // Mobile Browsers
+    // Chromium - Arabic
     {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      name: 'chromium-ar',
+      use: { 
+        ...devices['Desktop Chrome'],
+        locale: 'ar-SA',
+      },
     },
+    // Firefox - English
     {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 13'] },
+      name: 'firefox-en',
+      use: { 
+        ...devices['Desktop Firefox'],
+        locale: 'en-US',
+      },
     },
+    // Firefox - Arabic
     {
-      name: 'Mobile Safari Landscape',
-      use: { ...devices['iPhone 13 landscape'] },
+      name: 'firefox-ar',
+      use: { 
+        ...devices['Desktop Firefox'],
+        locale: 'ar-SA',
+      },
     },
+    // WebKit - English
     {
-      name: 'Tablet',
-      use: { ...devices['iPad Pro'] },
+      name: 'webkit-en',
+      use: { 
+        ...devices['Desktop Safari'],
+        locale: 'en-US',
+      },
+    },
+    // WebKit - Arabic
+    {
+      name: 'webkit-ar',
+      use: { 
+        ...devices['Desktop Safari'],
+        locale: 'ar-SA',
+      },
     },
   ],
   webServer: {

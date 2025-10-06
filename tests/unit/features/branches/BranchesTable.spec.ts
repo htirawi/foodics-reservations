@@ -239,9 +239,9 @@ describe('BranchesTable', () => {
       },
     });
 
-    expect(wrapper.find('[data-test-id="branches-table"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="branch-row-1"]').exists()).toBe(true);
-    expect(wrapper.find('[data-test-id="branch-row-2"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="branches-table"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="branch-row-1"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="branch-row-2"]').exists()).toBe(true);
   });
 
   it('renders empty tbody when no branches', () => {

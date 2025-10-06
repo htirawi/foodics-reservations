@@ -63,11 +63,13 @@ const props = withDefaults(
     title?: string;
     size?: 'sm' | 'md' | 'lg' | 'xl';
     dataTestid?: string;
+    preventClose?: boolean;
   }>(),
   {
     title: '',
     size: 'md',
     dataTestid: '',
+    preventClose: false,
   }
 );
 
@@ -89,11 +91,13 @@ const modalClasses = computed(() => {
 const titleId = computed(() => `modal-title-${Math.random().toString(36).slice(2)}`);
 
 function closeModal() {
-  emit('update:modelValue', false);
+  if (!props.preventClose) {
+    emit('update:modelValue', false);
+  }
 }
 
 function handleKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape' && props.modelValue) {
+  if (event.key === 'Escape' && props.modelValue && !props.preventClose) {
     closeModal();
   }
 }

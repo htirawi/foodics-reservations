@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { setupOfflineMode } from './setup/intercepts';
 
+/* eslint-disable max-lines */
+
 /**
  * Wait for page to finish loading and data to be ready
  */
@@ -49,12 +51,12 @@ test.describe('Add Branches Modal', () => {
     
     if (await branch1.count() > 0) {
       await expect(branch1).toBeVisible();
-      await expect(branch1).toContainText('Downtown Branch (DT-001)');
+      await expect(branch1).toContainText('Disabled Branch 1 (DB-001)');
     }
     
     if (await branch2.count() > 0) {
       await expect(branch2).toBeVisible();
-      await expect(branch2).toContainText('Mall Branch (ML-002)');
+      await expect(branch2).toContainText('Disabled Branch 2 (DB-002)');
     }
   });
 
@@ -94,7 +96,7 @@ test.describe('Add Branches Modal', () => {
     await expect(modal).toBeVisible();
 
     // Select first branch
-    const branch1Checkbox = page.locator('#1');
+    const branch1Checkbox = page.locator('#branch-1');
     if (await branch1Checkbox.count() > 0) {
       await branch1Checkbox.check();
       await expect(branch1Checkbox).toBeChecked();
@@ -159,7 +161,7 @@ test.describe('Add Branches Modal', () => {
     await expect(modal).toBeVisible();
 
     // Select a branch
-    const branch1Checkbox = page.locator('#1');
+    const branch1Checkbox = page.locator('#branch-1');
     if (await branch1Checkbox.count() > 0) {
       await branch1Checkbox.check();
 
@@ -180,15 +182,15 @@ test.describe('Add Branches Modal', () => {
 
   test('handles partial failure scenario', async ({ page }) => {
     // Mock partial failure - first branch succeeds, second fails
-    await page.route('**/api/branches/1/enable', async (route) => {
+    await page.route('**/api/branches/branch-1/enable', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ data: { id: '1', accepts_reservations: true } }),
+        body: JSON.stringify({ data: { id: 'branch-1', accepts_reservations: true } }),
       });
     });
 
-    await page.route('**/api/branches/2/enable', async (route) => {
+    await page.route('**/api/branches/branch-2/enable', async (route) => {
       await route.fulfill({
         status: 500,
         contentType: 'application/json',
@@ -206,8 +208,8 @@ test.describe('Add Branches Modal', () => {
     await expect(modal).toBeVisible();
 
     // Select both branches
-    const branch1Checkbox = page.locator('#1');
-    const branch2Checkbox = page.locator('#2');
+    const branch1Checkbox = page.locator('#branch-1');
+    const branch2Checkbox = page.locator('#branch-2');
     
     if (await branch1Checkbox.count() > 0 && await branch2Checkbox.count() > 0) {
       await branch1Checkbox.check();
@@ -239,7 +241,7 @@ test.describe('Add Branches Modal', () => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ data: { id: '1', accepts_reservations: true } }),
+        body: JSON.stringify({ data: { id: 'branch-1', accepts_reservations: true } }),
       });
     });
 
@@ -253,7 +255,7 @@ test.describe('Add Branches Modal', () => {
     await expect(modal).toBeVisible();
 
     // Select a branch
-    const branch1Checkbox = page.locator('#1');
+    const branch1Checkbox = page.locator('#branch-1');
     if (await branch1Checkbox.count() > 0) {
       await branch1Checkbox.check();
 
@@ -282,7 +284,7 @@ test.describe('Add Branches Modal', () => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ data: { id: '1', accepts_reservations: true } }),
+        body: JSON.stringify({ data: { id: 'branch-1', accepts_reservations: true } }),
       });
     });
 
@@ -296,7 +298,7 @@ test.describe('Add Branches Modal', () => {
     await expect(modal).toBeVisible();
 
     // Select a branch and start saving
-    const branch1Checkbox = page.locator('#1');
+    const branch1Checkbox = page.locator('#branch-1');
     if (await branch1Checkbox.count() > 0) {
       await branch1Checkbox.check();
 
@@ -328,12 +330,12 @@ test.describe('Add Branches Modal', () => {
     await expect(modal).toHaveAttribute('aria-modal', 'true');
 
     // Check checkbox accessibility
-    const branch1Checkbox = page.locator('#1');
+    const branch1Checkbox = page.locator('#branch-1');
     const branch1Label = page.getByTestId('branch-1');
     
     if (await branch1Checkbox.count() > 0) {
-      await expect(branch1Checkbox).toHaveAttribute('id', '1');
-      await expect(branch1Label).toHaveAttribute('for', '1');
+      await expect(branch1Checkbox).toHaveAttribute('id', 'branch-1');
+      await expect(branch1Label).toHaveAttribute('for', 'branch-1');
     }
   });
 

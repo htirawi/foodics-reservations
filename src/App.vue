@@ -4,7 +4,8 @@
     <a
       data-testid="skip-to-main"
       href="#main"
-      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      style="left: 1rem; right: auto;"
       @click="handleSkipToMain"
     >
       {{ $t('app.skipToMain') }}
@@ -41,8 +42,12 @@ const handleSkipToMain = (event: Event) => {
   event.preventDefault();
   const mainElement = document.getElementById('main');
   if (mainElement) {
-    mainElement.focus();
-    mainElement.scrollIntoView({ behavior: 'smooth' });
+    // Use focus with preventScroll for better cross-browser compatibility
+    mainElement.focus({ preventScroll: true });
+    // Scroll after focus is set
+    setTimeout(() => {
+      mainElement.scrollIntoView({ behavior: 'smooth' });
+    }, 0);
   }
 };
 
