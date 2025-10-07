@@ -70,11 +70,16 @@
       }
     },
     "tables": {
+      "title": "Tables",
       "label": "Tables",
       "placeholder": "Select tables that accept reservations",
       "noTables": "No tables available",
       "noSections": "No sections available",
-      "seats": "seats"
+      "seats": "seats",
+      "unnamedSection": "Unnamed Section",
+      "unnamedTable": "Unnamed Table",
+      "summary": "Reservable tables: {count}",
+      "helper": "Display-only: sections and tables for this branch."
     },
     "slots": {
       "title": "Reservation Time Slots"

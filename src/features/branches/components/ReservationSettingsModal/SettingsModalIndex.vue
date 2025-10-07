@@ -85,7 +85,7 @@ function handleClose(): void {
         @valid:duration="(valid) => isDurationValid = valid"
       />
 
-      <TablesList :sections="branch.sections" />
+      <TablesList :sections="branch.sections ?? []" />
 
       <DaySlotsEditor
         v-model="reservationTimes"

@@ -1,55 +1,101 @@
 <script setup lang="ts">/**
  * @file TablesList.vue
- * @summary Module: src/features/branches/components/ReservationSettingsModal/TablesList.vue
+ * @summary Read-only tables section for Reservation Settings modal
  * @remarks
  *   - Tiny components; logic in composables/services.
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import type { Section } from "@/types/foodics";
-defineProps<{
-    sections: Section[] | undefined;
-}>();
+import type { Section, Table } from "@/types/foodics";
+import { reservableTablesCount, formatTableLabel } from "@/utils/tables";
+
+const props = withDefaults(
+  defineProps<{
+    sections: Section[];
+    reservableOnly?: boolean;
+  }>(),
+  {
+    reservableOnly: false,
+  }
+);
+
 const { t } = useI18n();
+
+const reservableCount = computed<number>(() => {
+  return reservableTablesCount(props.sections);
+});
+
+function filterReservableTables(tables: Table[] | undefined): Table[] {
+  if (!tables) {
+    return [];
+  }
+  return tables.filter((table: Table) => table.accepts_reservations === true);
+}
+
+const filteredSections = computed<Section[]>(() => {
+  if (!props.reservableOnly) {
+    return props.sections ?? [];
+  }
+
+  return (props.sections ?? [])
+    .map((section) => ({
+      ...section,
+      tables: filterReservableTables(section.tables),
+    }))
+    .filter((section) => section.tables && section.tables.length > 0);
+});
 </script>
 
 <template>
   <div data-testid="settings-tables">
-    <label class="mb-2 block text-sm font-medium text-neutral-700">
-      {{ t('settings.tables.label') }}
-    </label>
-    <div v-if="sections && sections.length > 0" class="space-y-3">
-      <div
-        v-for="section in sections"
+    <h3 class="mb-2 text-sm font-medium text-neutral-700">
+      {{ t('settings.tables.title') }}
+    </h3>
+    
+    <p class="mb-3 text-sm text-neutral-500">
+      {{ t('settings.tables.helper') }}
+    </p>
+    
+    <div data-testid="settings-tables-summary" class="mb-4 text-sm font-medium text-primary-700">
+      {{ t('settings.tables.summary', { count: reservableCount }) }}
+    </div>
+
+    <ul
+      v-if="filteredSections.length > 0"
+      role="list"
+      data-testid="settings-tables-list"
+      class="space-y-2"
+    >
+      <li
+        v-for="section in filteredSections"
         :key="section.id"
-        class="rounded-lg border border-neutral-200 bg-neutral-50 p-3"
-        :data-testid="`section-${section.id}`"
+        :data-testid="`settings-tables-section-${section.id}`"
       >
-        <div class="mb-2 text-sm font-medium text-neutral-900">
-          {{ section.name ?? section.id }}
-        </div>
-        <div v-if="section.tables && section.tables.length > 0" class="flex flex-wrap gap-2">
+        <div
+          v-if="section.tables && section.tables.length > 0"
+          class="space-y-1"
+        >
           <div
             v-for="table in section.tables"
             :key="table.id"
-            class="rounded-lg border-2 border-primary-500 bg-white px-3 py-1.5 text-sm"
-            :data-testid="`table-${table.id}`"
+            :data-testid="`settings-tables-table-${table.id}`"
+            class="text-sm text-neutral-700"
           >
-            {{ table.name ?? table.id }}
-            <span v-if="table.seats" class="text-xs text-neutral-500">
-              ({{ table.seats }} {{ t('settings.tables.seats') }})
-            </span>
+            {{ formatTableLabel(section.name, table.name, t) }}
           </div>
         </div>
-        <p v-else class="text-sm text-neutral-500">
-          {{ t('settings.tables.noTables') }}
-        </p>
-      </div>
-    </div>
-    <p v-else class="text-sm text-neutral-500">
+      </li>
+    </ul>
+
+    <p
+      v-else
+      class="text-sm text-neutral-500"
+    >
       {{ t('settings.tables.noSections') }}
     </p>
   </div>
 </template>
+
 

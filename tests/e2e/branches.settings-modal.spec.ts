@@ -160,6 +160,44 @@ test.describe("Branches Settings Modal", () => {
             const slot = page.getByTestId("settings-slot-row-saturday-0");
             await expect(slot).toBeVisible();
         });
+
+        test("displays tables section with summary count", async ({ page }) => {
+            await page.getByTestId("branch-row-test-branch-1").click();
+            await page.getByTestId("settings-modal").waitFor();
+            
+            const tablesSection = page.getByTestId("settings-tables");
+            await expect(tablesSection).toBeVisible();
+            
+            const summary = page.getByTestId("settings-tables-summary");
+            await expect(summary).toBeVisible();
+            await expect(summary).toContainText("Reservable tables: 3");
+        });
+
+        test("displays table labels with section names", async ({ page }) => {
+            await page.getByTestId("branch-row-test-branch-1").click();
+            await page.getByTestId("settings-modal").waitFor();
+            
+            const tablesList = page.getByTestId("settings-tables-list");
+            await expect(tablesList).toBeVisible();
+            
+            await expect(page.getByTestId("settings-tables-table-test-table-1")).toContainText("Main Hall – Table 1");
+            await expect(page.getByTestId("settings-tables-table-test-table-2")).toContainText("Main Hall – Table 2");
+            await expect(page.getByTestId("settings-tables-table-test-table-3")).toContainText("Terrace – Table 3");
+        });
+
+        test("tables section has semantic list structure", async ({ page }) => {
+            await page.getByTestId("branch-row-test-branch-1").click();
+            await page.getByTestId("settings-modal").waitFor();
+            
+            const tablesList = page.getByTestId("settings-tables-list");
+            await expect(tablesList).toBeVisible();
+            
+            const tagName = await tablesList.evaluate(el => el.tagName);
+            expect(tagName).toBe("UL");
+            
+            const role = await tablesList.getAttribute("role");
+            expect(role).toBe("list");
+        });
     });
     test.describe("AR locale", () => {
         test.beforeEach(async ({ page }) => {
@@ -202,6 +240,18 @@ test.describe("Branches Settings Modal", () => {
             await timePill.hover();
             await timePill.getByRole("button").first().click();
             await expect(page.getByTestId("settings-slot-row-sunday-3")).not.toBeVisible();
+        });
+
+        test("displays tables section in Arabic with correct summary", async ({ page }) => {
+            await page.getByTestId("branch-row-test-branch-1").click();
+            await page.getByTestId("settings-modal").waitFor();
+            
+            const tablesSection = page.getByTestId("settings-tables");
+            await expect(tablesSection).toBeVisible();
+            
+            const summary = page.getByTestId("settings-tables-summary");
+            await expect(summary).toBeVisible();
+            await expect(summary).toContainText("الطاولات التي تقبل الحجوزات: 3");
         });
     });
 });
