@@ -48,8 +48,9 @@ const {
       class="space-y-3"
     >
       <fieldset
-        :data-testid="`settings-day-${day}`"
+        :data-testid="`settings-slot-day-${day}`"
         class="rounded-lg border border-neutral-200 bg-neutral-50 p-4"
+        :aria-labelledby="`day-heading-${day}`"
       >
         <legend class="sr-only">
           {{ t(`settings.days.${day}`) }}
@@ -57,7 +58,7 @@ const {
 
         <div class="mb-3 flex items-center justify-between">
           <h4
-            :id="`day-${day}-label`"
+            :id="`day-heading-${day}`"
             class="text-sm font-medium text-neutral-900"
           >
             {{ t(`settings.days.${day}`) }}
@@ -70,7 +71,7 @@ const {
             :data-testid="`slots-apply-all`"
             @click="() => applyToAllDaysWithConfirm(day)"
           >
-            {{ t('settings.timeSlots.applyToAll') }}
+            {{ t('settings.slots.applyAll') }}
           </BaseButton>
         </div>
 
@@ -104,14 +105,14 @@ const {
           :data-testid="`settings-day-${day}-add`"
           @click="addSlot(day)"
         >
-          + {{ t('settings.timeSlots.add') }}
+          + {{ t('settings.slots.add') }}
         </BaseButton>
 
         <div
           v-if="dayErrors[day] && dayErrors[day].length > 0"
           role="alert"
           aria-live="polite"
-          :data-testid="`settings-day-${day}-error`"
+          :data-testid="`error-${day}`"
           class="mt-3 space-y-1"
         >
           <p

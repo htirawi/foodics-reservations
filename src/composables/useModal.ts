@@ -7,11 +7,11 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { ref } from "vue";
-import type { ModalOptions } from "@/types/modal";
+import type { IModalOptions } from "@/types/modal";
 export const useModal = () => {
     const isOpen = ref(false);
-    const options = ref<ModalOptions>({});
-    const open = (modalOptions?: ModalOptions) => {
+    const options = ref<IModalOptions>({});
+    const open = (modalOptions?: IModalOptions) => {
         options.value = modalOptions ?? {};
         isOpen.value = true;
     };

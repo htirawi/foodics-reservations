@@ -7,7 +7,7 @@
  *   - HH:mm format only (24-hour); no date libraries.
  */
 import type { SlotTuple, ReservationTimes } from "@/types/foodics";
-import type { DurationOptions } from "@/types/duration";
+import type { IDurationOptions } from "@/types/duration";
 import {
   parseHHmm,
   toMinutes,
@@ -23,7 +23,7 @@ import {
   validateDaySlots,
   validateReservationTimes,
 } from "./slot.validation";
-import type { ReservationTimesValidation } from "@/types/validation";
+import type { IReservationTimesValidation } from "@/types/validation";
 
 const MIN_DURATION = 1;
 const MAX_DURATION = 1440;
@@ -33,7 +33,7 @@ const TIME_FORMAT_REGEX = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
 export { parseHHmm, toMinutes, isHHmm, timeToMinutes, compareHHmm };
 export { slotOverlaps, normalizeSlots };
 export { validateDaySlots, validateReservationTimes };
-export type { DurationOptions, ReservationTimesValidation };
+export type { IDurationOptions as DurationOptions, IReservationTimesValidation as ReservationTimesValidation };
 function sanitizeStringDuration(value: string, min: number, max: number): number | null {
     const trimmed = value.trim();
     if (trimmed === "")
@@ -59,7 +59,7 @@ function sanitizeNumberDuration(value: number, min: number, max: number): number
         return max;
     return Math.floor(value);
 }
-export function sanitizeDuration(value: unknown, { min = MIN_DURATION, max = MAX_DURATION }: DurationOptions = {}): number | null {
+export function sanitizeDuration(value: unknown, { min = MIN_DURATION, max = MAX_DURATION }: IDurationOptions = {}): number | null {
     if (value === null || value === undefined)
         return null;
     if (typeof value === "string")
@@ -68,7 +68,7 @@ export function sanitizeDuration(value: unknown, { min = MIN_DURATION, max = MAX
         return sanitizeNumberDuration(value, min, max);
     return null;
 }
-export function isValidDuration(value: unknown, { min = MIN_DURATION, max = MAX_DURATION }: DurationOptions = {}): value is number {
+export function isValidDuration(value: unknown, { min = MIN_DURATION, max = MAX_DURATION }: IDurationOptions = {}): value is number {
     if (typeof value !== "number" || !Number.isFinite(value))
         return false;
     if (!Number.isInteger(value))
@@ -113,6 +113,6 @@ export function slotsOverlap(slot1: SlotTuple, slot2: SlotTuple): boolean {
  * Backward-compatible wrapper.
  * @deprecated Use validateReservationTimes from slot.validation.ts instead
  */
-export function isValidReservationTimes(reservationTimes: ReservationTimes): ReservationTimesValidation {
+export function isValidReservationTimes(reservationTimes: ReservationTimes): IReservationTimesValidation {
     return validateReservationTimes(reservationTimes);
 }

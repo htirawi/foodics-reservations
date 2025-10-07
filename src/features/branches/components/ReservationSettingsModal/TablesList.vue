@@ -8,12 +8,12 @@
  */
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import type { Section, Table } from "@/types/foodics";
+import type { ISection, ITable } from "@/types/foodics";
 import { reservableTablesCount, formatTableLabel } from "@/utils/tables";
 
 const props = withDefaults(
   defineProps<{
-    sections: Section[];
+    sections: ISection[];
     reservableOnly?: boolean;
   }>(),
   {
@@ -24,17 +24,17 @@ const props = withDefaults(
 const { t } = useI18n();
 
 const reservableCount = computed<number>(() => {
-  return reservableTablesCount(props.sections);
+  return reservableTablesCount(props.sections as unknown as ISection[]);
 });
 
-function filterReservableTables(tables: Table[] | undefined): Table[] {
+function filterReservableTables(tables: ITable[] | undefined): ITable[] {
   if (!tables) {
     return [];
   }
-  return tables.filter((table: Table) => table.accepts_reservations === true);
+  return tables.filter((table: ITable) => table.accepts_reservations === true);
 }
 
-const filteredSections = computed<Section[]>(() => {
+const filteredSections = computed<ISection[]>(() => {
   if (!props.reservableOnly) {
     return props.sections ?? [];
   }

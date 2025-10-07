@@ -6,11 +6,15 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-export interface ApiError {
+export interface IApiError {
     status: number;
     message: string;
     details?: unknown;
 }
-export interface FoodicsResponse<T> {
+export interface IFoodicsResponse<T> {
     data: T;
 }
+
+// Backward-compatibility aliases
+export type ApiError = IApiError;
+export type FoodicsResponse<T> = IFoodicsResponse<T>;

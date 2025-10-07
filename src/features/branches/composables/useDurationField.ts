@@ -9,7 +9,7 @@
 import { computed, ref, watch, nextTick, type Ref, type ComputedRef } from "vue";
 import { sanitizeDuration, isValidDuration, type DurationOptions } from "@/features/branches/utils/reservation.validation";
 
-import type { UseDurationFieldOptions, UseDurationFieldReturn } from "@/types/duration";
+import type { IUseDurationFieldOptions, IUseDurationFieldReturn } from "@/types/duration";
 
 function validateRawDuration(rawValue: string, min: number, max: number): string | null {
     const rawNum = parseInt(rawValue, 10);
@@ -21,7 +21,7 @@ function validateRawDuration(rawValue: string, min: number, max: number): string
     return null;
 }
 
-function createDurationState(props: UseDurationFieldOptions) {
+function createDurationState(props: IUseDurationFieldOptions) {
     const options = computed<DurationOptions>(() => ({
         min: props.min ?? 1,
         max: props.max ?? 480,
@@ -38,7 +38,7 @@ function createDurationState(props: UseDurationFieldOptions) {
     return { options, rawValue };
 }
 
-function createDurationValidation(props: UseDurationFieldOptions, rawValue: Ref<string>, options: ComputedRef<DurationOptions>) {
+function createDurationValidation(props: IUseDurationFieldOptions, rawValue: Ref<string>, options: ComputedRef<DurationOptions>) {
     const isValid = computed<boolean>(() => {
         if (rawValue.value !== "") {
             const rawNum = parseInt(rawValue.value, 10);
@@ -71,9 +71,9 @@ function createDurationValidation(props: UseDurationFieldOptions, rawValue: Ref<
  * Composable for handling duration field input logic
  */
 export function useDurationField(
-    props: UseDurationFieldOptions,
+    props: IUseDurationFieldOptions,
     emit: (event: "update:modelValue", value: number | null) => void
-): UseDurationFieldReturn {
+): IUseDurationFieldReturn {
     const { options, rawValue } = createDurationState(props);
     const { isValid, error } = createDurationValidation(props, rawValue, options);
 

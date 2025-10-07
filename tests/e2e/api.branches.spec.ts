@@ -8,9 +8,9 @@
  */
 import { test, expect } from "@playwright/test";
 import type { Branch } from "@/types/foodics";
-const IS_ONLINE_MODE = process.env.PW_E2E_ONLINE === "true";
-const API_BASE = process.env.PW_API_BASE_URL ?? "https://api.foodics.dev/v5";
-const AUTH_TOKEN = process.env.PW_STAGING_TOKEN ?? process.env.VITE_FOODICS_TOKEN;
+const IS_ONLINE_MODE = process.env["PW_E2E_ONLINE"] === "true";
+const API_BASE = process.env["PW_API_BASE_URL"] ?? "https://api.foodics.dev/v5";
+const AUTH_TOKEN = process.env["PW_STAGING_TOKEN"] ?? process.env["VITE_FOODICS_TOKEN"];
 test.skip(!IS_ONLINE_MODE, "Skipping API contract tests - PW_E2E_ONLINE not enabled (offline mode)");
 test.describe("Branches API Contract @online", () => {
     test.describe("GET /branches", () => {

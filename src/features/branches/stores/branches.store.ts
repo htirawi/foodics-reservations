@@ -9,9 +9,9 @@
 import { defineStore } from "pinia";
 import { ref, computed, type Ref, type ComputedRef } from "vue";
 import { BranchesService } from "@/services/branches.service";
-import type { Branch, UpdateBranchSettingsPayload } from "@/types/foodics";
-import type { ApiError } from "@/types/api";
-function countReservableTables(branch: Branch): number {
+import type { IBranch, IUpdateBranchSettingsPayload } from "@/types/foodics";
+import type { IApiError } from "@/types/api";
+function countReservableTables(branch: IBranch): number {
     if (!branch.sections)
         return 0;
     return branch.sections.reduce((total, section) => {
@@ -19,21 +19,21 @@ function countReservableTables(branch: Branch): number {
         return total + sectionTables.filter((t) => t.accepts_reservations).length;
     }, 0);
 }
-function findBranchById(branches: Branch[], id: string): Branch | null {
+function findBranchById(branches: IBranch[], id: string): IBranch | null {
     return branches.find((b) => b.id === id) ?? null;
 }
 function useBranchesState() {
-    const branches = ref<Branch[]>([]);
+    const branches = ref<IBranch[]>([]);
     const selectedBranchId = ref<string | null>(null);
     const loading = ref(false);
     const error = ref<string | null>(null);
     const enabledBranches = computed(() => branches.value.filter((b) => b.accepts_reservations));
     const disabledBranches = computed(() => branches.value.filter((b) => !b.accepts_reservations));
     const branchById = computed(() => (id: string) => findBranchById(branches.value, id));
-    const reservableTablesCount = computed(() => (branch: Branch) => countReservableTables(branch));
+    const reservableTablesCount = computed(() => (branch: IBranch) => countReservableTables(branch));
     return { branches, selectedBranchId, loading, error, enabledBranches, disabledBranches, branchById, reservableTablesCount };
 }
-function useFetchBranches(branches: Ref<Branch[]>, loading: Ref<boolean>, error: Ref<string | null>) {
+function useFetchBranches(branches: Ref<IBranch[]>, loading: Ref<boolean>, error: Ref<string | null>) {
     async function fetchBranches(includeSections = false): Promise<void> {
         loading.value = true;
         error.value = null;
@@ -41,7 +41,7 @@ function useFetchBranches(branches: Ref<Branch[]>, loading: Ref<boolean>, error:
             branches.value = await BranchesService.getBranches(includeSections);
         }
         catch (err) {
-            const apiError = err as ApiError;
+            const apiError = err as IApiError;
             error.value = apiError.message ?? "Failed to fetch branches";
             throw err;
         }
@@ -51,7 +51,7 @@ function useFetchBranches(branches: Ref<Branch[]>, loading: Ref<boolean>, error:
     }
     return { fetchBranches };
 }
-function useEnableAction(branches: Ref<Branch[]>, error: Ref<string | null>) {
+function useEnableAction(branches: Ref<IBranch[]>, error: Ref<string | null>) {
     async function enableBranches(ids: string[]): Promise<{
         ok: boolean;
         enabled: string[];
@@ -75,7 +75,7 @@ function useEnableAction(branches: Ref<Branch[]>, error: Ref<string | null>) {
             branches.value = snapshot.map((b) => enabled.includes(b.id) ? { ...b, accepts_reservations: true } : b);
             if (enabled.length === 0) {
                 const firstError = results.find((r) => r.status === "rejected") as PromiseRejectedResult;
-                const apiError = firstError?.reason as ApiError;
+                const apiError = firstError?.reason as IApiError;
                 error.value = apiError?.message ?? "Failed to enable branches";
                 throw apiError;
             }
@@ -85,7 +85,7 @@ function useEnableAction(branches: Ref<Branch[]>, error: Ref<string | null>) {
     }
     return { enableBranches };
 }
-function useDisableAllAction(branches: Ref<Branch[]>, enabledBranches: ComputedRef<Branch[]>, error: Ref<string | null>) {
+function useDisableAllAction(branches: Ref<IBranch[]>, enabledBranches: ComputedRef<IBranch[]>, error: Ref<string | null>) {
     async function disableAll(): Promise<void> {
         const snapshot = branches.value.map((b) => ({ ...b }));
         const enabledIds = enabledBranches.value.map((b) => b.id);
@@ -95,15 +95,15 @@ function useDisableAllAction(branches: Ref<Branch[]>, enabledBranches: ComputedR
         }
         catch (err) {
             branches.value = snapshot;
-            const apiError = err as ApiError;
+            const apiError = err as IApiError;
             error.value = apiError.message ?? "Failed to disable all branches";
             throw err;
         }
     }
     return { disableAll };
 }
-function useUpdateSettings(branches: Ref<Branch[]>, error: Ref<string | null>) {
-    async function updateSettings(id: string, payload: UpdateBranchSettingsPayload): Promise<void> {
+function useUpdateSettings(branches: Ref<IBranch[]>, error: Ref<string | null>) {
+    async function updateSettings(id: string, payload: IUpdateBranchSettingsPayload): Promise<void> {
         const snapshot = branches.value.map((b) => ({ ...b }));
         const targetIndex = branches.value.findIndex((b) => b.id === id);
         if (targetIndex === -1)
@@ -122,7 +122,7 @@ function useUpdateSettings(branches: Ref<Branch[]>, error: Ref<string | null>) {
         }
         catch (err) {
             branches.value = snapshot;
-            const apiError = err as ApiError;
+            const apiError = err as IApiError;
             error.value = apiError.message ?? "Failed to update branch settings";
             throw err;
         }

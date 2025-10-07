@@ -8,13 +8,13 @@
  */
 import type { Ref, ComputedRef } from "vue";
 
-export interface UseDurationFieldOptions {
+export interface IUseDurationFieldOptions {
   modelValue: number | null;
   min?: number;
   max?: number;
 }
 
-export interface UseDurationFieldReturn {
+export interface IUseDurationFieldReturn {
   rawValue: Ref<string>;
   isValid: ComputedRef<boolean>;
   error: ComputedRef<string | undefined>;
@@ -24,7 +24,12 @@ export interface UseDurationFieldReturn {
 /**
  * Options for duration validation.
  */
-export interface DurationOptions {
+export interface IDurationOptions {
   min?: number;
   max?: number;
 }
+
+// Backward-compatibility aliases
+export type UseDurationFieldOptions = IUseDurationFieldOptions;
+export type UseDurationFieldReturn = IUseDurationFieldReturn;
+export type DurationOptions = IDurationOptions;

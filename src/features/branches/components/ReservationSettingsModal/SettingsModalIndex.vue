@@ -8,19 +8,19 @@
  */
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import type { Branch, UpdateBranchSettingsPayload } from "@/types/foodics";
+import type { IBranch, IUpdateBranchSettingsPayload } from "@/types/foodics";
 import UiModal from "@/components/ui/UiModal.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import DurationField from "./DurationField.vue";
 import TablesList from "./TablesList.vue";
 import DaySlotsEditor from "./DaySlotsEditor.vue";
 const props = defineProps<{
-    branch: Branch | null;
+    branch: IBranch | null;
     isOpen: boolean;
 }>();
 const emit = defineEmits<{
     save: [
-        payload: UpdateBranchSettingsPayload
+        payload: IUpdateBranchSettingsPayload
     ];
     close: [
     ];
@@ -50,7 +50,7 @@ watch(() => props.branch, (newBranch) => {
 function handleSave(): void {
     if (!isFormValid.value || duration.value === null)
         return;
-    const payload: UpdateBranchSettingsPayload = {
+    const payload: IUpdateBranchSettingsPayload = {
         reservation_duration: duration.value,
         reservation_times: reservationTimes.value,
     };

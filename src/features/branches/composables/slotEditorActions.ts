@@ -4,11 +4,11 @@
  * @remarks Pure state transformations; no direct DOM/side effects
  */
 import type { ReservationTimes, Weekday, SlotTuple } from "@/types/foodics";
-import type { SlotUpdateParams } from "@/types/slots";
+import type { ISlotUpdateParams } from "@/types/slots";
 
-export const WEEKDAY_ORDER: Weekday[] = [
+export const WEEKDAY_ORDER: ReadonlyArray<Weekday> = [
   "saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday",
-];
+] as const;
 
 /**
  * Add a new slot to a specific day.
@@ -47,7 +47,7 @@ export function removeSlotFromDay(
  */
 export function updateSlotField(
   modelValue: ReservationTimes,
-  params: SlotUpdateParams
+  params: ISlotUpdateParams
 ): ReservationTimes {
   const { day, index, field, value } = params;
   const slots = modelValue[day] ?? [];

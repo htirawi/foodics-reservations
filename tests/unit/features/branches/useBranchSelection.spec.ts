@@ -30,8 +30,8 @@ const mockToast = {
 const mockI18n = {
     t: vi.fn((key: string, params?: Record<string, any>) => {
         const translations: Record<string, string> = {
-            "reservations.toast.enableAllSuccess": `Successfully enabled ${params?.count ?? 0} branches.`,
-            "reservations.toast.enablePartialSuccess": `Enabled ${params?.enabledCount ?? 0} branches. Failed to enable ${params?.failedCount ?? 0} branches.`,
+            "reservations.toast.enableAllSuccess": `Successfully enabled ${params?.["count"] ?? 0} branches.`,
+            "reservations.toast.enablePartialSuccess": `Enabled ${params?.["enabledCount"] ?? 0} branches. Failed to enable ${params?.["failedCount"] ?? 0} branches.`,
             "reservations.toast.enableError": "Failed to enable branches. Please try again.",
         };
         return translations[key] ?? key;

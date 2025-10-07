@@ -12,7 +12,7 @@ export type SlotTuple = [
     string
 ];
 export type ReservationTimes = Record<Weekday, SlotTuple[]>;
-export interface Table {
+export interface ITable {
     id: string;
     name: string | null;
     section_id: string;
@@ -23,7 +23,7 @@ export interface Table {
     updated_at: string;
     deleted_at: string | null;
 }
-export interface Section {
+export interface ISection {
     id: string;
     branch_id: string;
     name: string | null;
@@ -31,9 +31,9 @@ export interface Section {
     created_at: string;
     updated_at: string;
     deleted_at: string | null;
-    tables?: Table[];
+    tables?: ITable[];
 }
-export interface Branch {
+export interface IBranch {
     id: string;
     name: string;
     name_localized: string | null;
@@ -48,9 +48,15 @@ export interface Branch {
     created_at: string;
     updated_at: string;
     deleted_at: string | null;
-    sections?: Section[];
+    sections?: ISection[];
 }
-export interface UpdateBranchSettingsPayload {
+export interface IUpdateBranchSettingsPayload {
     reservation_duration: number;
     reservation_times: ReservationTimes;
 }
+
+// Backward-compatibility aliases (preserve public API while migrating to I* interfaces)
+export type Table = ITable;
+export type Section = ISection;
+export type Branch = IBranch;
+export type UpdateBranchSettingsPayload = IUpdateBranchSettingsPayload;

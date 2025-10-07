@@ -8,11 +8,11 @@
  */
 import type { Ref } from "vue";
 
-export interface SelectableItem {
+export interface ISelectableItem {
   id: string;
 }
 
-export interface SelectionState<T extends SelectableItem> {
+export interface ISelectionState<T extends ISelectableItem> {
   selectedIds: Ref<string[]>;
   selectedItems: Ref<T[]>;
   selectedIdsSet: Ref<Set<string>>;
@@ -25,3 +25,7 @@ export interface SelectionState<T extends SelectableItem> {
   setSelected: (ids: string[]) => void;
   clearSelection: () => void;
 }
+
+// Backward-compatibility aliases
+export type SelectableItem = ISelectableItem;
+export type SelectionState<T extends ISelectableItem> = ISelectionState<T>;

@@ -7,9 +7,9 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { h } from "vue";
-import type { Toast } from "@/types/toast";
+import type { IToast } from "@/types/toast";
 
-function getToastClasses(type: Toast["type"]): string {
+function getToastClasses(type: IToast["type"]): string {
   const baseClasses = "bg-white";
   const typeClasses = {
     success: "text-green-800",
@@ -20,7 +20,7 @@ function getToastClasses(type: Toast["type"]): string {
   return `${baseClasses} ${typeClasses[type]}`;
 }
 
-function getCloseButtonClasses(type: Toast["type"]): string {
+function getCloseButtonClasses(type: IToast["type"]): string {
   const typeClasses = {
     success: "text-green-500 hover:text-green-600 focus:ring-green-500",
     error: "text-red-500 hover:text-red-600 focus:ring-red-500",
@@ -63,7 +63,7 @@ function createToastIcons() {
   };
 }
 
-function getIconComponent(type: Toast["type"]) {
+function getIconComponent(type: IToast["type"]) {
   const icons = createToastIcons();
   return icons[type]();
 }

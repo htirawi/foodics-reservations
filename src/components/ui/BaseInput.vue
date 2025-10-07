@@ -34,13 +34,13 @@
 import { computed } from "vue";
 const props = withDefaults(defineProps<{
     modelValue?: string | number;
-    type?: string;
-    label?: string;
-    placeholder?: string;
-    disabled?: boolean;
-    required?: boolean;
+    type?: string | undefined;
+    label?: string | undefined;
+    placeholder?: string | undefined;
+    disabled?: boolean | undefined;
+    required?: boolean | undefined;
     error?: string | undefined;
-    dataTestid?: string;
+    dataTestid?: string | undefined;
 }>(), {
     modelValue: "",
     type: "text",
@@ -48,7 +48,7 @@ const props = withDefaults(defineProps<{
     placeholder: "",
     disabled: false,
     required: false,
-    error: undefined,
+    error: "",
     dataTestid: "",
 });
 defineEmits<{

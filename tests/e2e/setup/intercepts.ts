@@ -58,10 +58,10 @@ async function interceptBranchMutations(page: Page, tracker: string[]): Promise<
         const body = route.request().postDataJSON() as Record<string, unknown>;
         tracker.push("PUT /api/branches/:id");
         let fixture = "branch-enable-success.json";
-        if (body.accepts_reservations === false) {
+        if (body["accepts_reservations"] === false) {
             fixture = "branch-disable-success.json";
         }
-        else if (body.reservation_duration !== undefined || body.reservation_times !== undefined) {
+        else if (body["reservation_duration"] !== undefined || body["reservation_times"] !== undefined) {
             fixture = "branch-settings-success.json";
         }
         await route.fulfill({

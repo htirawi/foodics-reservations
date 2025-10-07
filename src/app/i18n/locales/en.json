@@ -109,7 +109,7 @@
       "friday": "Friday"
     },
     "timeSlots": {
-      "add": "Add Available Reservation Times",
+      "add": "Add slot",
       "applyToAll": "Apply on all days",
       "remove": "Remove time slot",
       "from": "From",

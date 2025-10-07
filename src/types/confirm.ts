@@ -6,7 +6,7 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-export interface ConfirmOptions {
+export interface IConfirmOptions {
   title: string;
   message: string;
   confirmText?: string;
@@ -17,4 +17,7 @@ export interface ConfirmOptions {
 /**
  * Confirmation function type.
  */
-export type ConfirmFn = (options: ConfirmOptions) => Promise<boolean>;
+export type ConfirmFn = (options: IConfirmOptions) => Promise<boolean>;
+
+// Backward-compatibility alias
+export type ConfirmOptions = IConfirmOptions;

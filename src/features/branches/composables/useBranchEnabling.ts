@@ -8,7 +8,7 @@
  */
 import { type Ref } from "vue";
 import { useAsyncAction } from "@/composables/useAsyncAction";
-import type { EnableBranchesResult } from "@/types/async";
+import type { IEnableBranchesResult } from "@/types/async";
 function useBranchEnablingLogic(selectedBranchIds: Ref<string[]>, branchesStore: {
     enableBranches: (ids: string[]) => Promise<{
         ok: boolean;
@@ -37,13 +37,13 @@ export function useBranchEnabling(selectedBranchIds: Ref<string[]>, branchesStor
 }, t: (key: string, params?: Record<string, unknown>) => string) {
     const { busy, run } = useAsyncAction();
     const { enableBranches } = useBranchEnablingLogic(selectedBranchIds, branchesStore);
-    async function enableSelectedBranches(): Promise<EnableBranchesResult> {
+  async function enableSelectedBranches(): Promise<IEnableBranchesResult> {
         if (selectedBranchIds.value.length === 0) {
             return { ok: true, enabled: [], failed: [] };
         }
         return run(async () => {
             const { enabled, failed } = await enableBranches();
-            const result: EnableBranchesResult = {
+      const result: IEnableBranchesResult = {
                 ok: failed.length === 0,
                 enabled,
                 failed

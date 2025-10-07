@@ -8,10 +8,10 @@
  */
 import { type Ref } from "vue";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
-import type { Branch, Weekday, ReservationTimes } from "@/types/foodics";
+import type { IBranch, Weekday, ReservationTimes } from "@/types/foodics";
 const weekdays: Weekday[] = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
 export function useSettingsActions(state: {
-    branch: Ref<Branch | null>;
+    branch: Ref<IBranch | null>;
     duration: Ref<number>;
     weekSlots: Ref<ReservationTimes>;
 }, validation: {

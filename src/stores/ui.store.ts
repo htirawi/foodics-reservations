@@ -8,20 +8,20 @@
  */
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { Toast } from "@/types/toast";
-import type { ConfirmOptions } from "@/types/confirm";
+import type { IToast } from "@/types/toast";
+import type { IConfirmOptions } from "@/types/confirm";
 import type { ModalName } from "@/types/ui";
 
 interface ConfirmDialogState {
   isOpen: boolean;
-  options: ConfirmOptions | null;
+  options: IConfirmOptions | null;
   resolve: ((value: boolean) => void) | null;
 }
-function createToast(message: string, type: Toast["type"], duration: number): Toast {
+function createToast(message: string, type: IToast["type"], duration: number): IToast {
     const id = `${Date.now()}-${Math.random()}`;
     return { id, message, type, duration };
 }
-function buildConfirmOptions(options: ConfirmOptions): ConfirmOptions {
+function buildConfirmOptions(options: IConfirmOptions): IConfirmOptions {
     return {
         confirmText: "Confirm",
         cancelText: "Cancel",
@@ -43,8 +43,8 @@ function useModals() {
     return { openModals, openModal, closeModal, isModalOpen };
 }
 function useToasts() {
-    const toasts = ref<Toast[]>([]);
-    function notify(message: string, type: Toast["type"] = "info", duration = 5000): string {
+    const toasts = ref<IToast[]>([]);
+    function notify(message: string, type: IToast["type"] = "info", duration = 5000): string {
         const toast = createToast(message, type, duration);
         toasts.value.push(toast);
         if (duration > 0) {
@@ -65,7 +65,7 @@ function useConfirmDialog() {
         options: null,
         resolve: null,
     });
-    function confirm(options: ConfirmOptions): Promise<boolean> {
+    function confirm(options: IConfirmOptions): Promise<boolean> {
         return new Promise((resolve) => {
             confirmDialog.value = {
                 isOpen: true,

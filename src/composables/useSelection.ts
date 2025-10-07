@@ -7,8 +7,8 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { ref, computed, type Ref } from "vue";
-import type { SelectableItem, SelectionState } from "@/types/selection";
-function useSelectionState<T extends SelectableItem>(items: Ref<T[] | undefined>) {
+import type { ISelectableItem, ISelectionState } from "@/types/selection";
+function useSelectionState<T extends ISelectableItem>(items: Ref<T[] | undefined>) {
     const selectedIds = ref<string[]>([]);
     const selectedIdsSet = computed(() => new Set(selectedIds.value));
     const selectedItems = computed(() => (items.value ?? []).filter((item) => selectedIdsSet.value.has(item.id)));
@@ -24,7 +24,7 @@ function useSelectionState<T extends SelectableItem>(items: Ref<T[] | undefined>
         selectionCount,
     };
 }
-function useSelectionActions(selectedIds: Ref<string[]>, items: Ref<SelectableItem[] | undefined>, isAllSelected: Ref<boolean>, selectedIdsSet: Ref<Set<string>>) {
+function useSelectionActions(selectedIds: Ref<string[]>, items: Ref<ISelectableItem[] | undefined>, isAllSelected: Ref<boolean>, selectedIdsSet: Ref<Set<string>>) {
     function toggleOne(id: string): void {
         const index = selectedIds.value.indexOf(id);
         if (index > -1) {
@@ -59,7 +59,7 @@ function useSelectionActions(selectedIds: Ref<string[]>, items: Ref<SelectableIt
         isSelected,
     };
 }
-export function useSelection<T extends SelectableItem>(items: Ref<T[] | undefined>): SelectionState<T> & {
+export function useSelection<T extends ISelectableItem>(items: Ref<T[] | undefined>): ISelectionState<T> & {
     toggleOne: (id: string) => void;
     toggleAll: () => void;
     setSelected: (ids: string[]) => void;

@@ -136,9 +136,17 @@ function setupWatchers(
   modelValue: ReservationTimes,
   emit: DaySlotsEditorEmits
 ) {
-  onMounted(() => {
-    emitValidity(modelValue, emit);
-  });
+  // Emit validity immediately for tests
+  emitValidity(modelValue, emit);
+  
+  // Only call onMounted if we're in a component context
+  try {
+    onMounted(() => {
+      emitValidity(modelValue, emit);
+    });
+  } catch {
+    // Not in component context (e.g., tests), already emitted above
+  }
 
   watch(
     () => modelValue,

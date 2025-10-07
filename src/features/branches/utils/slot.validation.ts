@@ -7,7 +7,7 @@
  *   - Returns i18n error keys.
  */
 import type { SlotTuple, ReservationTimes, Weekday } from "@/types/foodics";
-import type { ReservationTimesValidation } from "@/types/validation";
+import type { IReservationTimesValidation } from "@/types/validation";
 import { isHHmm, timeToMinutes } from "@/utils/time";
 import { slotOverlaps } from "./slot.operations";
 
@@ -126,7 +126,7 @@ export function validateDaySlots(slots: SlotTuple[]): { ok: boolean; errors: str
  */
 export function validateReservationTimes(
   reservationTimes: ReservationTimes
-): ReservationTimesValidation {
+): IReservationTimesValidation {
   const perDay: Record<Weekday, string[]> = {
     saturday: [],
     sunday: [],

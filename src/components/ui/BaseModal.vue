@@ -42,7 +42,7 @@ d="M6 18L18 6M6 6l12 12" />
             <slot />
           </div>
           <div
-            v-if="$slots.actions"
+            v-if="$slots['actions']"
             class="flex items-center justify-between border-t border-neutral-200 p-6"
           >
             <slot name="actions" />
@@ -64,10 +64,10 @@ d="M6 18L18 6M6 6l12 12" />
 import { computed, onMounted, onBeforeUnmount } from "vue";
 const props = withDefaults(defineProps<{
     modelValue: boolean;
-    title?: string;
+    title?: string | undefined;
     size?: "sm" | "md" | "lg" | "xl";
-    dataTestid?: string;
-    preventClose?: boolean;
+    dataTestid?: string | undefined;
+    preventClose?: boolean | undefined;
 }>(), {
     title: "",
     size: "md",
@@ -84,7 +84,7 @@ const modalClasses = computed(() => {
         md: "w-full max-w-2xl",
         lg: "w-full max-w-4xl",
         xl: "w-full max-w-6xl",
-    };
+    } as const;
     return `${base} ${sizes[props.size]}`;
 });
 const titleId = computed(() => `modal-title-${Math.random().toString(36).slice(2)}`);

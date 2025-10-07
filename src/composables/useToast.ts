@@ -7,12 +7,12 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { ref } from "vue";
-import type { Toast } from "@/types/toast";
+import type { IToast } from "@/types/toast";
 export const useToast = () => {
-    const toasts = ref<Toast[]>([]);
-    const show = (message: string, type: Toast["type"] = "info", duration = 5000) => {
+    const toasts = ref<IToast[]>([]);
+    const show = (message: string, type: IToast["type"] = "info", duration = 5000) => {
         const id = `${Date.now()}-${Math.random()}`;
-        const toast: Toast = { id, message, type, duration };
+        const toast: IToast = { id, message, type, duration };
         toasts.value.push(toast);
         if (duration > 0) {
             setTimeout(() => {

@@ -6,18 +6,21 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import type { Toast } from "./toast";
-import type { ConfirmOptions } from "./confirm";
+import type { IToast } from "./toast";
+import type { IConfirmOptions } from "./confirm";
 
 export type ModalName = "addBranches" | "settings";
 
-interface ConfirmDialogState {
+interface IConfirmDialogState {
   isOpen: boolean;
-  options: ConfirmOptions | null;
+  options: IConfirmOptions | null;
 }
 
-export interface UIStoreState {
+export interface IUIStoreState {
   modals: Record<ModalName, boolean>;
-  toasts: Toast[];
-  confirmDialog: ConfirmDialogState;
+  toasts: IToast[];
+  confirmDialog: IConfirmDialogState;
 }
+
+// Backward-compatibility alias
+export type UIStoreState = IUIStoreState;

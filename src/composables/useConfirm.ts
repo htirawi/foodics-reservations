@@ -7,12 +7,12 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { ref } from "vue";
-import type { ConfirmOptions } from "@/types/confirm";
+import type { IConfirmOptions } from "@/types/confirm";
 export const useConfirm = () => {
     const isOpen = ref(false);
-    const options = ref<ConfirmOptions | null>(null);
+    const options = ref<IConfirmOptions | null>(null);
     const resolveCallback = ref<((value: boolean) => void) | null>(null);
-    const confirm = (confirmOptions: ConfirmOptions): Promise<boolean> => {
+    const confirm = (confirmOptions: IConfirmOptions): Promise<boolean> => {
         options.value = {
             confirmText: "Confirm",
             cancelText: "Cancel",

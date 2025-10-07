@@ -15,7 +15,7 @@ const REPO_ROOT = resolve(__dirname, "../../..");
 export function runSafetyPreflight(): void {
     const errors: string[] = [];
     const warnings: string[] = [];
-    const token = process.env.VITE_FOODICS_TOKEN;
+    const token = process.env["VITE_FOODICS_TOKEN"];
     if (!token) {
         warnings.push("VITE_FOODICS_TOKEN not set; some tests may fail");
     }
@@ -30,12 +30,12 @@ export function runSafetyPreflight(): void {
             // Tracked env file exists - this is expected for development
         }
     });
-    const isOnlineMode = process.env.PW_E2E_ONLINE === "true";
+    const isOnlineMode = process.env["PW_E2E_ONLINE"] === "true";
     if (isOnlineMode) {
-        if (!process.env.PW_API_BASE_URL) {
+        if (!process.env["PW_API_BASE_URL"]) {
             errors.push("PW_E2E_ONLINE=true requires PW_API_BASE_URL to be set");
         }
-        if (!process.env.PW_STAGING_TOKEN) {
+        if (!process.env["PW_STAGING_TOKEN"]) {
             errors.push("PW_E2E_ONLINE=true requires PW_STAGING_TOKEN to be set");
         }
     }

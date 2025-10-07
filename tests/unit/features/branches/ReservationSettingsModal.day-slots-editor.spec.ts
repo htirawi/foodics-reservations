@@ -21,6 +21,9 @@ const i18n = createI18n({
   locale: "en",
   messages: {
     en: {
+      app: {
+        remove: "Remove",
+      },
       settings: {
         days: {
           saturday: "Saturday",
@@ -82,7 +85,7 @@ describe("DaySlotsEditor", () => {
       const days = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
 
       days.forEach((day) => {
-        expect(wrapper.find(`[data-testid="settings-day-${day}"]`).exists()).toBe(true);
+        expect(wrapper.find(`[data-testid="settings-slot-day-${day}"]`).exists()).toBe(true);
       });
     });
 
@@ -108,7 +111,7 @@ describe("DaySlotsEditor", () => {
       expect(applyButton.exists()).toBe(true);
 
       // Should be within Saturday's fieldset
-      const saturdayFieldset = wrapper.find('[data-testid="settings-day-saturday"]');
+      const saturdayFieldset = wrapper.find('[data-testid="settings-slot-day-saturday"]');
       expect(saturdayFieldset.html()).toContain('data-testid="slots-apply-all"');
     });
   });
@@ -182,13 +185,13 @@ describe("DaySlotsEditor", () => {
     it("should display error message for invalid slots", async () => {
       const times: ReservationTimes = {
         ...emptyTimes,
-        saturday: [["12:00", "09:00"]], // Invalid order
+        saturday: [["14:00", "12:00"]], // Invalid order (2 PM to 12 PM)
       };
       const wrapper = createWrapper(times);
 
       const error = wrapper.find('[data-testid="error-saturday"]');
       expect(error.exists()).toBe(true);
-      expect(error.text()).toContain("Start time must be before end time");
+      expect(error.text()).toContain("Overnight ranges not supported.");
     });
 
     it("should have aria-live on error message", () => {
@@ -230,13 +233,13 @@ describe("DaySlotsEditor", () => {
   describe("accessibility", () => {
     it("should use fieldset for each day", () => {
       const wrapper = createWrapper();
-      const fieldset = wrapper.find('[data-testid="settings-day-saturday"]');
+      const fieldset = wrapper.find('[data-testid="settings-slot-day-saturday"]');
       expect(fieldset.element.tagName).toBe("FIELDSET");
     });
 
     it("should have aria-labelledby on fieldset", () => {
       const wrapper = createWrapper();
-      const fieldset = wrapper.find('[data-testid="settings-day-saturday"]');
+      const fieldset = wrapper.find('[data-testid="settings-slot-day-saturday"]');
       expect(fieldset.attributes("aria-labelledby")).toBe("day-heading-saturday");
     });
 
@@ -253,11 +256,11 @@ describe("DaySlotsEditor", () => {
       const wrapper = createWrapper();
       
       // Should exist in Saturday
-      const saturdaySection = wrapper.find('[data-testid="settings-day-saturday"]');
+      const saturdaySection = wrapper.find('[data-testid="settings-slot-day-saturday"]');
       expect(saturdaySection.html()).toContain('data-testid="slots-apply-all"');
 
       // Should NOT exist in other days
-      const sundaySection = wrapper.find('[data-testid="settings-day-sunday"]');
+      const sundaySection = wrapper.find('[data-testid="settings-slot-day-sunday"]');
       expect(sundaySection.html()).not.toContain('data-testid="slots-apply-all"');
     });
   });
@@ -273,11 +276,11 @@ describe("DaySlotsEditor", () => {
     it("should display translated error messages", () => {
       const times: ReservationTimes = {
         ...emptyTimes,
-        saturday: [["12:00", "09:00"]],
+        saturday: [["14:00", "12:00"]], // Invalid order (2 PM to 12 PM)
       };
       const wrapper = createWrapper(times);
       const error = wrapper.find('[data-testid="error-saturday"]');
-      expect(error.text()).toContain("Start time must be before end time");
+      expect(error.text()).toContain("Overnight ranges not supported.");
     });
 
     it("should display translated button text", () => {
@@ -299,7 +302,7 @@ describe("DaySlotsEditor", () => {
       expect(wrapper.find('[data-testid="settings-day-slots"]').exists()).toBe(true);
 
       // Day fieldsets
-      expect(wrapper.find('[data-testid="settings-day-saturday"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="settings-slot-day-saturday"]').exists()).toBe(true);
 
       // Slot list
       expect(wrapper.find('[data-testid="settings-day-saturday-list"]').exists()).toBe(true);

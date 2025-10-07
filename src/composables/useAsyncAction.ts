@@ -7,8 +7,8 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { ref } from "vue";
-import type { AsyncActionState } from "@/types/async";
-export function useAsyncAction(): AsyncActionState & {
+import type { IAsyncActionState } from "@/types/async";
+export function useAsyncAction(): IAsyncActionState & {
     run: <T>(fn: () => Promise<T>) => Promise<T>;
 } {
     const busy = ref(false);

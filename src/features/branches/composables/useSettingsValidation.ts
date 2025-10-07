@@ -8,7 +8,7 @@
  */
 import { ref } from "vue";
 import type { Weekday, SlotTuple } from "@/types/foodics";
-import type { ValidationErrors } from "@/types/validation";
+import type { IValidationErrors } from "@/types/validation";
 function checkSlotTimes(from: string, to: string): "missing" | "invalid" | "valid" {
     if (!from || !to)
         return "missing";
@@ -65,7 +65,7 @@ function validateSlots(slots: SlotTuple[], messages: {
 }
 
 export function useSettingsValidation() {
-    const errors = ref<ValidationErrors>({});
+  const errors = ref<IValidationErrors>({});
     
     function validateDuration(duration: number, errorMsg: string): boolean {
         if (!duration || duration < 1) {

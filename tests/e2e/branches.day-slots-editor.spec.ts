@@ -212,7 +212,7 @@ test.describe("Day Slots Editor - Settings Modal", () => {
     });
 
     test.skip("should have aria-live on error messages", async () => {
-      // TODO: Implement when TimePill edit mode is ready
+      // Implement when TimePill edit mode is ready
     });
   });
 
@@ -252,7 +252,7 @@ test.describe("Day Slots Editor - Settings Modal", () => {
     });
 
     test.skip("should show Arabic error messages", async () => {
-      // TODO: Implement when TimePill edit mode is ready
+      // Implement when TimePill edit mode is ready
     });
 
     test("should show confirmation dialog in Arabic", async ({ page }) => {
@@ -324,7 +324,7 @@ test.describe("Day Slots Editor - Settings Modal", () => {
     });
 
     test.skip("should prevent save when slots have validation errors", async () => {
-      // TODO: Implement when TimePill edit mode is ready
+      // Implement when TimePill edit mode is ready
     });
   });
 });

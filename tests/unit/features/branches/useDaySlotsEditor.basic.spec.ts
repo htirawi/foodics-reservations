@@ -87,11 +87,11 @@ describe("useDaySlotsEditor - Basic Operations", () => {
     it("should detect order errors", () => {
       const times: ReservationTimes = {
         ...emptyTimes,
-        saturday: [["12:00", "09:00"]],
+        saturday: [["14:00", "12:00"]], // Invalid order (2 PM to 12 PM)
       };
       const { dayErrors } = useDaySlotsEditor(times, mockEmit);
       expect(dayErrors.value.saturday.length).toBeGreaterThan(0);
-      expect(dayErrors.value.saturday[0]).toContain("order");
+      expect(dayErrors.value.saturday[0]).toBe("settings.slots.errors.overnight");
     });
   });
 

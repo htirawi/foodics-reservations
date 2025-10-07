@@ -59,10 +59,10 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { useI18n } from "vue-i18n";
-import type { Branch } from "@/types/foodics";
+import type { IBranch } from "@/types/foodics";
 interface Props {
-    branches: Branch[];
-    reservableCount: (branch: Branch) => number;
+    branches: IBranch[];
+    reservableCount: (branch: IBranch) => number;
 }
 interface Emits {
     (e: "open-settings", branchId: string): void;

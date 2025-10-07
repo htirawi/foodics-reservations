@@ -24,7 +24,7 @@
       {{ description ?? $t('empty.description') }}
     </p>
     <div
-      v-if="$slots.action || actionText"
+      v-if="$slots['action'] || actionText"
       class="mt-6"
     >
       <slot name="action">
@@ -49,11 +49,15 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import BaseButton from "@/components/ui/BaseButton.vue";
-defineProps<{
-    title?: string;
-    description?: string;
-    actionText?: string;
-}>();
+withDefaults(defineProps<{
+    title?: string | undefined;
+    description?: string | undefined;
+    actionText?: string | undefined;
+}>(), {
+    title: "",
+    description: "",
+    actionText: "",
+});
 defineEmits<{
     action: [
     ];

@@ -17,6 +17,7 @@ module.exports = {
     ecmaVersion: 'latest',
     parser: '@typescript-eslint/parser',
     sourceType: 'module',
+    extraFileExtensions: ['.vue'],
   },
   plugins: ['@typescript-eslint', 'vue', 'eslint-comments'],
   rules: {
@@ -117,6 +118,36 @@ module.exports = {
     'no-var': 'error',
   },
   overrides: [
+    {
+      // Enforce interface naming and typed rules in central types only
+      files: [
+        'src/types/**/*.ts'
+      ],
+      parserOptions: {
+        project: ['./tsconfig.json'],
+        tsconfigRootDir: __dirname,
+      },
+      rules: {
+        '@typescript-eslint/naming-convention': [
+          'error',
+          {
+            selector: 'interface',
+            format: ['PascalCase'],
+            custom: { regex: '^I[A-Z].*$', match: true }
+          },
+          {
+            selector: 'typeAlias',
+            format: ['PascalCase']
+          },
+          {
+            selector: 'typeParameter',
+            format: ['PascalCase', 'UPPER_CASE'],
+            custom: { regex: '^(T([A-Z][a-zA-Z0-9]+)?|[A-Z])$', match: true }
+          }
+        ],
+        '@typescript-eslint/prefer-readonly': 'warn',
+      }
+    },
     {
       // Allow service imports in composables and stores
       files: [

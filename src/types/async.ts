@@ -8,7 +8,7 @@
  */
 import type { Ref } from "vue";
 
-export interface AsyncActionState {
+export interface IAsyncActionState {
   busy: Ref<boolean>;
   error: Ref<string | null>;
   reset: () => void;
@@ -17,8 +17,12 @@ export interface AsyncActionState {
 /**
  * Result of enabling/disabling branches.
  */
-export interface EnableBranchesResult {
+export interface IEnableBranchesResult {
   ok: boolean;
   enabled: string[];
   failed: string[];
 }
+
+// Backward-compatibility aliases
+export type AsyncActionState = IAsyncActionState;
+export type EnableBranchesResult = IEnableBranchesResult;

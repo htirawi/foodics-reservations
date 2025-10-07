@@ -7,7 +7,7 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
-import type { ApiError } from "@/types/api";
+import type { IApiError } from "@/types/api";
 const httpClient = axios.create({
     baseURL: "/api",
     headers: {
@@ -25,7 +25,7 @@ httpClient.interceptors.response.use((response) => response, (error: AxiosError<
     message?: string;
     error?: string;
 }>) => {
-    const normalized: ApiError = {
+    const normalized: IApiError = {
         status: error.response?.status ?? 500,
         message: error.response?.data?.message ??
             error.response?.data?.error ??
@@ -36,4 +36,4 @@ httpClient.interceptors.response.use((response) => response, (error: AxiosError<
     return Promise.reject(normalized);
 });
 export { httpClient };
-export type { ApiError };
+export type { IApiError as ApiError };

@@ -7,7 +7,7 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 
-import type { Section, Table } from "@/types/foodics";
+import type { ISection, ITable } from "@/types/foodics";
 
 /**
  * Count the number of tables across all sections that accept reservations.
@@ -15,7 +15,7 @@ import type { Section, Table } from "@/types/foodics";
  * @param sections - Array of sections (may be undefined or have undefined tables)
  * @returns Total count of tables where accepts_reservations === true
  */
-export function reservableTablesCount(sections: Section[] | undefined): number {
+export function reservableTablesCount(sections: ISection[] | undefined): number {
   if (!sections) {
     return 0;
   }
@@ -26,7 +26,7 @@ export function reservableTablesCount(sections: Section[] | undefined): number {
     }
     
     const reservableInSection = section.tables.filter(
-      (table: Table) => table.accepts_reservations === true
+      (table: ITable) => table.accepts_reservations === true
     ).length;
     
     return total + reservableInSection;

@@ -6,11 +6,18 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { createI18n } from "vue-i18n";
 import DaySlotsEditor from "@/features/branches/components/ReservationSettingsModal/DaySlotsEditor.vue";
 import type { ReservationTimes } from "@/types/foodics";
+
+// Mock the useConfirm composable
+vi.mock("@/composables/useConfirm", () => ({
+  useConfirm: () => ({
+    confirm: vi.fn().mockResolvedValue(true), // Always return true for confirmations
+  }),
+}));
 const i18n = createI18n({
     legacy: false,
     locale: "en",
@@ -22,6 +29,12 @@ const i18n = createI18n({
             settings: {
                 slots: {
                     title: "Slots",
+                    add: "Add slot",
+                    applyAll: "Apply Saturday's slots to all days",
+                    confirmApplyAll: "This will overwrite slots for all other days. Continue?",
+                    errors: {
+                        overlap: "Slots must not overlap.",
+                    },
                 },
                 timeSlots: {
                     add: "Add",
@@ -73,7 +86,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 plugins: [i18n],
             },
         });
-        expect(wrapper.find("[data-testid=\"settings-slot-row-saturday-0\"]").exists()).toBe(true);
+        expect(wrapper.find("[data-testid=\"settings-day-saturday-row-0\"]").exists()).toBe(true);
     });
     it("emits update:modelValue when adding a slot", async () => {
         const wrapper = mount(DaySlotsEditor, {
@@ -84,7 +97,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 plugins: [i18n],
             },
         });
-        await wrapper.find("[data-testid=\"add-slot-sunday\"]").trigger("click");
+        await wrapper.find("[data-testid=\"settings-day-sunday-add\"]").trigger("click");
         expect(wrapper.emitted("update:modelValue")).toBeTruthy();
         const emittedValue = wrapper.emitted("update:modelValue")?.[0]?.[0] as ReservationTimes;
         expect(emittedValue.sunday.length).toBe(1);
@@ -129,7 +142,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
             },
         });
         await wrapper.vm.$nextTick();
-        await wrapper.find("[data-testid=\"add-slot-sunday\"]").trigger("click");
+        await wrapper.find("[data-testid=\"settings-day-sunday-add\"]").trigger("click");
         expect(wrapper.emitted("update:valid")).toBeTruthy();
         expect(wrapper.emitted("update:valid")?.[0]).toEqual([true]);
     });
@@ -142,7 +155,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 plugins: [i18n],
             },
         });
-        await wrapper.find("[data-testid=\"apply-all-saturday\"]").trigger("click");
+        await wrapper.find("[data-testid=\"slots-apply-all\"]").trigger("click");
         expect(wrapper.emitted("update:modelValue")).toBeTruthy();
         const emittedValue = wrapper.emitted("update:modelValue")?.[0]?.[0] as ReservationTimes;
         expect(emittedValue.sunday).toEqual([["09:00", "17:00"]]);
