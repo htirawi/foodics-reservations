@@ -9,7 +9,22 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import type { VueWrapper } from "@vue/test-utils";
 import { mount } from "@vue/test-utils";
+import { createI18n } from "vue-i18n";
 import UiModal from "@/components/ui/UiModal.vue";
+
+const i18n = createI18n({
+    legacy: false,
+    locale: "en",
+    fallbackLocale: "en",
+    messages: {
+        en: {
+            app: {
+                close: "Close"
+            }
+        }
+    }
+});
+
 describe("UiModal", () => {
     let wrapper: VueWrapper;
     beforeEach(() => {
@@ -30,6 +45,9 @@ describe("UiModal", () => {
                 title: "<span id=\"test-title\">Test Title</span>",
                 default: "<p>Body content</p>",
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         const modal = document.querySelector("[role=\"dialog\"]");
         expect(modal).toBeTruthy();
@@ -42,6 +60,9 @@ describe("UiModal", () => {
                 isOpen: false,
                 ariaLabelledby: "test-title",
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         const modal = document.querySelector("[role=\"dialog\"]");
         expect(modal).toBeFalsy();
@@ -55,6 +76,9 @@ describe("UiModal", () => {
             slots: {
                 title: "<span id=\"modal-title\">My Modal</span>",
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         const modal = document.querySelector("[role=\"dialog\"]") as HTMLElement;
         expect(modal).toBeTruthy();
@@ -72,6 +96,9 @@ describe("UiModal", () => {
                 default: "<div data-testid=\"body\">Body</div>",
                 actions: "<button data-testid=\"action-btn\">Action</button>",
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         expect(document.body.textContent).toContain("Title");
         expect(document.querySelector("[data-testid=\"body\"]")).toBeTruthy();
@@ -84,6 +111,9 @@ describe("UiModal", () => {
                 ariaLabelledby: "test-title",
                 closeOnEscape: true,
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         await wrapper.setProps({ isOpen: true });
         await wrapper.vm.$nextTick();
@@ -101,6 +131,9 @@ describe("UiModal", () => {
                 ariaLabelledby: "test-title",
                 closeOnEscape: false,
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         const modal = document.querySelector("[role=\"dialog\"]") as HTMLElement;
         expect(modal).toBeTruthy();
@@ -114,6 +147,9 @@ describe("UiModal", () => {
                 ariaLabelledby: "test-title",
                 closeOnBackdrop: true,
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         const container = document.querySelector(".fixed.inset-0") as HTMLElement;
         expect(container).toBeTruthy();
@@ -127,6 +163,9 @@ describe("UiModal", () => {
                 ariaLabelledby: "test-title",
                 closeOnBackdrop: false,
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         const container = document.querySelector(".fixed.inset-0") as HTMLElement;
         expect(container).toBeTruthy();
@@ -148,6 +187,9 @@ describe("UiModal", () => {
                     ariaLabelledby: "test-title",
                     size,
                 },
+                global: {
+                    plugins: [i18n]
+                }
             });
             const modal = document.querySelector("[role=\"dialog\"]") as HTMLElement;
             expect(modal).toBeTruthy();
@@ -161,6 +203,9 @@ describe("UiModal", () => {
                 isOpen: false,
                 ariaLabelledby: "test-title",
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         expect(document.body.style.overflow).toBe("");
         await wrapper.setProps({ isOpen: true });
@@ -175,6 +220,9 @@ describe("UiModal", () => {
                 isOpen: true,
                 ariaLabelledby: "test-title",
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         wrapper.unmount();
         expect(document.body.style.overflow).toBe("");
@@ -189,6 +237,9 @@ describe("UiModal", () => {
                 default: "<button data-testid=\"first-btn\">First</button><button>Second</button>",
             },
             attachTo: document.body,
+            global: {
+                plugins: [i18n]
+            }
         });
         await wrapper.vm.$nextTick();
         await new Promise(resolve => setTimeout(resolve, 200));
@@ -206,6 +257,9 @@ describe("UiModal", () => {
             slots: {
                 default: "<p>Body only</p>",
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         expect(wrapper.find(".border-b").exists()).toBe(false);
     });
@@ -218,6 +272,9 @@ describe("UiModal", () => {
             slots: {
                 default: "<p>Body only</p>",
             },
+            global: {
+                plugins: [i18n]
+            }
         });
         expect(wrapper.find(".border-t").exists()).toBe(false);
     });

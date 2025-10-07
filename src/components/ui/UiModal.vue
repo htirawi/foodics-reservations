@@ -14,6 +14,23 @@
             <div :id="ariaLabelledby" class="text-lg font-semibold text-gray-900">
               <slot name="title" />
             </div>
+            <button
+              type="button"
+              :aria-label="t('app.close')"
+              class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500"
+              @click="emit('close')"
+            >
+              <span class="sr-only">{{ t('app.close') }}</span>
+              <svg
+class="h-6 w-6"
+fill="none"
+viewBox="0 0 24 24"
+stroke-width="1.5"
+stroke="currentColor"
+aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
           <div class="flex-1 overflow-y-auto px-6 py-4">
             <slot />
@@ -36,6 +53,7 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { ref, watch, onUnmounted, computed } from "vue";
+import { useI18n } from "vue-i18n";
 interface UiModalProps {
     isOpen: boolean;
     ariaLabelledby?: string | undefined;
@@ -53,6 +71,7 @@ const emit = defineEmits<{
     close: [
     ];
 }>();
+const { t } = useI18n();
 const modalRef = ref<HTMLElement | null>(null);
 const previousActiveElement = ref<HTMLElement | null>(null);
 const sizeClasses = computed(() => {
