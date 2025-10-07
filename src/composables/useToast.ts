@@ -7,12 +7,7 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { ref } from "vue";
-export interface Toast {
-    id: string;
-    message: string;
-    type: "success" | "error" | "warning" | "info";
-    duration?: number;
-}
+import type { Toast } from "@/types/toast";
 export const useToast = () => {
     const toasts = ref<Toast[]>([]);
     const show = (message: string, type: Toast["type"] = "info", duration = 5000) => {

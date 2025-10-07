@@ -10,7 +10,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { setActivePinia, createPinia } from "pinia";
 import { createI18n } from "vue-i18n";
-import Toaster from "@/layouts/Toaster.vue";
+import AppToaster from "@/components/layout/AppToaster.vue";
 import { useUIStore } from "@/stores/ui.store";
 const i18n = createI18n({
     legacy: false,
@@ -32,7 +32,7 @@ describe("Toaster", () => {
         vi.useRealTimers();
     });
     it("does not render when no toasts", () => {
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },
@@ -42,7 +42,7 @@ describe("Toaster", () => {
     it("renders toaster with data-testid when toasts exist", () => {
         const store = useUIStore();
         store.notify("Test message");
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },
@@ -52,7 +52,7 @@ describe("Toaster", () => {
     it("has aria-live=\"polite\" attribute", () => {
         const store = useUIStore();
         store.notify("Test message");
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },
@@ -63,7 +63,7 @@ describe("Toaster", () => {
     it("has role=\"status\" attribute", () => {
         const store = useUIStore();
         store.notify("Test message");
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },
@@ -74,7 +74,7 @@ describe("Toaster", () => {
     it("displays success toast with correct styling", () => {
         const store = useUIStore();
         store.notify("Success message", "success");
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },
@@ -86,7 +86,7 @@ describe("Toaster", () => {
     it("displays error toast with correct styling", () => {
         const store = useUIStore();
         store.notify("Error message", "error");
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },
@@ -98,7 +98,7 @@ describe("Toaster", () => {
     it("displays warning toast with correct styling", () => {
         const store = useUIStore();
         store.notify("Warning message", "warning");
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },
@@ -110,7 +110,7 @@ describe("Toaster", () => {
     it("displays info toast with correct styling", () => {
         const store = useUIStore();
         store.notify("Info message", "info");
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },
@@ -123,7 +123,7 @@ describe("Toaster", () => {
         const store = useUIStore();
         store.notify("First message", "success");
         store.notify("Second message", "error");
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },
@@ -134,7 +134,7 @@ describe("Toaster", () => {
     it("removes toast when close button clicked", async () => {
         const store = useUIStore();
         store.notify("Test message", "info");
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },
@@ -146,7 +146,7 @@ describe("Toaster", () => {
     it("auto-removes toast after duration", async () => {
         const store = useUIStore();
         store.notify("Test message", "info", 1000);
-        const wrapper = mount(Toaster, {
+        const wrapper = mount(AppToaster, {
             global: {
                 plugins: [i18n],
             },

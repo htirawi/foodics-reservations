@@ -1,4 +1,5 @@
 // scripts/strip-comments-add-jsdoc.mjs
+/* eslint-disable no-restricted-syntax, complexity, max-depth, no-console */
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import fg from 'fast-glob';
@@ -158,3 +159,5 @@ main().catch(e => {
   console.error(e);
   process.exit(1);
 });
+
+/* eslint-enable no-restricted-syntax, complexity, max-depth, no-console */

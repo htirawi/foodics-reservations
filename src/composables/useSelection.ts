@@ -7,17 +7,7 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { ref, computed, type Ref } from "vue";
-export interface SelectableItem {
-    id: string;
-}
-export interface SelectionState<T extends SelectableItem> {
-    selectedIds: Ref<string[]>;
-    selectedIdsSet: Ref<Set<string>>;
-    selectedItems: Ref<T[]>;
-    isAllSelected: Ref<boolean>;
-    hasSelection: Ref<boolean>;
-    selectionCount: Ref<number>;
-}
+import type { SelectableItem, SelectionState } from "@/types/selection";
 function useSelectionState<T extends SelectableItem>(items: Ref<T[] | undefined>) {
     const selectedIds = ref<string[]>([]);
     const selectedIdsSet = computed(() => new Set(selectedIds.value));

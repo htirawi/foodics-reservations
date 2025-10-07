@@ -6,12 +6,8 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { ref, type Ref } from "vue";
-export interface AsyncActionState {
-    busy: Ref<boolean>;
-    error: Ref<string | null>;
-    reset: () => void;
-}
+import { ref } from "vue";
+import type { AsyncActionState } from "@/types/async";
 export function useAsyncAction(): AsyncActionState & {
     run: <T>(fn: () => Promise<T>) => Promise<T>;
 } {

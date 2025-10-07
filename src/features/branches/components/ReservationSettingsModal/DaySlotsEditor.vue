@@ -6,97 +6,25 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { computed, watch, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import TimePill from "@/components/ui/TimePill.vue";
-import type { ReservationTimes, Weekday, SlotTuple } from "@/types/foodics";
-import { validateDaySlots } from "@/features/branches/utils/reservation.validation";
+import type { ReservationTimes } from "@/types/foodics";
+import { useDaySlotsEditor } from "@/features/branches/composables/useDaySlotsEditor";
+
 const props = defineProps<{
-    modelValue: ReservationTimes;
+  modelValue: ReservationTimes;
 }>();
+
 const emit = defineEmits<{
-    "update:modelValue": [
-        value: ReservationTimes
-    ];
-    "update:valid": [
-        valid: boolean
-    ];
+  "update:modelValue": [value: ReservationTimes];
+  "update:valid": [valid: boolean];
 }>();
+
 const { t } = useI18n();
-const weekdays: Weekday[] = [
-    "saturday",
-    "sunday",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-];
-const dayErrors = computed<Record<Weekday, string[]>>(() => {
-    const errors: Record<Weekday, string[]> = {
-        saturday: [],
-        sunday: [],
-        monday: [],
-        tuesday: [],
-        wednesday: [],
-        thursday: [],
-        friday: [],
-    };
-    weekdays.forEach((day) => {
-        const slots = props.modelValue[day];
-        if (slots) {
-            errors[day] = validateDaySlots(slots);
-        }
-    });
-    return errors;
-});
-function addSlot(day: Weekday): void {
-    const newSlots = [...props.modelValue[day]];
-    newSlots.push(["09:00", "17:00"]);
-    const updated = { ...props.modelValue, [day]: newSlots };
-    emit("update:modelValue", updated);
-    emitValidity(updated);
-}
-function removeSlot(day: Weekday, index: number): void {
-    const newSlots = props.modelValue[day].filter((_, i) => i !== index);
-    const updated = { ...props.modelValue, [day]: newSlots };
-    emit("update:modelValue", updated);
-    emitValidity(updated);
-}
-function updateSlot(day: Weekday, index: number, field: "from" | "to", value: string): void {
-    const newSlots = [...props.modelValue[day]];
-    const slot = newSlots[index];
-    if (!slot)
-        return;
-    const updatedSlot: SlotTuple = field === "from" ? [value, slot[1]] : [slot[0], value];
-    newSlots[index] = updatedSlot;
-    const updated = { ...props.modelValue, [day]: newSlots };
-    emit("update:modelValue", updated);
-    emitValidity(updated);
-}
-function applyToAllDays(day: Weekday): void {
-    const template = props.modelValue[day];
-    const updated: ReservationTimes = { ...props.modelValue };
-    weekdays.forEach((d) => {
-        updated[d] = [...template];
-    });
-    emit("update:modelValue", updated);
-    emitValidity(updated);
-}
-function emitValidity(times: ReservationTimes): void {
-    const allValid = weekdays.every((day) => {
-        const slots = times[day];
-        return slots ? validateDaySlots(slots).length === 0 : true;
-    });
-    emit("update:valid", allValid);
-}
-onMounted(() => {
-    emitValidity(props.modelValue);
-});
-watch(() => props.modelValue, (newValue) => {
-    emitValidity(newValue);
-});
+
+const { weekdays, dayErrors, addSlot, removeSlot, updateSlot, applyToAllDays } = 
+  useDaySlotsEditor(props.modelValue, emit);
 </script>
 
 <template>

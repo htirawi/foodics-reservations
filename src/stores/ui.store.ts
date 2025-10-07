@@ -8,13 +8,14 @@
  */
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { Toast } from "@/composables/useToast";
-import type { ConfirmOptions } from "@/composables/useConfirm";
-export type ModalName = "addBranches" | "settings";
+import type { Toast } from "@/types/toast";
+import type { ConfirmOptions } from "@/types/confirm";
+import type { ModalName } from "@/types/ui";
+
 interface ConfirmDialogState {
-    isOpen: boolean;
-    options: ConfirmOptions | null;
-    resolve: ((value: boolean) => void) | null;
+  isOpen: boolean;
+  options: ConfirmOptions | null;
+  resolve: ((value: boolean) => void) | null;
 }
 function createToast(message: string, type: Toast["type"], duration: number): Toast {
     const id = `${Date.now()}-${Math.random()}`;

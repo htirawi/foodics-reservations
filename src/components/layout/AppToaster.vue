@@ -57,8 +57,8 @@ aria-hidden="true">
 </template>
 
 <script setup lang="ts">/**
- * @file Toaster.vue
- * @summary Module: src/layouts/Toaster.vue
+ * @file AppToaster.vue
+ * @summary Module: src/components/layout/AppToaster.vue
  * @remarks
  *   - Tiny components; logic in composables/services.
  *   - TypeScript strict; no any/unknown; use ?./??.
@@ -67,7 +67,7 @@ aria-hidden="true">
 import { h } from "vue";
 import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui.store";
-import type { Toast } from "@/composables/useToast";
+import type { Toast } from "@/types/toast";
 const uiStore = useUIStore();
 const { toasts } = storeToRefs(uiStore);
 const { removeToast } = uiStore;

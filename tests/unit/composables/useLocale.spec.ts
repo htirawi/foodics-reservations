@@ -9,6 +9,11 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { createI18n } from "vue-i18n";
 import { useLocale } from "@/composables/useLocale";
+import { useUIStore } from "@/stores/ui.store";
+
+vi.mock("@/stores/ui.store", () => ({
+    useUIStore: vi.fn(),
+}));
 const mockI18n = createI18n({
     legacy: false,
     locale: "en",
@@ -27,17 +32,6 @@ vi.mock("vue-i18n", async () => {
         }),
     };
 });
-
-const mockToast = {
-    show: vi.fn(),
-    hide: vi.fn(),
-    clear: vi.fn(),
-};
-
-vi.mock("@/composables/useToast", () => ({
-    useToast: () => mockToast,
-}));
-
 describe("useLocale", () => {
     const STORAGE_KEY = "foodics-locale";
     beforeEach(() => {
@@ -46,7 +40,11 @@ describe("useLocale", () => {
         document.documentElement.removeAttribute("dir");
         document.documentElement.removeAttribute("lang");
         vi.clearAllMocks();
-        mockToast.show.mockClear();
+        
+        // Default mock for useUIStore
+        vi.mocked(useUIStore).mockReturnValue({
+            notify: vi.fn(),
+        } as any);
     });
     afterEach(() => {
         localStorage.clear();
@@ -88,18 +86,27 @@ describe("useLocale", () => {
             expect(localStorage.getItem(STORAGE_KEY)).toBe("ar");
         });
         it("handles localStorage errors gracefully", () => {
+            const mockNotify = vi.fn();
+            vi.mocked(useUIStore).mockReturnValue({
+                notify: mockNotify,
+            } as any);
+            
             const { setLocale } = useLocale();
+            
             const originalSetItem = Storage.prototype.setItem;
             Storage.prototype.setItem = vi.fn(() => {
                 throw new Error("QuotaExceededError");
             });
+            
             setLocale("ar");
+            
             expect(mockI18n.global.locale.value).toBe("ar");
             expect(document.documentElement.getAttribute("dir")).toBe("rtl");
-            expect(mockToast.show).toHaveBeenCalledWith(
-                "Failed to save language preference. Settings may not persist between sessions.",
-                "warning"
+            expect(mockNotify).toHaveBeenCalledWith(
+                'Failed to save language preference. It will reset on page reload.',
+                'warning'
             );
+            
             Storage.prototype.setItem = originalSetItem;
         });
     });
@@ -129,17 +136,26 @@ describe("useLocale", () => {
             expect(mockI18n.global.locale.value).toBe("en");
         });
         it("handles localStorage read errors gracefully", () => {
+            const mockNotify = vi.fn();
+            vi.mocked(useUIStore).mockReturnValue({
+                notify: mockNotify,
+            } as any);
+            
             const { restoreLocale } = useLocale();
+            
             const originalGetItem = Storage.prototype.getItem;
             Storage.prototype.getItem = vi.fn(() => {
                 throw new Error("SecurityError");
             });
+            
             const result = restoreLocale();
+            
             expect(result).toBe("en");
-            expect(mockToast.show).toHaveBeenCalledWith(
-                "Failed to restore language preference. Using default language.",
-                "warning"
+            expect(mockNotify).toHaveBeenCalledWith(
+                'Failed to load language preference. Using default language.',
+                'warning'
             );
+            
             Storage.prototype.getItem = originalGetItem;
         });
         it("accepts valid locales only", () => {

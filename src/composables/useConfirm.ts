@@ -7,13 +7,7 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { ref } from "vue";
-export interface ConfirmOptions {
-    title: string;
-    message: string;
-    confirmText?: string;
-    cancelText?: string;
-    variant?: "danger" | "warning" | "info";
-}
+import type { ConfirmOptions } from "@/types/confirm";
 export const useConfirm = () => {
     const isOpen = ref(false);
     const options = ref<ConfirmOptions | null>(null);

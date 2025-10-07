@@ -113,9 +113,6 @@ export async function setupOfflineModeWithDisabledBranches(page: Page): Promise<
             return;
         }
         interceptedRequests.push("GET /api/branches (with disabled)");
-        const url = new URL(route.request().url());
-        // Check if include parameter is present (used for fixture selection)
-        url.searchParams.get("include[0]") || url.searchParams.get("include");
         const fixture = "branches-with-disabled-and-sections.json";
         await route.fulfill({
             status: 200,

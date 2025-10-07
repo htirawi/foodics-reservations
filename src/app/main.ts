@@ -1,6 +1,6 @@
 /**
  * @file main.ts
- * @summary Module: src/main.ts
+ * @summary Module: src/app/main.ts
  * @remarks
  *   - Tiny components; logic in composables/services.
  *   - TypeScript strict; no any/unknown; use ?./??.
@@ -8,7 +8,7 @@
  */
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { i18n } from "@/i18n";
+import { i18n } from "@/app/i18n";
 import App from "./App.vue";
 import "./styles/main.css";
 const pinia = createPinia();

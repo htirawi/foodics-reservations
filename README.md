@@ -15,24 +15,45 @@ Foodics Reservations is a Vue 3 + TypeScript app for managing restaurant reserva
 ## Project Structure
 
 ```
-src/components/   # Tiny, presentational UI units (UI glue only)
-src/views/        # Pages/screens
-src/composables/  # Reusable logic (selection/filtering/async wrappers)
-src/stores/       # Pinia stores (domain state, orchestration, optimistic/rollback)
-src/services/     # HTTP client + API modules (IO only; typed errors)
-src/i18n/         # Locales & i18n setup (EN/AR + RTL)
-src/styles/       # Tailwind tokens/layers
-types/            # Shared types only (re-export from types/index.ts)
-tests/unit/, tests/e2e/
+src/
+  app/                    # Application wiring
+    App.vue
+    main.ts
+    i18n/
+      index.ts
+      locales/
+        en.json
+        ar.json
+    styles/
+      main.css
+  components/             # Global, re-usable UI only
+    ui/                   # Primitives (Button, Modal, Input...)
+    layout/               # AppHeader, Toaster, shells
+  features/
+    branches/
+      views/              # Route-level screens
+      components/         # Feature UI pieces (tiny)
+      stores/             # Pinia feature stores
+      composables/        # Feature-logic hooks (no DOM)
+      services/           # Feature API modules
+  services/               # Cross-feature services
+  stores/                 # Cross-feature global stores
+  composables/            # Cross-feature hooks
+types/                    # Shared types only
+tests/
+  unit/                   # Mirrors src structure
+  e2e/                    # Playwright specs
 ```
 
 ## Key Design Decisions & Rationale
 
-- Minimal dependencies (no UI/date kits); tokens-first design with Tailwind.
-- Components remain tiny; logic moves to composables/services; stores orchestrate.
-- i18n from day 1 (EN/AR) with RTL; accessibility target ≥95 (skip link in `App.vue`).
-- Centralized Axios client with error normalization `{ status, message, details }`.
-- Strict TS, no `any`/`unknown`; shared types live in `types/` only.
+- **App Layer Structure**: Centralized application wiring in `src/app/` for better organization
+- **Feature-Scoped Architecture**: Each feature (e.g., branches) contains its own components, stores, composables, and services
+- **Type Safety**: All shared types consolidated in `/types` folder; strict TypeScript with no `any`/`unknown`
+- **Component Size Limits**: Components kept under 150 lines; complex logic extracted to composables
+- **Minimal Dependencies**: No UI/date kits; tokens-first design with Tailwind
+- **i18n & RTL**: EN/AR support from day 1 with proper RTL handling; accessibility target ≥95
+- **Centralized HTTP**: Axios client with error normalization `{ status, message, details }`
 
 ## Setup & Usage
 

@@ -6,12 +6,9 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { ref, type Ref } from "vue";
+import { ref } from "vue";
 import type { Weekday, SlotTuple } from "@/types/foodics";
-interface ValidationErrors {
-    duration?: string | undefined;
-    slots?: Partial<Record<Weekday, string>> | undefined;
-}
+import type { ValidationErrors } from "@/types/validation";
 function checkSlotTimes(from: string, to: string): "missing" | "invalid" | "valid" {
     if (!from || !to)
         return "missing";
@@ -22,85 +19,96 @@ function checkOverlap(slot1: SlotTuple, slot2: SlotTuple): boolean {
     const [from2, to2] = slot2;
     return from1 < to2 && to1 > from2;
 }
-const validateDurationValue = (duration: number, errorMsg: string, errors: Ref<ValidationErrors>): boolean => {
-  if (!duration || duration < 1) {
-    errors.value.duration = errorMsg;
+function validateSlotTimes(slots: SlotTuple[], messages: {
+    missing: string;
+    invalid: string;
+}): string | null {
+    for (const slot of slots) {
+        if (!slot) continue;
+        const [from, to] = slot;
+        const timeCheck = checkSlotTimes(from, to);
+        if (timeCheck === "missing") return messages.missing;
+        if (timeCheck === "invalid") return messages.invalid;
+    }
+    return null;
+}
+
+function checkSlotPairOverlap(slot1: SlotTuple, slot2: SlotTuple): boolean {
+    return slot2 && checkOverlap(slot1, slot2);
+}
+
+function checkSlotAgainstOthers(slot: SlotTuple, otherSlots: SlotTuple[], startIndex: number): boolean {
+    for (let j = startIndex; j < otherSlots.length; j++) {
+        const otherSlot = otherSlots[j];
+        if (otherSlot && checkSlotPairOverlap(slot, otherSlot)) return true;
+    }
     return false;
-  }
-  errors.value.duration = undefined;
-  return true;
-};
+}
 
-const clearDayError = (day: Weekday, errors: Ref<ValidationErrors>): void => {
-  const key = `day_${day}` as keyof ValidationErrors;
-  errors.value[key] = undefined;
-};
+function validateSlotOverlaps(slots: SlotTuple[], messages: { overlap: string }): string | null {
+    for (let i = 0; i < slots.length; i++) {
+        const s1 = slots[i];
+        if (!s1) continue;
+        if (checkSlotAgainstOthers(s1, slots, i + 1)) return messages.overlap;
+    }
+    return null;
+}
 
-const setDayError = (day: Weekday, error: string, errors: Ref<ValidationErrors>): void => {
-  const key = `day_${day}` as keyof ValidationErrors;
-  errors.value[key] = error;
-};
-
-const checkSlotValidation = (slots: SlotTuple[], messages: {
-  missing: string;
-  invalid: string;
-  overlap: string;
-}): string | null => {
-  // Check individual slot validity
-  for (const slot of slots) {
-    if (!slot) continue;
-    const [from, to] = slot;
-    const timeCheck = checkSlotTimes(from, to);
-    if (timeCheck === "missing") return messages.missing;
-    if (timeCheck === "invalid") return messages.invalid;
-  }
-  return null;
-};
-
-const checkSlotOverlaps = (slots: SlotTuple[], overlapMsg: string): string | null => {
-  for (let i = 0; i < slots.length; i++) {
-    const s1 = slots[i];
-    if (!s1) continue;
-    const hasOverlap = slots.slice(i + 1).some(s2 => s2 && checkOverlap(s1, s2));
-    if (hasOverlap) return overlapMsg;
-  }
-  return null;
-};
+function validateSlots(slots: SlotTuple[], messages: {
+    missing: string;
+    invalid: string;
+    overlap: string;
+}): string | null {
+    const timeError = validateSlotTimes(slots, messages);
+    if (timeError) return timeError;
+    return validateSlotOverlaps(slots, messages);
+}
 
 export function useSettingsValidation() {
     const errors = ref<ValidationErrors>({});
     
-    const validateDuration = (duration: number, errorMsg: string): boolean => {
-        return validateDurationValue(duration, errorMsg, errors);
-    };
-    const validateDaySlots = (slots: SlotTuple[], day: Weekday, messages: {
+    function validateDuration(duration: number, errorMsg: string): boolean {
+        if (!duration || duration < 1) {
+            errors.value.duration = errorMsg;
+            return false;
+        }
+        errors.value.duration = undefined;
+        return true;
+    }
+    
+    function validateDaySlots(slots: SlotTuple[], day: Weekday, messages: {
         missing: string;
         invalid: string;
         overlap: string;
-    }): boolean => {
+    }): boolean {
         if (!slots || slots.length === 0) {
-            clearDayError(day, errors);
+            clearDayError(day);
             return true;
         }
-        
-        const validationError = checkSlotValidation(slots, messages);
-        if (validationError) {
-            setDayError(day, validationError, errors);
+        const validationResult = validateSlots(slots, messages);
+        if (validationResult) {
+            setDayError(day, validationResult);
             return false;
         }
-        
-        const overlapError = checkSlotOverlaps(slots, messages.overlap);
-        if (overlapError) {
-            setDayError(day, overlapError, errors);
-            return false;
-        }
-        
-        clearDayError(day, errors);
+        clearDayError(day);
         return true;
-    };
-    const clearAllErrors = (): void => {
+    }
+    
+    function setDayError(day: Weekday, message: string): void {
+        errors.value.slots = { ...errors.value.slots, [day]: message };
+    }
+    
+    function clearDayError(day: Weekday): void {
+        if (!errors.value.slots) return;
+        const newSlots = { ...errors.value.slots };
+        delete newSlots[day];
+        errors.value.slots = Object.keys(newSlots).length > 0 ? newSlots : undefined;
+    }
+    
+    function clearAllErrors(): void {
         errors.value = {};
-    };
+    }
+    
     return {
         errors,
         validateDuration,

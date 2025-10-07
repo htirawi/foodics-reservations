@@ -6,9 +6,9 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { computed, useId, watch, ref, nextTick } from "vue";
+import { computed, useId, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { sanitizeDuration, isValidDuration, type DurationOptions } from "@/features/branches/utils/reservation.validation";
+import { useDurationField } from "@/features/branches/composables/useDurationField";
 const props = withDefaults(defineProps<{
     modelValue: number | null;
     min?: number;
@@ -28,62 +28,35 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const inputId = useId();
 const errorId = useId();
-const options = computed<DurationOptions>(() => ({
-    min: props.min,
-    max: props.max,
-}));
-const rawValue = ref<string>("");
-watch(() => props.modelValue, (newValue) => {
-    if (newValue !== null && newValue !== undefined) {
-        rawValue.value = String(newValue);
-    }
-}, { immediate: true });
-const isValid = computed<boolean>(() => {
-    if (rawValue.value !== "") {
-        const rawNum = parseInt(rawValue.value, 10);
-        if (!Number.isNaN(rawNum)) {
-            return rawNum >= props.min && Number.isInteger(rawNum);
+
+const { rawValue, isValid, error: composableError, handleInput } = useDurationField(props, emit);
+
+const error = computed(() => {
+    const composableErr = composableError.value;
+    if (composableErr) {
+        // Map generic errors to i18n keys
+        if (composableErr.includes("at least")) {
+            const min = composableErr.match(/\d+/)?.[0];
+            return t("settings.duration.errors.min", { min: min ?? props.min });
         }
-        return false;
-    }
-    return isValidDuration(props.modelValue, options.value);
-});
-function validateRawInput(rawValue: string, min: number, max: number): string | undefined {
-    const rawNum = parseInt(rawValue, 10);
-    if (rawValue && !Number.isNaN(rawNum)) {
-        if (rawNum < min)
-            return t("settings.duration.errors.min", { min });
-        if (rawNum > max)
-            return t("settings.duration.errors.max", { max });
-        if (!Number.isInteger(rawNum))
+        if (composableErr.includes("at most")) {
+            const max = composableErr.match(/\d+/)?.[0];
+            return t("settings.duration.errors.max", { max: max ?? props.max });
+        }
+        if (composableErr.includes("whole number")) {
             return t("settings.duration.errors.integer");
-    }
-    return undefined;
-}
-const error = computed<string | undefined>(() => {
-    const rawError = validateRawInput(rawValue.value, props.min, props.max);
-    if (rawError)
-        return rawError;
-    if (isValid.value)
-        return undefined;
-    if (props.modelValue === null || props.modelValue === undefined) {
-        return t("settings.duration.errors.required");
+        }
+        if (composableErr.includes("required")) {
+            return t("settings.duration.errors.required");
+        }
+        return composableErr;
     }
     return undefined;
 });
+
 watch(isValid, (valid) => {
     emit("valid:duration", valid);
 }, { immediate: true });
-function handleInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    rawValue.value = target.value;
-    const sanitized = sanitizeDuration(target.value, options.value);
-    if (sanitized !== null && sanitized !== parseInt(target.value, 10)) {
-        rawValue.value = String(sanitized);
-        nextTick();
-    }
-    emit("update:modelValue", sanitized);
-}
 </script>
 
 <template>

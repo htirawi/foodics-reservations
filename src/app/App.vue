@@ -20,22 +20,22 @@
     >
       <BranchesListView />
     </main>
-    <Toaster />
+    <AppToaster />
     <ConfirmDialog />
   </div>
 </template>
 
 <script setup lang="ts">/**
  * @file App.vue
- * @summary Module: src/App.vue
+ * @summary Module: src/app/App.vue
  * @remarks
  *   - Tiny components; logic in composables/services.
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { onMounted } from "vue";
-import AppHeader from "@/layouts/AppHeader.vue";
-import Toaster from "@/layouts/Toaster.vue";
+import AppHeader from "@/components/layout/AppHeader.vue";
+import AppToaster from "@/components/layout/AppToaster.vue";
 import ConfirmDialog from "@/components/ui/ConfirmDialog.vue";
 import BranchesListView from "@/features/branches/views/BranchesListView.vue";
 import { useLocale } from "@/composables/useLocale";
@@ -54,11 +54,9 @@ const handleSkipToMain = (event: Event) => {
 };
 onMounted(() => {
     restoreLocale();
-    if (typeof window !== "undefined") {
-        interface WindowWithStore extends Window {
-            __uiStore?: typeof uiStore;
-        }
-        (window as unknown as WindowWithStore).__uiStore = uiStore;
+    // Expose UI store to window for debugging purposes in development
+    if (typeof window !== "undefined" && import.meta.env.DEV) {
+        (window as Window & { __uiStore?: typeof uiStore }).__uiStore = uiStore;
     }
 });
 </script>

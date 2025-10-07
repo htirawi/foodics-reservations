@@ -1,6 +1,6 @@
 /**
  * @file index.ts
- * @summary Module: src/i18n/index.ts
+ * @summary Module: src/app/i18n/index.ts
  * @remarks
  *   - Tiny components; logic in composables/services.
  *   - TypeScript strict; no any/unknown; use ?./??.

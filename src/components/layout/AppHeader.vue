@@ -19,7 +19,7 @@
 
 <script setup lang="ts">/**
  * @file AppHeader.vue
- * @summary Module: src/layouts/AppHeader.vue
+ * @summary Module: src/components/layout/AppHeader.vue
  * @remarks
  *   - Tiny components; logic in composables/services.
  *   - TypeScript strict; no any/unknown; use ?./??.

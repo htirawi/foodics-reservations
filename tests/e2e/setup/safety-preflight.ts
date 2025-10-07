@@ -27,7 +27,7 @@ export function runSafetyPreflight(): void {
     trackedEnvFiles.forEach((file) => {
         const path = resolve(REPO_ROOT, file);
         if (existsSync(path)) {
-            // File exists, which is expected
+            // Tracked env file exists - this is expected for development
         }
     });
     const isOnlineMode = process.env.PW_E2E_ONLINE === "true";
