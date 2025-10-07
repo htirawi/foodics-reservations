@@ -13,3 +13,12 @@ export interface AsyncActionState {
   error: Ref<string | null>;
   reset: () => void;
 }
+
+/**
+ * Result of enabling/disabling branches.
+ */
+export interface EnableBranchesResult {
+  ok: boolean;
+  enabled: string[];
+  failed: string[];
+}

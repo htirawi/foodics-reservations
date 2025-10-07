@@ -1,0 +1,73 @@
+/**
+ * @file time.ts
+ * @summary Pure time utility functions (HH:mm format only)
+ * @remarks
+ *   - Pure functions; no side effects; no DOM.
+ *   - TypeScript strict; no any/unknown.
+ *   - HH:mm format only (24-hour); no date libraries.
+ */
+
+const TIME_FORMAT_REGEX = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
+
+/**
+ * Parse HH:mm string into { h, m } object.
+ * @param s - Time string in HH:mm format
+ * @returns Object with hours and minutes, or null if invalid
+ */
+export function parseHHmm(s: string): { h: number; m: number } | null {
+  const match = TIME_FORMAT_REGEX.exec(s);
+  if (!match) {
+    return null;
+  }
+  const h = parseInt(match[1] ?? "0", 10);
+  const m = parseInt(match[2] ?? "0", 10);
+  return { h, m };
+}
+
+/**
+ * Convert { h, m } object to total minutes.
+ * @param time - Object with hours and minutes
+ * @returns Total minutes since midnight
+ */
+export function toMinutes(time: { h: number; m: number }): number {
+  return time.h * 60 + time.m;
+}
+
+/**
+ * Check if string is valid HH:mm format (24-hour).
+ * @param s - String to check
+ * @returns true if valid HH:mm format
+ */
+export function isHHmm(s: string): boolean {
+  return TIME_FORMAT_REGEX.test(s);
+}
+
+/**
+ * Convert HH:mm string to total minutes since midnight.
+ * @param time - Time string in HH:mm format
+ * @returns Total minutes, or null if invalid
+ */
+export function timeToMinutes(time: string): number | null {
+  const parsed = parseHHmm(time);
+  if (!parsed) return null;
+  return toMinutes(parsed);
+}
+
+/**
+ * Compare two HH:mm strings by minutes.
+ * @param a - First time string
+ * @param b - Second time string
+ * @returns -1 if a < b, 0 if equal, 1 if a > b
+ */
+export function compareHHmm(a: string, b: string): -1 | 0 | 1 {
+  const aMinutes = timeToMinutes(a);
+  const bMinutes = timeToMinutes(b);
+  
+  if (aMinutes === null || bMinutes === null) {
+    return 0;
+  }
+  
+  if (aMinutes < bMinutes) return -1;
+  if (aMinutes > bMinutes) return 1;
+  return 0;
+}

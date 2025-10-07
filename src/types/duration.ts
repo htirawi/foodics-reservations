@@ -20,3 +20,11 @@ export interface UseDurationFieldReturn {
   error: ComputedRef<string | undefined>;
   handleInput: (event: Event) => Promise<void>;
 }
+
+/**
+ * Options for duration validation.
+ */
+export interface DurationOptions {
+  min?: number;
+  max?: number;
+}

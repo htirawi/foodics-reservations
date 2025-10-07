@@ -8,11 +8,7 @@
  */
 import { type Ref } from "vue";
 import { useAsyncAction } from "@/composables/useAsyncAction";
-export interface EnableBranchesResult {
-    ok: boolean;
-    enabled: string[];
-    failed: string[];
-}
+import type { EnableBranchesResult } from "@/types/async";
 function useBranchEnablingLogic(selectedBranchIds: Ref<string[]>, branchesStore: {
     enableBranches: (ids: string[]) => Promise<{
         ok: boolean;

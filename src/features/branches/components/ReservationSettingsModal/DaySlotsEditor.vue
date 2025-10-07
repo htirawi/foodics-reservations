@@ -1,8 +1,8 @@
 <script setup lang="ts">/**
  * @file DaySlotsEditor.vue
- * @summary Module: src/features/branches/components/ReservationSettingsModal/DaySlotsEditor.vue
+ * @summary Day-by-day time slots editor for reservation settings
  * @remarks
- *   - Tiny components; logic in composables/services.
+ *   - Tiny UI glue; logic in composables/utils.
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
@@ -11,6 +11,7 @@ import BaseButton from "@/components/ui/BaseButton.vue";
 import TimePill from "@/components/ui/TimePill.vue";
 import type { ReservationTimes } from "@/types/foodics";
 import { useDaySlotsEditor } from "@/features/branches/composables/useDaySlotsEditor";
+import { useConfirm } from "@/composables/useConfirm";
 
 const props = defineProps<{
   modelValue: ReservationTimes;
@@ -22,69 +23,106 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const { confirm } = useConfirm();
 
-const { weekdays, dayErrors, addSlot, removeSlot, updateSlot, applyToAllDays } = 
-  useDaySlotsEditor(props.modelValue, emit);
+const {
+  weekdays,
+  dayErrors,
+  canAdd,
+  addSlot,
+  removeSlot,
+  updateSlot,
+  applyToAllDaysWithConfirm,
+} = useDaySlotsEditor(props.modelValue, emit, confirm, t);
 </script>
 
 <template>
-  <div data-testid="settings-day-slots" class="space-y-4">
-    <h3 class="text-sm font-medium text-neutral-900">
+  <div data-testid="settings-day-slots" class="space-y-6">
+    <h3 class="text-base font-semibold text-neutral-900">
       {{ t('settings.slots.title') }}
     </h3>
+
     <div
       v-for="day in weekdays"
       :key="day"
-      class="rounded-lg border border-neutral-200 bg-neutral-50 p-4"
-      :data-testid="`settings-slot-day-${day}`"
+      class="space-y-3"
     >
-      <div class="mb-3 flex items-center justify-between">
-        <h4 class="text-sm font-medium text-neutral-900">
+      <fieldset
+        :data-testid="`settings-day-${day}`"
+        class="rounded-lg border border-neutral-200 bg-neutral-50 p-4"
+      >
+        <legend class="sr-only">
           {{ t(`settings.days.${day}`) }}
-        </h4>
+        </legend>
+
+        <div class="mb-3 flex items-center justify-between">
+          <h4
+            :id="`day-${day}-label`"
+            class="text-sm font-medium text-neutral-900"
+          >
+            {{ t(`settings.days.${day}`) }}
+          </h4>
+
+          <BaseButton
+            v-if="day === 'saturday'"
+            variant="ghost"
+            size="sm"
+            :data-testid="`slots-apply-all`"
+            @click="() => applyToAllDaysWithConfirm(day)"
+          >
+            {{ t('settings.timeSlots.applyToAll') }}
+          </BaseButton>
+        </div>
+
+        <div
+          v-if="modelValue[day] && modelValue[day].length > 0"
+          :data-testid="`settings-day-${day}-list`"
+          class="space-y-2"
+          role="list"
+          :aria-labelledby="`day-${day}-label`"
+        >
+          <TimePill
+            v-for="(slot, idx) in modelValue[day]"
+            :key="idx"
+            :from="slot[0]"
+            :to="slot[1]"
+            :editable="true"
+            :removable="true"
+            :data-testid="`settings-day-${day}-row-${idx}`"
+            role="listitem"
+            @update:from="(val) => updateSlot(day, idx, 'from', val)"
+            @update:to="(val) => updateSlot(day, idx, 'to', val)"
+            @remove="removeSlot(day, idx)"
+          />
+        </div>
+
         <BaseButton
           variant="ghost"
           size="sm"
-          :data-testid="`apply-all-${day}`"
-          @click="applyToAllDays(day)"
+          class="mt-3"
+          :disabled="!canAdd(day)"
+          :data-testid="`settings-day-${day}-add`"
+          @click="addSlot(day)"
         >
-          {{ t('settings.timeSlots.applyToAll') }}
+          + {{ t('settings.timeSlots.add') }}
         </BaseButton>
-      </div>
 
-      <div v-if="modelValue[day].length > 0" class="space-y-2">
-        <TimePill
-          v-for="(slot, idx) in modelValue[day]"
-          :key="idx"
-          :from="slot[0]"
-          :to="slot[1]"
-          :editable="true"
-          :removable="true"
-          :data-testid="`settings-slot-row-${day}-${idx}`"
-          @update:from="(val) => updateSlot(day, idx, 'from', val)"
-          @update:to="(val) => updateSlot(day, idx, 'to', val)"
-          @remove="removeSlot(day, idx)"
-        />
-      </div>
-
-      <BaseButton
-        variant="ghost"
-        size="sm"
-        class="mt-2"
-        :data-testid="`add-slot-${day}`"
-        @click="addSlot(day)"
-      >
-        + {{ t('settings.timeSlots.add') }}
-      </BaseButton>
-
-      <p
-        v-if="dayErrors[day] && dayErrors[day].length > 0"
-        class="mt-2 text-sm text-red-600"
-        :data-testid="`error-${day}`"
-      >
-        {{ dayErrors[day][0] }}
-      </p>
+        <div
+          v-if="dayErrors[day] && dayErrors[day].length > 0"
+          role="alert"
+          aria-live="polite"
+          :data-testid="`settings-day-${day}-error`"
+          class="mt-3 space-y-1"
+        >
+          <p
+            v-for="(error, idx) in dayErrors[day]"
+            :key="idx"
+            class="text-sm text-red-600"
+          >
+            {{ t(error) }}
+          </p>
+        </div>
+      </fieldset>
     </div>
   </div>
 </template>
-

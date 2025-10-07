@@ -13,3 +13,8 @@ export interface ConfirmOptions {
   cancelText?: string;
   variant?: "danger" | "warning" | "info";
 }
+
+/**
+ * Confirmation function type.
+ */
+export type ConfirmFn = (options: ConfirmOptions) => Promise<boolean>;

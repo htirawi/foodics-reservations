@@ -1,83 +1,53 @@
 /**
  * @file useDaySlotsEditor.ts
- * @summary Composable for day slots editor functionality
+ * @summary Composable for day-by-day time slots editor
  * @remarks
- *   - Tiny components; logic in composables/services.
+ *   - Handles slot CRUD operations for reservation times.
+ *   - Delegates validation to pure utils.
  *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
+
 import { computed, watch, onMounted } from "vue";
 import type { ReservationTimes, Weekday, SlotTuple } from "@/types/foodics";
-import { validateDaySlots } from "@/features/branches/utils/reservation.validation";
+import type { ConfirmFn } from "@/types/confirm";
+import { validateDaySlots, normalizeSlots } from "@/features/branches/utils/reservation.validation";
+import {
+  addSlotToDay,
+  removeSlotFromDay,
+  updateSlotField,
+  applyToAllDays as applyToAllDaysUtil,
+  WEEKDAY_ORDER,
+} from "./slotEditorActions";
 
+const MAX_SLOTS_PER_DAY = 3;
+
+interface DaySlotsEditorEmits {
+  (e: "update:modelValue", value: ReservationTimes): void;
+  (e: "update:valid", valid: boolean): void;
+}
+
+type TranslateFn = (key: string) => string;
+
+/**
+ * Emit overall validity based on all days.
+ */
 function emitValidity(
   times: ReservationTimes,
-  weekdays: Weekday[],
-  emit: {
-    (e: "update:valid", valid: boolean): void;
-  }
+  emit: DaySlotsEditorEmits
 ): void {
-  const allValid = weekdays.every((day) => {
+  const allValid = WEEKDAY_ORDER.every((day) => {
     const slots = times[day];
-    return slots ? validateDaySlots(slots).length === 0 : true;
+    if (!slots || slots.length === 0) return true;
+    const validation = validateDaySlots(slots);
+    return validation.ok;
   });
   emit("update:valid", allValid);
 }
 
-function createSlotActions(
-  modelValue: ReservationTimes,
-  emit: {
-    (e: "update:modelValue", value: ReservationTimes): void;
-    (e: "update:valid", valid: boolean): void;
-  },
-  weekdays: Weekday[]
-) {
-  function addSlot(day: Weekday): void {
-    const newSlots = [...modelValue[day]];
-    newSlots.push(["09:00", "17:00"]);
-    const updated = { ...modelValue, [day]: newSlots };
-    emit("update:modelValue", updated);
-    emitValidity(updated, weekdays, emit);
-  }
-
-  function removeSlot(day: Weekday, index: number): void {
-    const newSlots = modelValue[day].filter((_, i) => i !== index);
-    const updated = { ...modelValue, [day]: newSlots };
-    emit("update:modelValue", updated);
-    emitValidity(updated, weekdays, emit);
-  }
-
-  function updateSlot(day: Weekday, index: number, field: "from" | "to", value: string): void {
-    const newSlots = [...modelValue[day]];
-    const slot = newSlots[index];
-    if (!slot) return;
-    
-    const updatedSlot: SlotTuple = field === "from" ? [value, slot[1]] : [slot[0], value];
-    newSlots[index] = updatedSlot;
-    const updated = { ...modelValue, [day]: newSlots };
-    emit("update:modelValue", updated);
-    emitValidity(updated, weekdays, emit);
-  }
-
-  function applyToAllDays(day: Weekday): void {
-    const template = modelValue[day];
-    const updated: ReservationTimes = { ...modelValue };
-    weekdays.forEach((d) => {
-      updated[d] = [...template];
-    });
-    emit("update:modelValue", updated);
-    emitValidity(updated, weekdays, emit);
-  }
-
-  return {
-    addSlot,
-    removeSlot,
-    updateSlot,
-    applyToAllDays,
-  };
-}
-
-function createDayErrors(modelValue: ReservationTimes, weekdays: Weekday[]) {
+/**
+ * Create per-day errors computed ref.
+ */
+function createDayErrors(modelValue: ReservationTimes) {
   return computed<Record<Weekday, string[]>>(() => {
     const errors: Record<Weekday, string[]> = {
       saturday: [],
@@ -88,63 +58,140 @@ function createDayErrors(modelValue: ReservationTimes, weekdays: Weekday[]) {
       thursday: [],
       friday: [],
     };
-    
-    weekdays.forEach((day) => {
+
+    WEEKDAY_ORDER.forEach((day) => {
       const slots = modelValue[day];
-      if (slots) {
-        errors[day] = validateDaySlots(slots);
+      if (slots && slots.length > 0) {
+        const validation = validateDaySlots(slots);
+        errors[day] = validation.errors;
       }
     });
-    
+
     return errors;
   });
 }
 
-function setupWatchers(
-  modelValue: ReservationTimes,
-  weekdays: Weekday[],
-  emit: {
-    (e: "update:valid", valid: boolean): void;
-  }
-) {
-  onMounted(() => {
-    emitValidity(modelValue, weekdays, emit);
-  });
-
-  watch(() => modelValue, (newValue) => {
-    emitValidity(newValue, weekdays, emit);
-  });
+function getDaySlots(modelValue: ReservationTimes, day: Weekday): SlotTuple[] {
+  const slots = modelValue[day] ?? [];
+  return normalizeSlots(slots);
 }
 
-export function useDaySlotsEditor(
+function canAddSlot(modelValue: ReservationTimes, day: Weekday): boolean {
+  const slots = modelValue[day] ?? [];
+  return slots.length < MAX_SLOTS_PER_DAY;
+}
+
+function validateDaySlotsFor(modelValue: ReservationTimes, day: Weekday) {
+  const slots = modelValue[day] ?? [];
+  return validateDaySlots(slots);
+}
+
+/**
+ * Create slot CRUD actions.
+ */
+function createSlotActions(
   modelValue: ReservationTimes,
-  emit: {
-    (e: "update:modelValue", value: ReservationTimes): void;
-    (e: "update:valid", valid: boolean): void;
-  }
+  emit: DaySlotsEditorEmits
 ) {
-  const weekdays: Weekday[] = [
-    "saturday",
-    "sunday", 
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-  ];
+  function addSlot(day: Weekday): void {
+    if (!canAddSlot(modelValue, day)) return;
+    const updated = addSlotToDay(modelValue, day);
+    emit("update:modelValue", updated);
+    emitValidity(updated, emit);
+  }
 
-  const dayErrors = createDayErrors(modelValue, weekdays);
-  const { addSlot, removeSlot, updateSlot, applyToAllDays } = 
-    createSlotActions(modelValue, emit, weekdays);
+  function removeSlot(day: Weekday, index: number): void {
+    const updated = removeSlotFromDay(modelValue, day, index);
+    emit("update:modelValue", updated);
+    emitValidity(updated, emit);
+  }
 
-  setupWatchers(modelValue, weekdays, emit);
+  function updateSlot(day: Weekday, index: number, field: "from" | "to", value: string): void {
+    const updated = updateSlotField(modelValue, { day, index, field, value });
+    emit("update:modelValue", updated);
+    emitValidity(updated, emit);
+  }
+
+  function applyToAllDays(sourceDay: Weekday): void {
+    const updated = applyToAllDaysUtil(modelValue, sourceDay);
+    emit("update:modelValue", updated);
+    emitValidity(updated, emit);
+  }
 
   return {
-    weekdays,
-    dayErrors,
+    getDaySlots: (day: Weekday) => getDaySlots(modelValue, day),
+    canAdd: (day: Weekday) => canAddSlot(modelValue, day),
+    validateDay: (day: Weekday) => validateDaySlotsFor(modelValue, day),
     addSlot,
     removeSlot,
     updateSlot,
     applyToAllDays,
+  };
+}
+
+/**
+ * Setup watchers for validity tracking.
+ */
+function setupWatchers(
+  modelValue: ReservationTimes,
+  emit: DaySlotsEditorEmits
+) {
+  onMounted(() => {
+    emitValidity(modelValue, emit);
+  });
+
+  watch(
+    () => modelValue,
+    (newValue) => {
+      emitValidity(newValue, emit);
+    },
+    { deep: true }
+  );
+}
+
+/**
+ * Composable for day-by-day time slots editor.
+ * 
+ * @param modelValue - Current reservation times
+ * @param emit - Emitter for updates and validity
+ * @param confirm - Confirmation dialog function
+ * @param t - Translation function
+ * @returns Slot management API
+ */
+export function useDaySlotsEditor(
+  modelValue: ReservationTimes,
+  emit: DaySlotsEditorEmits,
+  confirm?: ConfirmFn,
+  t?: TranslateFn
+) {
+  const dayErrors = createDayErrors(modelValue);
+  const actions = createSlotActions(modelValue, emit);
+
+  setupWatchers(modelValue, emit);
+
+  /**
+   * Apply one day's slots to all days with confirmation.
+   */
+  async function applyToAllDaysWithConfirm(sourceDay: Weekday): Promise<void> {
+    if (!confirm || !t) {
+      actions.applyToAllDays(sourceDay);
+      return;
+    }
+
+    const confirmed = await confirm({
+      title: t("settings.slots.applyAll"),
+      message: t("settings.slots.confirmApplyAll"),
+    });
+
+    if (confirmed) {
+      actions.applyToAllDays(sourceDay);
+    }
+  }
+
+  return {
+    weekdays: WEEKDAY_ORDER,
+    dayErrors,
+    ...actions,
+    applyToAllDaysWithConfirm,
   };
 }

@@ -82,7 +82,22 @@
       "helper": "Display-only: sections and tables for this branch."
     },
     "slots": {
-      "title": "Reservation Time Slots"
+      "title": "Day-by-day time slots",
+      "add": "Add slot",
+      "applyAll": "Apply Saturday's slots to all days",
+      "confirmApplyAll": "This will overwrite slots for all other days. Continue?",
+      "labels": {
+        "start": "Start (HH:mm)",
+        "end": "End (HH:mm)"
+      },
+      "errors": {
+        "required": "Both start and end are required.",
+        "format": "Use HH:mm (e.g., 09:30).",
+        "order": "Start time must be before end time.",
+        "max": "At most 3 slots per day.",
+        "overlap": "Slots must not overlap.",
+        "overnight": "Overnight ranges not supported."
+      }
     },
     "days": {
       "saturday": "Saturday",

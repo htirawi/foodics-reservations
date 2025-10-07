@@ -1,19 +1,39 @@
 /**
  * @file reservation.validation.ts
- * @summary Module: src/features/branches/utils/reservation.validation.ts
+ * @summary Pure validation utilities for reservation time slots
  * @remarks
- *   - Tiny components; logic in composables/services.
+ *   - Pure functions; no side effects; no DOM.
  *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
+ *   - HH:mm format only (24-hour); no date libraries.
  */
-import type { SlotTuple, ReservationTimes, Weekday } from "@/types/foodics";
+import type { SlotTuple, ReservationTimes } from "@/types/foodics";
+import type { DurationOptions } from "@/types/duration";
+import {
+  parseHHmm,
+  toMinutes,
+  isHHmm,
+  timeToMinutes,
+  compareHHmm,
+} from "@/utils/time";
+import {
+  slotOverlaps,
+  normalizeSlots,
+} from "./slot.operations";
+import {
+  validateDaySlots,
+  validateReservationTimes,
+} from "./slot.validation";
+import type { ReservationTimesValidation } from "@/types/validation";
+
 const MIN_DURATION = 1;
 const MAX_DURATION = 1440;
 const TIME_FORMAT_REGEX = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
-export interface DurationOptions {
-    min?: number;
-    max?: number;
-}
+
+// Re-export utilities for convenience
+export { parseHHmm, toMinutes, isHHmm, timeToMinutes, compareHHmm };
+export { slotOverlaps, normalizeSlots };
+export { validateDaySlots, validateReservationTimes };
+export type { DurationOptions, ReservationTimesValidation };
 function sanitizeStringDuration(value: string, min: number, max: number): number | null {
     const trimmed = value.trim();
     if (trimmed === "")
@@ -58,7 +78,9 @@ export function isValidDuration(value: unknown, { min = MIN_DURATION, max = MAX_
 export function isValidTimeFormat(time: string): boolean {
     return TIME_FORMAT_REGEX.test(time);
 }
-export function timeToMinutes(time: string): number | null {
+
+// timeToMinutes is imported from @/utils/time but we keep this for backward compatibility
+function timeToMinutesLocal(time: string): number | null {
     const match = TIME_FORMAT_REGEX.exec(time);
     if (!match)
         return null;
@@ -72,77 +94,25 @@ export function isValidSlotTuple(tuple: SlotTuple): boolean {
         return false;
     if (!isValidTimeFormat(start) || !isValidTimeFormat(end))
         return false;
-    const startMinutes = timeToMinutes(start);
-    const endMinutes = timeToMinutes(end);
+    const startMinutes = timeToMinutesLocal(start);
+    const endMinutes = timeToMinutesLocal(end);
     if (startMinutes === null || endMinutes === null)
         return false;
     return endMinutes > startMinutes;
 }
-function slotToMinutesRange(slot: SlotTuple): [
-    number,
-    number
-] | null {
-    const start = timeToMinutes(slot[0] ?? "");
-    const end = timeToMinutes(slot[1] ?? "");
-    if (start === null || end === null)
-        return null;
-    return [start, end];
-}
+
+/**
+ * Backward-compatible wrapper for slotOverlaps.
+ * @deprecated Use slotOverlaps from slot.operations.ts instead
+ */
 export function slotsOverlap(slot1: SlotTuple, slot2: SlotTuple): boolean {
-    const range1 = slotToMinutesRange(slot1);
-    const range2 = slotToMinutesRange(slot2);
-    if (!range1 || !range2)
-        return false;
-    const [start1, end1] = range1;
-    const [start2, end2] = range2;
-    return (start1 < end2 && end1 > start2);
+    return slotOverlaps(slot1, slot2);
 }
-function checkSlotOverlap(slot: SlotTuple, index: number, allSlots: SlotTuple[]): string | null {
-    for (let i = index + 1; i < allSlots.length; i++) {
-        const otherSlot = allSlots[i];
-        if (otherSlot && slotsOverlap(slot, otherSlot)) {
-            return `Slot ${index + 1} overlaps with slot ${i + 1}`;
-        }
-    }
-    return null;
-}
-export function validateDaySlots(slots: SlotTuple[]): string[] {
-    const errors: string[] = [];
-    slots.forEach((slot, index) => {
-        if (!isValidSlotTuple(slot)) {
-            errors.push(`Slot ${index + 1} is invalid`);
-            return;
-        }
-        const overlapError = checkSlotOverlap(slot, index, slots);
-        if (overlapError)
-            errors.push(overlapError);
-    });
-    return errors;
-}
-export interface ReservationTimesValidation {
-    ok: boolean;
-    errors: Record<Weekday, string[]>;
-}
+
+/**
+ * Backward-compatible wrapper.
+ * @deprecated Use validateReservationTimes from slot.validation.ts instead
+ */
 export function isValidReservationTimes(reservationTimes: ReservationTimes): ReservationTimesValidation {
-    const errors: Record<Weekday, string[]> = {
-        saturday: [],
-        sunday: [],
-        monday: [],
-        tuesday: [],
-        wednesday: [],
-        thursday: [],
-        friday: [],
-    };
-    let hasErrors = false;
-    (Object.keys(reservationTimes) as Weekday[]).forEach((day) => {
-        const slots = reservationTimes[day];
-        if (!slots)
-            return;
-        const dayErrors = validateDaySlots(slots);
-        if (dayErrors.length > 0) {
-            errors[day] = dayErrors;
-            hasErrors = true;
-        }
-    });
-    return { ok: !hasErrors, errors };
+    return validateReservationTimes(reservationTimes);
 }

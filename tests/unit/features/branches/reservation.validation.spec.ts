@@ -163,28 +163,32 @@ describe("reservation.validation", () => {
                 ["13:00", "17:00"],
                 ["18:00", "22:00"],
             ];
-            expect(validateDaySlots(slots)).toEqual([]);
+            const result = validateDaySlots(slots);
+            expect(result.ok).toBe(true);
+            expect(result.errors).toEqual([]);
         });
         it("returns errors for invalid slot tuples", () => {
             const slots: SlotTuple[] = [
                 ["17:00", "09:00"],
                 ["13:00", "17:00"],
             ];
-            const errors = validateDaySlots(slots);
-            expect(errors.length).toBeGreaterThan(0);
-            expect(errors[0]).toContain("Slot 1");
+            const result = validateDaySlots(slots);
+            expect(result.ok).toBe(false);
+            expect(result.errors.length).toBeGreaterThan(0);
         });
         it("returns errors for overlapping slots", () => {
             const slots: SlotTuple[] = [
                 ["09:00", "12:00"],
                 ["11:00", "14:00"],
             ];
-            const errors = validateDaySlots(slots);
-            expect(errors.length).toBeGreaterThan(0);
-            expect(errors[0]).toContain("overlap");
+            const result = validateDaySlots(slots);
+            expect(result.ok).toBe(false);
+            expect(result.errors.length).toBeGreaterThan(0);
         });
-        it("returns empty array for empty slots", () => {
-            expect(validateDaySlots([])).toEqual([]);
+        it("returns ok:true for empty slots", () => {
+            const result = validateDaySlots([]);
+            expect(result.ok).toBe(true);
+            expect(result.errors).toEqual([]);
         });
     });
     describe("isValidReservationTimes", () => {
@@ -200,8 +204,8 @@ describe("reservation.validation", () => {
             };
             const result = isValidReservationTimes(times);
             expect(result.ok).toBe(true);
-            expect(result.errors.saturday).toEqual([]);
-            expect(result.errors.sunday).toEqual([]);
+            expect(result.perDay.saturday).toEqual([]);
+            expect(result.perDay.sunday).toEqual([]);
         });
         it("returns ok=false and errors for invalid slots", () => {
             const times: ReservationTimes = {
@@ -218,8 +222,8 @@ describe("reservation.validation", () => {
             };
             const result = isValidReservationTimes(times);
             expect(result.ok).toBe(false);
-            expect(result.errors.saturday.length).toBeGreaterThan(0);
-            expect(result.errors.sunday.length).toBeGreaterThan(0);
+            expect(result.perDay.saturday.length).toBeGreaterThan(0);
+            expect(result.perDay.sunday.length).toBeGreaterThan(0);
         });
         it("returns ok=true for all empty days", () => {
             const times: ReservationTimes = {

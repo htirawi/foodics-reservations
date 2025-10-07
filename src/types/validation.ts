@@ -12,3 +12,11 @@ export interface ValidationErrors {
   duration?: string | undefined;
   slots?: Partial<Record<Weekday, string>> | undefined;
 }
+
+/**
+ * Validation result for full reservation times (all days).
+ */
+export interface ReservationTimesValidation {
+  ok: boolean;
+  perDay: Record<Weekday, string[]>;
+}
