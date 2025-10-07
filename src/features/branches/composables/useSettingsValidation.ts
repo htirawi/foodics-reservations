@@ -9,49 +9,42 @@
 import { ref } from "vue";
 import type { Weekday, SlotTuple } from "@/types/foodics";
 import type { IValidationErrors } from "@/types/validation";
-function checkSlotTimes(from: string, to: string): "missing" | "invalid" | "valid" {
-    if (!from || !to)
-        return "missing";
-    return from >= to ? "invalid" : "valid";
-}
-function checkOverlap(slot1: SlotTuple, slot2: SlotTuple): boolean {
-    const [from1, to1] = slot1;
-    const [from2, to2] = slot2;
-    return from1 < to2 && to1 > from2;
-}
-function validateSlotTimes(slots: SlotTuple[], messages: {
-    missing: string;
-    invalid: string;
-}): string | null {
+import { isValidRange, isOverlapping } from "@/utils/slots";
+
+function validateIndividualSlots(slots: SlotTuple[], messages: { invalid: string }): string | null {
     for (const slot of slots) {
-        if (!slot) continue;
-        const [from, to] = slot;
-        const timeCheck = checkSlotTimes(from, to);
-        if (timeCheck === "missing") return messages.missing;
-        if (timeCheck === "invalid") return messages.invalid;
+        const validation = isValidRange(slot);
+        if (!validation.ok) {
+            return messages.invalid;
+        }
     }
     return null;
 }
 
-function checkSlotPairOverlap(slot1: SlotTuple, slot2: SlotTuple): boolean {
-    return slot2 && checkOverlap(slot1, slot2);
+function validateSlotOverlaps(slots: SlotTuple[], messages: { overlap: string; invalid: string }): string | null {
+    for (let i = 0; i < slots.length; i++) {
+        const slot = slots[i];
+        if (!slot) continue;
+        
+        // Check this slot against all other slots for overlaps
+        const hasOverlap = checkSlotOverlaps(slot, slots, i + 1);
+        if (hasOverlap) {
+            return messages.overlap;
+        }
+    }
+    return null;
 }
 
-function checkSlotAgainstOthers(slot: SlotTuple, otherSlots: SlotTuple[], startIndex: number): boolean {
-    for (let j = startIndex; j < otherSlots.length; j++) {
-        const otherSlot = otherSlots[j];
-        if (otherSlot && checkSlotPairOverlap(slot, otherSlot)) return true;
+function checkSlotOverlaps(slot: SlotTuple, slots: SlotTuple[], startIndex: number): boolean {
+    for (let j = startIndex; j < slots.length; j++) {
+        const otherSlot = slots[j];
+        if (!otherSlot) continue;
+        
+        if (isOverlapping(slot, otherSlot)) {
+            return true;
+        }
     }
     return false;
-}
-
-function validateSlotOverlaps(slots: SlotTuple[], messages: { overlap: string }): string | null {
-    for (let i = 0; i < slots.length; i++) {
-        const s1 = slots[i];
-        if (!s1) continue;
-        if (checkSlotAgainstOthers(s1, slots, i + 1)) return messages.overlap;
-    }
-    return null;
 }
 
 function validateSlots(slots: SlotTuple[], messages: {
@@ -59,8 +52,11 @@ function validateSlots(slots: SlotTuple[], messages: {
     invalid: string;
     overlap: string;
 }): string | null {
-    const timeError = validateSlotTimes(slots, messages);
-    if (timeError) return timeError;
+    if (!slots || slots.length === 0) return null;
+    
+    const individualError = validateIndividualSlots(slots, messages);
+    if (individualError) return individualError;
+    
     return validateSlotOverlaps(slots, messages);
 }
 

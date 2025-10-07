@@ -191,7 +191,7 @@ describe("DaySlotsEditor", () => {
 
       const error = wrapper.find('[data-testid="error-saturday"]');
       expect(error.exists()).toBe(true);
-      expect(error.text()).toContain("Overnight ranges not supported.");
+      expect(error.text()).toContain("Start time must be before end time.");
     });
 
     it("should have aria-live on error message", () => {
@@ -280,7 +280,7 @@ describe("DaySlotsEditor", () => {
       };
       const wrapper = createWrapper(times);
       const error = wrapper.find('[data-testid="error-saturday"]');
-      expect(error.text()).toContain("Overnight ranges not supported.");
+      expect(error.text()).toContain("Start time must be before end time.");
     });
 
     it("should display translated button text", () => {

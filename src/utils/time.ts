@@ -71,3 +71,37 @@ export function compareHHmm(a: string, b: string): -1 | 0 | 1 {
   if (aMinutes > bMinutes) return 1;
   return 0;
 }
+
+/**
+ * Alias for parseHHmm (CARD 10 spec compliance).
+ * @param input - Time string in HH:mm format
+ * @returns Object with hours and minutes, or null if invalid
+ */
+export function parseTime(input: string): { h: number; m: number } | null {
+  return parseHHmm(input);
+}
+
+/**
+ * Format hours and minutes into HH:mm string (zero-padded).
+ * @param h - Hours (0-23)
+ * @param m - Minutes (0-59)
+ * @returns Zero-padded HH:mm string
+ */
+export function formatTime(h: number, m: number): string {
+  const hh = String(h).padStart(2, "0");
+  const mm = String(m).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
+/**
+ * Convert total minutes since midnight to { h, m } object.
+ * Clamps input to valid range [0..1439].
+ * @param total - Total minutes since midnight
+ * @returns Object with hours and minutes
+ */
+export function fromMinutes(total: number): { h: number; m: number } {
+  const clamped = Math.max(0, Math.min(1439, total));
+  const h = Math.floor(clamped / 60);
+  const m = clamped % 60;
+  return { h, m };
+}

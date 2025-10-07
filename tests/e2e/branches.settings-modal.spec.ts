@@ -24,11 +24,11 @@ test.describe("Branches Settings Modal", () => {
             await expect(page.getByTestId("settings-tables")).toBeVisible();
             await expect(page.getByTestId("settings-day-slots")).toBeVisible();
         });
-        test("Save button is disabled initially", async ({ page }) => {
+        test("Save button is enabled when form has valid data", async ({ page }) => {
             await page.getByTestId("branch-row-test-branch-1").click();
             await page.getByTestId("settings-modal").waitFor();
             const saveButton = page.getByTestId("save-button");
-            await expect(saveButton).toBeDisabled();
+            await expect(saveButton).toBeEnabled();
         });
         test("enables Save button when form is valid", async ({ page }) => {
             await page.getByTestId("branch-row-test-branch-1").click();

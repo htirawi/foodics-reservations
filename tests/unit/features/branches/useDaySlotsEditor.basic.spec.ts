@@ -91,7 +91,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
       };
       const { dayErrors } = useDaySlotsEditor(times, mockEmit);
       expect(dayErrors.value.saturday.length).toBeGreaterThan(0);
-      expect(dayErrors.value.saturday[0]).toBe("settings.slots.errors.overnight");
+      expect(dayErrors.value.saturday[0]).toBe("settings.slots.errors.order");
     });
   });
 

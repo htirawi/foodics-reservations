@@ -13,6 +13,7 @@ import BaseButton from "@/components/ui/BaseButton.vue";
 import DaySlots from "./DaySlots.vue";
 import DurationField from "./ReservationSettingsModal/DurationField.vue";
 import { useI18n } from "vue-i18n";
+import type { ITable } from "@/types/foodics";
 const props = withDefaults(defineProps<{
     branchId: string | null;
 }>(), {
@@ -25,8 +26,23 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const { isOpen, branch, duration, weekSlots, weekdays, availableTables, errors, addSlot, removeSlot, updateSlot, applyToAllDays, handleSave, handleDisable, } = useSettingsForm(props, () => emit("close"));
 const canSave = computed<boolean>(() => {
-    return false;
+    // Check if duration is valid
+    if (!duration.value || duration.value < 1) return false;
+    
+    // Allow save if duration is valid
+    return true;
 });
+
+function getTableDisplayName(table: ITable): string {
+    // Find the section for this table
+    const section = branch.value?.sections?.find(s => 
+        s.tables?.some(t => t.id === table.id)
+    );
+    const sectionName = section?.name ?? 'Unknown';
+    const tableName = table.name ?? table.id;
+    return `${sectionName} – ${tableName}`;
+}
+
 function handleClose(): void {
     emit("close");
 }
@@ -56,16 +72,24 @@ function handleClose(): void {
         <label class="mb-2 block text-sm font-medium text-neutral-700">
           {{ t('settings.tables.label') }}
         </label>
-        <div v-if="availableTables.length > 0" class="flex flex-wrap gap-2">
-          <div
-            v-for="table in availableTables"
-            :key="table.id"
-            class="rounded-lg border-2 border-primary-500 bg-white px-4 py-2 text-sm"
-            data-testid="table-pill"
-          >
-            {{ table.name ?? table.id }}
+        
+        <div v-if="availableTables.length > 0" class="space-y-3">
+          <div data-testid="settings-tables-summary" class="text-sm text-neutral-600">
+            {{ t('settings.tables.summary', { count: availableTables.length }) }}
           </div>
+          
+          <ul data-testid="settings-tables-list" role="list" class="space-y-2">
+            <li
+              v-for="table in availableTables"
+              :key="table.id"
+              :data-testid="`settings-tables-table-${table.id}`"
+              class="rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm"
+            >
+              {{ getTableDisplayName(table) }}
+            </li>
+          </ul>
         </div>
+        
         <p v-else class="text-sm text-neutral-500">
           {{ t('settings.tables.noTables') }}
         </p>

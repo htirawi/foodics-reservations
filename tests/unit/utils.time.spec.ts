@@ -6,10 +6,13 @@
 import { describe, it, expect } from "vitest";
 import {
   parseHHmm,
+  parseTime,
   toMinutes,
   isHHmm,
   timeToMinutes,
   compareHHmm,
+  formatTime,
+  fromMinutes,
 } from "@/utils/time";
 
 describe("parseHHmm", () => {
@@ -93,5 +96,79 @@ describe("compareHHmm", () => {
   it("should return 0 for invalid times", () => {
     expect(compareHHmm("invalid", "09:00")).toBe(0);
     expect(compareHHmm("09:00", "invalid")).toBe(0);
+  });
+});
+
+describe("parseTime", () => {
+  it("should be an alias for parseHHmm", () => {
+    expect(parseTime("09:30")).toEqual({ h: 9, m: 30 });
+    expect(parseTime("00:00")).toEqual({ h: 0, m: 0 });
+    expect(parseTime("23:59")).toEqual({ h: 23, m: 59 });
+  });
+
+  it("should return null for invalid format", () => {
+    expect(parseTime("9:30")).toBeNull();
+    expect(parseTime("invalid")).toBeNull();
+  });
+});
+
+describe("formatTime", () => {
+  it("should format hours and minutes with zero-padding", () => {
+    expect(formatTime(9, 30)).toBe("09:30");
+    expect(formatTime(0, 0)).toBe("00:00");
+    expect(formatTime(23, 59)).toBe("23:59");
+  });
+
+  it("should zero-pad single-digit hours and minutes", () => {
+    expect(formatTime(5, 7)).toBe("05:07");
+    expect(formatTime(0, 5)).toBe("00:05");
+    expect(formatTime(15, 0)).toBe("15:00");
+  });
+});
+
+describe("fromMinutes", () => {
+  it("should convert total minutes to { h, m }", () => {
+    expect(fromMinutes(570)).toEqual({ h: 9, m: 30 });
+    expect(fromMinutes(0)).toEqual({ h: 0, m: 0 });
+    expect(fromMinutes(1439)).toEqual({ h: 23, m: 59 });
+    expect(fromMinutes(720)).toEqual({ h: 12, m: 0 });
+  });
+
+  it("should clamp values outside [0..1439]", () => {
+    expect(fromMinutes(-10)).toEqual({ h: 0, m: 0 });
+    expect(fromMinutes(2000)).toEqual({ h: 23, m: 59 });
+    expect(fromMinutes(1500)).toEqual({ h: 23, m: 59 });
+  });
+});
+
+describe("Roundtrip tests", () => {
+  it("parseTime → toMinutes → fromMinutes → formatTime should be consistent", () => {
+    const times = ["09:30", "00:00", "23:59", "12:00", "18:45"];
+
+    for (const time of times) {
+      const parsed = parseTime(time);
+      expect(parsed).not.toBeNull();
+      if (parsed) {
+        const minutes = toMinutes(parsed);
+        const back = fromMinutes(minutes);
+        const formatted = formatTime(back.h, back.m);
+        expect(formatted).toBe(time);
+      }
+    }
+  });
+
+  it("formatTime → parseTime should roundtrip", () => {
+    const cases = [
+      { h: 9, m: 30 },
+      { h: 0, m: 0 },
+      { h: 23, m: 59 },
+      { h: 12, m: 0 },
+    ];
+
+    for (const { h, m } of cases) {
+      const formatted = formatTime(h, m);
+      const parsed = parseTime(formatted);
+      expect(parsed).toEqual({ h, m });
+    }
   });
 });

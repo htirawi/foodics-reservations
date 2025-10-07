@@ -65,7 +65,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run smoke E2E tests
-        run: npm run test:e2e -- tests/e2e/smoke.spec.ts tests/e2e/app-shell.spec.ts --project="Desktop Chrome"
+        run: npm run test:e2e -- tests/e2e/smoke.spec.ts tests/e2e/app-shell.spec.ts --project=chromium
 
       - name: Upload Playwright report
         if: failure()
