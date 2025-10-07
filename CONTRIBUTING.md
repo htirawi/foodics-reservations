@@ -27,7 +27,12 @@ npm run lint          # Fix linting issues
 npm run typecheck     # Verify types
 npm run test:unit     # Run unit tests
 npm run test:e2e      # Run E2E tests
+npm run build         # Verify production build
 ```
+
+**Quick verification**: `npm run test:quick` (lint + typecheck + unit tests)
+
+**Full verification**: `npm run test:full` (all tests + build)
 
 Fix any failures before moving forward.
 
@@ -77,6 +82,8 @@ function process(data: User): Result {}
 - Extract complex logic to composables
 - Keep components small (≤150 lines)
 - No prop mutations - use emits
+- No service imports - use stores/composables
+- No eslint-disable directives
 
 ```vue
 <script setup lang="ts">
@@ -199,7 +206,7 @@ All user-facing text must use i18n keys:
 <button>{{ $t('common.submit') }}</button>
 ```
 
-Add translations to `src/i18n/locales/en.json` and `src/i18n/locales/ar.json`.
+Add translations to `src/app/i18n/locales/en.json` and `src/app/i18n/locales/ar.json`.
 
 Use logical CSS properties for RTL support:
 
@@ -241,11 +248,17 @@ Address review comments within 24 hours when possible.
 
 All PRs must pass:
 
-1. Lint
-2. Type check
-3. Unit tests
-4. E2E tests
-5. Build
+1. **Lint** - ESLint with strict rules (no eslint-disable allowed)
+2. **Type check** - TypeScript strict mode
+3. **Unit tests** - Vitest with 308+ tests
+4. **E2E tests** - Playwright with offline mode
+5. **Build** - Production build verification
+
+**Zero tolerance for**:
+- `eslint-disable` directives
+- `@ts-ignore` or `@ts-expect-error`
+- `console.log` in production code
+- `any` or `unknown` types
 
 Fix failures before requesting review.
 

@@ -1,6 +1,9 @@
 # Generated documentation (not pushed to repo)
 /docs
 
+# Local development scripts (not pushed to repo)
+/scripts
+
 # Dependencies
 node_modules/
 

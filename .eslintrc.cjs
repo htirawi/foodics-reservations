@@ -61,7 +61,7 @@ module.exports = {
 
     // Vue specific
     'vue/multi-word-component-names': ['error', {
-      ignores: ['App', 'Home', 'Index', 'Error', 'BaseButton', 'BaseCard', 'BaseInput', 'BaseModal', 'BaseSelect', 'BaseTable', 'ConfirmDialog', 'EmptyState', 'LocaleSwitcher', 'PageLoading', 'TimePill', 'UiModal', 'Toaster'] // tiny, explicit allowlist only
+      ignores: ['App', 'Home', 'Index', 'Error'] // Only essential exceptions
     }],
     'vue/no-v-html': 'error',
     'vue/no-mutating-props': 'error',
