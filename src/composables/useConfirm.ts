@@ -1,13 +1,29 @@
-/**
- * @file useConfirm.ts
- * @summary Module: src/composables/useConfirm.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { ref } from "vue";
 import type { IConfirmOptions } from "@/types/confirm";
+
+/**
+ * Confirmation dialog system with promise-based user response handling.
+ * Displays a modal dialog and resolves with user's choice (confirm/cancel).
+ *
+ * @returns Object containing dialog state and confirm/handleConfirm/handleCancel functions
+ *
+ * @example
+ * ```typescript
+ * const { confirm } = useConfirm();
+ *
+ * const userConfirmed = await confirm({
+ *   title: 'Delete Branch',
+ *   message: 'Are you sure? This action cannot be undone.',
+ *   confirmText: 'Delete',
+ *   cancelText: 'Cancel',
+ *   variant: 'danger'
+ * });
+ *
+ * if (userConfirmed) {
+ *   await deleteBranch(branchId);
+ * }
+ * ```
+ */
 export const useConfirm = () => {
     const isOpen = ref(false);
     const options = ref<IConfirmOptions | null>(null);

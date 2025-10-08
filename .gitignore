@@ -6,6 +6,8 @@ CHANGELOG.md
 CONTRIBUTING.md
 REPORT_TYPES_AUDIT.md
 PROOF_CLEAN_HISTORY.md
+COMPLIANCE_AUDIT.md
+.comments_sweep_progress.json
 test-*.log
 test-results.json
 

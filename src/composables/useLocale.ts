@@ -1,11 +1,3 @@
-/**
- * @file useLocale.ts
- * @summary Module: src/composables/useLocale.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { SupportedLocale } from "@/types/locale";

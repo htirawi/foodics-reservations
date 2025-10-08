@@ -10,14 +10,7 @@
   </button>
 </template>
 
-<script setup lang="ts">/**
- * @file LocaleSwitcher.vue
- * @summary Module: src/components/ui/LocaleSwitcher.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import { useLocale } from "@/composables/useLocale";
 import { TESTID_LOCALE_SWITCHER } from "@/constants/testids";
 

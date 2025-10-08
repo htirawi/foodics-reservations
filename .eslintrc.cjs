@@ -164,6 +164,15 @@ module.exports = {
       },
     },
     {
+      // Allow any in generic utility composables
+      files: ['src/composables/useDebounce.ts'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+        'eslint-comments/no-use': 'off',
+        'eslint-comments/require-description': 'off',
+      },
+    },
+    {
       // Relax rules for build scripts and config files
       files: [
         'scripts/**/*.{js,mjs,ts}',

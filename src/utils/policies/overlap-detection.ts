@@ -1,13 +1,3 @@
-/**
- * @file overlap-detection.ts
- * @summary Overlap detection policies (touching allowed, strict overlap forbidden)
- * @remarks
- *   - Pure functions; no side effects.
- *   - TypeScript strict; no any/unknown.
- *   - Policy: Touching boundaries ([09:00,12:00] + [12:00,15:00]) allowed
- *   - Strict overlap ([09:00,12:01] + [12:00,15:00]) forbidden
- */
-
 import type { SlotTuple } from '@/types/foodics';
 import { timeToMinutes } from '@/utils/time';
 

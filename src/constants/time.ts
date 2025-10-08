@@ -1,14 +1,3 @@
-/**
- * @file time.ts
- * @summary Time conversion factors, limits, and formatting constants
- * @remarks
- *   - Used by pure time utilities (HH:mm operations)
- *   - No date library dependencies
- * @example
- *   import { MINUTES_PER_HOUR, TIME_PAD_LENGTH } from '@/constants/time';
- *   const hours = Math.floor(minutes / MINUTES_PER_HOUR);
- */
-
 // Conversion Factors
 export const MINUTES_PER_HOUR = 60;
 export const HOURS_PER_DAY = 24;

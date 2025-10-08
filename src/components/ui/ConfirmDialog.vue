@@ -33,14 +33,7 @@
   </BaseModal>
 </template>
 
-<script setup lang="ts">/**
- * @file ConfirmDialog.vue
- * @summary Module: src/components/ui/ConfirmDialog.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui.store";
 import BaseModal from "@/components/ui/BaseModal.vue";

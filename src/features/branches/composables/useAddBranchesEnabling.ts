@@ -1,11 +1,3 @@
-/**
- * @file useAddBranchesEnabling.ts
- * @summary Module: src/features/branches/composables/useAddBranchesEnabling.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { ref, type Ref } from "vue";
 import type { Composer } from "vue-i18n";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";

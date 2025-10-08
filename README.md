@@ -298,6 +298,10 @@ Keep PRs focused and reviewable:
 
 ## Notes on Dependencies
 
-- Runtime: `axios`, `pinia`, `vue-i18n`, `vue`, `vue-router`, `tailwindcss` (plugins forms/typography).
-- Dev/Test: ESLint + Prettier, TypeScript, Vitest + `@vue/test-utils`, Playwright.
-- New dependencies require a short rationale and bundle impact in PR.
+**Runtime (4 total)**: `axios` (HTTP client), `pinia` (state management), `vue` (framework), `vue-i18n` (internationalization)
+
+**Dev/Test**: ESLint + Prettier, TypeScript, Vitest + `@vue/test-utils`, Playwright, Tailwind CSS (build-time only)
+
+**Custom implementations**: Debouncing, validation utilities, and other common patterns are implemented in-house to minimize external dependencies and demonstrate ability to write custom utility functions.
+
+New dependencies require a short rationale and bundle impact in PR.

@@ -1,11 +1,3 @@
-/**
- * @file ui.store.ts
- * @summary Module: src/stores/ui.store.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { IToast } from "@/types/toast";

@@ -17,14 +17,7 @@
   </header>
 </template>
 
-<script setup lang="ts">/**
- * @file AppHeader.vue
- * @summary Module: src/components/layout/AppHeader.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import LocaleSwitcher from "@/components/ui/LocaleSwitcher.vue";
 import { TESTID_HEADER_TITLE } from "@/constants/testids";
 </script>

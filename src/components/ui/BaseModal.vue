@@ -53,14 +53,7 @@ d="M6 18L18 6M6 6l12 12" />
   </Teleport>
 </template>
 
-<script setup lang="ts">/**
- * @file BaseModal.vue
- * @summary Module: src/components/ui/BaseModal.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import { computed, onMounted, onBeforeUnmount } from "vue";
 import { ID_PREFIX_MODAL_TITLE, RADIX_BASE36, ID_RANDOM_SLICE_START } from "@/constants/html";
 

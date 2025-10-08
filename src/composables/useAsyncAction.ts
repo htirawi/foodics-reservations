@@ -1,13 +1,26 @@
-/**
- * @file useAsyncAction.ts
- * @summary Module: src/composables/useAsyncAction.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { ref } from "vue";
 import type { IAsyncActionState } from "@/types/async";
+
+/**
+ * Manages asynchronous action state with loading indicators and error tracking.
+ * Provides a standardized pattern for handling async operations with proper cleanup.
+ *
+ * @returns Object containing busy state, error state, reset function, and run executor
+ *
+ * @example
+ * ```typescript
+ * const { busy, error, run } = useAsyncAction();
+ *
+ * await run(async () => {
+ *   const data = await fetchBranches();
+ *   processBranches(data);
+ * });
+ *
+ * if (error.value) {
+ *   console.error('Operation failed:', error.value);
+ * }
+ * ```
+ */
 export function useAsyncAction(): IAsyncActionState & {
     run: <T>(fn: () => Promise<T>) => Promise<T>;
 } {

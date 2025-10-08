@@ -1,8 +1,3 @@
-/**
- * @file slotEditorActions.ts
- * @summary Slot CRUD operations (add, remove, update, apply-all)
- * @remarks Pure state transformations; no direct DOM/side effects
- */
 import type { ReservationTimes, Weekday, SlotTuple } from "@/types/foodics";
 import type { ISlotUpdateParams } from "@/types/slots";
 import { WEEKDAYS, DEFAULT_SLOT_START, DEFAULT_SLOT_END } from "@/constants/reservations";

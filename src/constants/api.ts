@@ -1,14 +1,3 @@
-/**
- * @file api.ts
- * @summary API endpoints, query parameters, and include values
- * @remarks
- *   - Use these constants for all API service calls
- *   - Ensures consistent endpoint naming across the application
- * @example
- *   import { API_BASE_URL, API_ENDPOINT_BRANCHES } from '@/constants/api';
- *   httpClient.get(`${API_ENDPOINT_BRANCHES}`);
- */
-
 // Base URL
 export const API_BASE_URL = '/api';
 

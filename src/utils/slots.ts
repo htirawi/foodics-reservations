@@ -1,13 +1,3 @@
-/**
- * @file slots.ts
- * @summary Pure slot validation utilities (HH:mm ranges only)
- * @remarks
- *   - Pure functions; no side effects; no DOM; no Date libraries.
- *   - TypeScript strict; no any/unknown.
- *   - Returns i18n error keys (not messages); UI translates via $t().
- *   - Edge-case policies: see docs/EDGE_CASE_POLICIES.md
- */
-
 import type { SlotTuple, ReservationTimes } from "@/types/foodics";
 import { isHHmm, timeToMinutes } from "./time";
 import { WEEKDAYS, MAX_SLOTS_PER_DAY } from "@/constants/reservations";

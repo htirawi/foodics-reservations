@@ -1,11 +1,3 @@
-/**
- * @file slot.validation.ts
- * @summary Slot validation logic (day-level and full reservation times)
- * @remarks
- *   - Pure functions; no side effects.
- *   - TypeScript strict; no any/unknown.
- *   - Returns i18n error keys.
- */
 import type { SlotTuple, ReservationTimes, Weekday } from "@/types/foodics";
 import type { IReservationTimesValidation } from "@/types/validation";
 import { isHHmm, timeToMinutes } from "@/utils/time";

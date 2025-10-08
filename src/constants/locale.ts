@@ -1,14 +1,3 @@
-/**
- * @file locale.ts
- * @summary Locale codes, direction values, and i18n configuration
- * @remarks
- *   - Supported locales and RTL/LTR settings
- *   - Used by i18n plugin and locale composables
- * @example
- *   import { LOCALE_ARABIC, DIR_RTL } from '@/constants/locale';
- *   if (locale === LOCALE_ARABIC) { setDir(DIR_RTL); }
- */
-
 // Locale Codes
 export const LOCALE_ENGLISH = 'en';
 export const LOCALE_ARABIC = 'ar';

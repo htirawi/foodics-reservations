@@ -1,14 +1,3 @@
-/**
- * @file ui.ts
- * @summary UI constants: toast types, confirm dialogs, button variants, durations
- * @remarks
- *   - Centralized UI behavior and styling constants
- *   - Ensures consistent UX across components
- * @example
- *   import { TOAST_DEFAULT_DURATION_MS, TOAST_TYPE_SUCCESS } from '@/constants/ui';
- *   notify('Saved!', TOAST_TYPE_SUCCESS, TOAST_DEFAULT_DURATION_MS);
- */
-
 // Toast Types
 export const TOAST_TYPE_SUCCESS = 'success';
 export const TOAST_TYPE_ERROR = 'error';

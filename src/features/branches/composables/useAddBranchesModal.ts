@@ -1,11 +1,3 @@
-/**
- * @file useAddBranchesModal.ts
- * @summary Module: src/features/branches/composables/useAddBranchesModal.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { ref, computed, watch, type Ref } from "vue";
 import type { Branch } from "@/types/foodics";
 function filterBranches(branches: Branch[] | undefined, query: string): Branch[] {

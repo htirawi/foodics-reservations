@@ -1,11 +1,3 @@
-/**
- * @file branches.service.ts
- * @summary Module: src/services/branches.service.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { httpClient } from "@/services/http";
 import type { IBranch, IUpdateBranchSettingsPayload } from "@/types/foodics";
 import type { IFoodicsResponse } from "@/types/api";

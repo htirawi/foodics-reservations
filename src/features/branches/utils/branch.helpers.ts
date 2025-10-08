@@ -1,11 +1,3 @@
-/**
- * @file branch.helpers.ts
- * @summary Module: src/features/branches/utils/branch.helpers.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import type { IBranch } from "@/types/foodics";
 
 /**

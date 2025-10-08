@@ -1,14 +1,28 @@
-/**
- * @file useBranchEnabling.ts
- * @summary Module: src/features/branches/composables/useBranchEnabling.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { type Ref } from "vue";
 import { useAsyncAction } from "@/composables/useAsyncAction";
 import type { IEnableBranchesResult } from "@/types/async";
+
+function notifyEnableResult(
+    result: { enabled: string[]; failed: string[] },
+    toast: { success: (msg: string) => void; error: (msg: string) => void },
+    t: (key: string, params?: Record<string, unknown>) => string
+): void {
+    const { enabled, failed } = result;
+
+    if (failed.length === 0) {
+        toast.success(t("reservations.toast.enableAllSuccess", { count: enabled.length }));
+    } else if (enabled.length > 0) {
+        toast.success(
+            t("reservations.toast.enablePartialSuccess", {
+                enabledCount: enabled.length,
+                failedCount: failed.length,
+            })
+        );
+    } else {
+        toast.error(t("reservations.toast.enableError"));
+    }
+}
+
 function useBranchEnablingLogic(selectedBranchIds: Ref<string[]>, branchesStore: {
     enableBranches: (ids: string[]) => Promise<{
         ok: boolean;
@@ -37,30 +51,24 @@ export function useBranchEnabling(selectedBranchIds: Ref<string[]>, branchesStor
 }, t: (key: string, params?: Record<string, unknown>) => string) {
     const { busy, run } = useAsyncAction();
     const { enableBranches } = useBranchEnablingLogic(selectedBranchIds, branchesStore);
-  async function enableSelectedBranches(): Promise<IEnableBranchesResult> {
+    async function enableSelectedBranches(): Promise<IEnableBranchesResult> {
         if (selectedBranchIds.value.length === 0) {
             return { ok: true, enabled: [], failed: [] };
         }
+
         return run(async () => {
             const { enabled, failed } = await enableBranches();
-      const result: IEnableBranchesResult = {
+
+            const result: IEnableBranchesResult = {
                 ok: failed.length === 0,
                 enabled,
-                failed
+                failed,
             };
-            if (result.ok) {
-                toast.success(t("reservations.toast.enableAllSuccess", { count: enabled.length }));
-            }
-            else if (enabled.length > 0) {
-                toast.success(t("reservations.toast.enablePartialSuccess", {
-                    enabledCount: enabled.length,
-                    failedCount: failed.length
-                }));
-            }
-            else {
-                toast.error(t("reservations.toast.enableError"));
-            }
+
+            notifyEnableResult(result, toast, t);
+
             selectedBranchIds.value = failed;
+
             return result;
         }).catch(() => {
             toast.error(t("reservations.toast.enableError"));

@@ -50,14 +50,7 @@
   </div>
 </template>
 
-<script setup lang="ts">/**
- * @file BranchesTable.vue
- * @summary Module: src/features/branches/components/BranchesTable.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import type { IBranch } from "@/types/foodics";
 interface Props {

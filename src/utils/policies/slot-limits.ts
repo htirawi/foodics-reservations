@@ -1,12 +1,3 @@
-/**
- * @file slot-limits.ts
- * @summary Slot limit enforcement policies (MAX_SLOTS_PER_DAY = 3)
- * @remarks
- *   - Pure functions; no side effects.
- *   - TypeScript strict; no any/unknown.
- *   - Policy: Hard limit at 3 slots per day, 4th rejected with error
- */
-
 import type { SlotTuple } from '@/types/foodics';
 import { MAX_SLOTS_PER_DAY } from '@/constants/reservations';
 

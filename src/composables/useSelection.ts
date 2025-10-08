@@ -1,13 +1,13 @@
-/**
- * @file useSelection.ts
- * @summary Module: src/composables/useSelection.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { ref, computed, type Ref } from "vue";
 import type { ISelectableItem, ISelectionState } from "@/types/selection";
+
+/**
+ * Manages selection state for lists with multi-select support.
+ * Provides reactive state tracking including selected IDs, items, and computed flags.
+ *
+ * @param items - Reactive reference to array of selectable items
+ * @returns Object containing selection state (selectedIds, selectedItems, isAllSelected, etc.)
+ */
 function useSelectionState<T extends ISelectableItem>(items: Ref<T[] | undefined>) {
     const selectedIds = ref<string[]>([]);
     const selectedIdsSet = computed(() => new Set(selectedIds.value));
@@ -69,6 +69,39 @@ function useSelectionActions({
         isSelected,
     };
 }
+
+/**
+ * Complete selection management system for multi-select lists.
+ * Combines state tracking with actions for toggling individual items, selecting all, and clearing.
+ *
+ * @param items - Reactive reference to array of selectable items
+ * @returns Object with selection state and action methods (toggleOne, toggleAll, clearSelection, etc.)
+ *
+ * @example
+ * ```typescript
+ * const branches = ref<IBranch[]>([...]);
+ * const {
+ *   selectedIds,
+ *   selectedItems,
+ *   isAllSelected,
+ *   toggleOne,
+ *   toggleAll,
+ *   clearSelection
+ * } = useSelection(branches);
+ *
+ * // Toggle individual item
+ * toggleOne('branch-123');
+ *
+ * // Select/deselect all
+ * toggleAll();
+ *
+ * // Clear selection
+ * clearSelection();
+ *
+ * // Access selected items
+ * console.log(selectedItems.value); // Array of selected branch objects
+ * ```
+ */
 export function useSelection<T extends ISelectableItem>(items: Ref<T[] | undefined>): ISelectionState<T> & {
     toggleOne: (id: string) => void;
     toggleAll: () => void;

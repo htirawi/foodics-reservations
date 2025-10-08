@@ -1,14 +1,3 @@
-/**
- * @file reservations.ts
- * @summary Reservation domain constants (weekdays, slot limits, duration bounds)
- * @remarks
- *   - Core business rules for the reservation system
- *   - Used by forms, validation, and composables
- * @example
- *   import { WEEKDAYS, MAX_SLOTS_PER_DAY } from '@/constants/reservations';
- *   if (slots.length > MAX_SLOTS_PER_DAY) { ... }
- */
-
 // Weekday Constants
 export const WEEKDAY_SATURDAY = 'saturday';
 export const WEEKDAY_SUNDAY = 'sunday';

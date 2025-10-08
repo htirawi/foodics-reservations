@@ -1,12 +1,3 @@
-/**
- * @file useDaySlotsEditor.ts
- * @summary Composable for day-by-day time slots editor
- * @remarks
- *   - Handles slot CRUD operations for reservation times.
- *   - Delegates validation to pure utils.
- *   - TypeScript strict; no any/unknown; use ?./??.
- */
-
 import { computed, type Ref } from "vue";
 import type { ReservationTimes, Weekday } from "@/types/foodics";
 import type { ConfirmFn } from "@/types/confirm";

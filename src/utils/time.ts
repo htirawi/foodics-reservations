@@ -1,11 +1,3 @@
-/**
- * @file time.ts
- * @summary Pure time utility functions (HH:mm format only)
- * @remarks
- *   - Pure functions; no side effects; no DOM.
- *   - TypeScript strict; no any/unknown.
- *   - HH:mm format only (24-hour); no date libraries.
- */
 import { TIME_FORMAT_REGEX } from "@/constants/regex";
 
 /**

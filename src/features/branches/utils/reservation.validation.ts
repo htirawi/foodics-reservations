@@ -31,30 +31,35 @@ export { parseHHmm, toMinutes, isHHmm, timeToMinutes, compareHHmm };
 export { slotOverlaps, normalizeSlots };
 export { validateDaySlots, validateReservationTimes };
 export type { IDurationOptions as DurationOptions, IReservationTimesValidation as ReservationTimesValidation };
-function sanitizeStringDuration(value: string, min: number, max: number): number | null {
+
+function cleanDurationString(value: string): string | null {
     const trimmed = value.trim();
-    if (trimmed === "")
-        return null;
+    if (trimmed === "") return null;
+
     const cleaned = trimmed.replace(/[^\d-]/g, "");
-    if (cleaned === "" || cleaned === "-")
-        return null;
+    if (cleaned === "" || cleaned === "-") return null;
+
+    return cleaned;
+}
+
+function clampDuration(value: number, min: number, max: number): number | null {
+    if (value < min) return null;
+    if (value > max) return max;
+    return value;
+}
+
+function sanitizeStringDuration(value: string, min: number, max: number): number | null {
+    const cleaned = cleanDurationString(value);
+    if (cleaned === null) return null;
+
     const parsed = parseInt(cleaned, 10);
-    if (Number.isNaN(parsed))
-        return null;
-    if (parsed < min)
-        return null;
-    if (parsed > max)
-        return max;
-    return parsed;
+    if (Number.isNaN(parsed)) return null;
+
+    return clampDuration(parsed, min, max);
 }
 function sanitizeNumberDuration(value: number, min: number, max: number): number | null {
-    if (!Number.isFinite(value))
-        return null;
-    if (value < min)
-        return null;
-    if (value > max)
-        return max;
-    return Math.floor(value);
+    if (!Number.isFinite(value)) return null;
+    return clampDuration(Math.floor(value), min, max);
 }
 export function sanitizeDuration(value: unknown, { min = MIN_DURATION_MINUTES, max = MAX_DURATION_MINUTES }: IDurationOptions = {}): number | null {
     if (value === null || value === undefined)
@@ -76,7 +81,6 @@ export function isValidTimeFormat(time: string): boolean {
     return TIME_FORMAT_REGEX.test(time);
 }
 
-// timeToMinutes is imported from @/utils/time but we keep this for backward compatibility
 function timeToMinutesLocal(time: string): number | null {
     const match = TIME_FORMAT_REGEX.exec(time);
     if (!match)

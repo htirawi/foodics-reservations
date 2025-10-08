@@ -30,25 +30,9 @@
 </template>
 
 <script setup lang="ts">
-/**
- * @file AuthTokenBanner.vue
- * @summary Global auth token error banner
- * @remarks
- *   - Shows when 401 errors occur (triggered by http interceptor)
- *   - Dismissible by user
- *   - Uses UI store for state management
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-
-// Third-party libraries
 import { storeToRefs } from "pinia";
-
-// Components
 import BaseButton from "@/components/ui/BaseButton.vue";
 import UiBanner from "@/components/ui/UiBanner.vue";
-
-// Stores
 import { useUIStore } from "@/stores/ui.store";
 
 const uiStore = useUIStore();

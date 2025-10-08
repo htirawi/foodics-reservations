@@ -1,9 +1,3 @@
-/**
- * @file slotWatchers.ts
- * @summary Watchers for day slots editor validity tracking
- * @remarks Vue-specific watchers for reactive validity updates
- */
-
 import { watch, onMounted, type Ref } from "vue";
 import type { ReservationTimes } from "@/types/foodics";
 

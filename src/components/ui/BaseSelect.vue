@@ -23,14 +23,7 @@
   </div>
 </template>
 
-<script setup lang="ts">/**
- * @file BaseSelect.vue
- * @summary Module: src/components/ui/BaseSelect.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import { computed } from "vue";
 import { ID_PREFIX_SELECT, RADIX_BASE36, ID_RANDOM_SLICE_START, ID_RANDOM_SLICE_END } from "@/constants/html";
 

@@ -1,11 +1,3 @@
-/**
- * @file useSettingsValidation.ts
- * @summary Module: src/features/branches/composables/useSettingsValidation.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { ref } from "vue";
 import type { Weekday, SlotTuple } from "@/types/foodics";
 import type { IValidationErrors } from "@/types/validation";

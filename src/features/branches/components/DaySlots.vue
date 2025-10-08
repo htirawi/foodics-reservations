@@ -1,18 +1,6 @@
-<script setup lang="ts">/**
- * @file DaySlots.vue
- * @summary Module: src/features/branches/components/DaySlots.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-// Vue core
+<script setup lang="ts">
 import { useI18n } from "vue-i18n";
-
-// Type imports
 import type { Weekday, SlotTuple } from "@/types/foodics";
-
-// Components
 import BaseButton from "@/components/ui/BaseButton.vue";
 import TimePill from "@/components/ui/TimePill.vue";
 defineProps<{

@@ -1,12 +1,3 @@
-/**
- * @file useErrorMapper.ts
- * @summary Maps API errors to i18n keys with error classification
- * @remarks
- *   - Pure mapping logic; no UI/service imports
- *   - Returns i18n keys only; caller resolves via $t()
- *   - TypeScript strict; no any/unknown; use ?./??.
- */
-
 import type { IApiError } from "@/types/api";
 import type { IMappedError } from "@/types/error";
 import {
@@ -31,7 +22,6 @@ export function useErrorMapper() {
   function mapError(error: IApiError): IMappedError {
     const { status, code } = error;
 
-    // 401 Unauthorized - token/auth issues
     if (status === HTTP_STATUS_UNAUTHORIZED) {
       return {
         kind: "auth",
@@ -39,9 +29,7 @@ export function useErrorMapper() {
       };
     }
 
-    // 4xx Client errors
     if (status >= HTTP_STATUS_CLIENT_ERROR_MIN && status < HTTP_STATUS_SERVER_ERROR_MIN) {
-      // If a specific code is provided, try to map it
       if (code) {
         return {
           kind: "client",
@@ -49,14 +37,12 @@ export function useErrorMapper() {
         };
       }
 
-      // Default client error
       return {
         kind: "client",
         i18nKey: I18N_KEY_ERROR_CLIENT_GENERIC,
       };
     }
 
-    // 5xx Server errors - retry scenario
     return {
       kind: "server",
       i18nKey: I18N_KEY_ERROR_SERVER_TRY_AGAIN,

@@ -1,12 +1,3 @@
-/**
- * @file tables.ts
- * @summary Pure table-related helpers for counting and formatting
- * @remarks
- *   - Pure functions; no side effects.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-
 import type { ISection, ITable } from "@/types/foodics";
 
 /**

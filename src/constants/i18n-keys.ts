@@ -1,14 +1,3 @@
-/**
- * @file i18n-keys.ts
- * @summary i18n namespace keys for translations (errors, labels, messages)
- * @remarks
- *   - Prevents typos in i18n key strings
- *   - Used with vue-i18n $t() function
- * @example
- *   import { I18N_KEY_SLOT_ERROR_FORMAT } from '@/constants/i18n-keys';
- *   const errorMsg = t(I18N_KEY_SLOT_ERROR_FORMAT);
- */
-
 // Slot Validation Error Keys
 export const I18N_KEY_SLOT_ERROR_FORMAT = 'settings.slots.errors.format';
 export const I18N_KEY_SLOT_ERROR_ORDER = 'settings.slots.errors.order';

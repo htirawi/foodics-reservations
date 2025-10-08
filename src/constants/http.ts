@@ -1,14 +1,3 @@
-/**
- * @file http.ts
- * @summary HTTP headers, status codes, and authentication constants
- * @remarks
- *   - Centralized HTTP protocol constants for API communication
- *   - Use for axios interceptors, error handling, and request configuration
- * @example
- *   import { HTTP_STATUS_UNAUTHORIZED, HTTP_AUTH_BEARER_PREFIX } from '@/constants/http';
- *   if (error.status === HTTP_STATUS_UNAUTHORIZED) { ... }
- */
-
 // HTTP Headers
 export const HTTP_HEADER_CONTENT_TYPE = 'Content-Type';
 export const HTTP_HEADER_AUTHORIZATION = 'Authorization';

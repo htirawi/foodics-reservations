@@ -1,26 +1,15 @@
-/**
- * @file branches.store.ts
- * @summary Module: src/features/branches/stores/branches.store.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-// Vue core
 import { ref, computed, type Ref, type ComputedRef } from "vue";
 import { defineStore } from "pinia";
-
-// Type imports
 import type { IBranch, IUpdateBranchSettingsPayload } from "@/types/foodics";
 import type { IApiError } from "@/types/api";
-
-// Services
 import { BranchesService } from "@/services/branches.service";
-
-// Utils
 import { countReservableTables, findBranchById } from "@/features/branches/utils/branch.helpers";
-
-// Constants
+import {
+    processBatchResults,
+    applyOptimisticUpdate,
+    rollbackWithPartialSuccess,
+    handleCompleteFailure,
+} from "@/features/branches/utils/batch-operations";
 import {
     ERROR_MSG_FETCH_BRANCHES_FAILED,
     ERROR_MSG_ENABLE_BRANCHES_FAILED,
@@ -64,29 +53,27 @@ function useEnableAction(branches: Ref<IBranch[]>, error: Ref<string | null>) {
         failed: string[];
     }> {
         const snapshot = branches.value.map((b) => ({ ...b }));
-        branches.value = branches.value.map((b) => ids.includes(b.id) ? { ...b, accepts_reservations: true } : b);
-        const results = await Promise.allSettled(ids.map(async (id) => {
-            await BranchesService.enableBranch(id);
-            return id;
-        }));
-        const enabled = results
-            .filter((r) => r.status === "fulfilled")
-            .map((r) => (r as PromiseFulfilledResult<string>).value);
-        const failed = results
-            .map((result, index) => ({ result, id: ids[index] }))
-            .filter(({ result }) => result.status === "rejected")
-            .map(({ id }) => id)
-            .filter((id): id is string => id !== undefined);
+        branches.value = applyOptimisticUpdate(branches.value, ids, true);
+
+        const results = await Promise.allSettled(
+            ids.map(async (id) => {
+                await BranchesService.enableBranch(id);
+                return id;
+            })
+        );
+
+        const { succeeded: enabled, failed } = processBatchResults(results, ids);
+
         if (failed.length > 0) {
-            branches.value = snapshot.map((b) => enabled.includes(b.id) ? { ...b, accepts_reservations: true } : b);
+            branches.value = rollbackWithPartialSuccess(snapshot, enabled, true);
+
             if (enabled.length === 0) {
-                const firstError = results.find((r) => r.status === "rejected") as PromiseRejectedResult;
-                const apiError = firstError?.reason as IApiError;
-                error.value = apiError?.message ?? ERROR_MSG_ENABLE_BRANCHES_FAILED;
-                throw apiError;
+                handleCompleteFailure(results, error, ERROR_MSG_ENABLE_BRANCHES_FAILED);
             }
+
             return { ok: false, enabled, failed };
         }
+
         return { ok: true, enabled, failed: [] };
     }
     return { enableBranches };
@@ -96,22 +83,24 @@ function useDisableAllAction(branches: Ref<IBranch[]>, enabledBranches: Computed
         const snapshot = branches.value.map((b) => ({ ...b }));
         const enabledIds = enabledBranches.value.map((b) => b.id);
         branches.value = branches.value.map((b) => ({ ...b, accepts_reservations: false }));
-        const results = await Promise.allSettled(enabledIds.map(async (id) => {
-            await BranchesService.disableBranch(id);
-            return id;
-        }));
-        const succeeded = results.filter((r) => r.status === "fulfilled");
-        const failed = results.filter((r) => r.status === "rejected");
+
+        const results = await Promise.allSettled(
+            enabledIds.map(async (id) => {
+                await BranchesService.disableBranch(id);
+                return id;
+            })
+        );
+
+        const { succeeded, failed } = processBatchResults(results, enabledIds);
+
         if (failed.length > 0) {
-            const successfulIds = succeeded.map((r) => (r as PromiseFulfilledResult<string>).value);
-            branches.value = snapshot.map((b) => successfulIds.includes(b.id) ? { ...b, accepts_reservations: false } : b);
+            branches.value = rollbackWithPartialSuccess(snapshot, succeeded, false);
+
             if (succeeded.length === 0) {
-                const firstError = results.find((r) => r.status === "rejected") as PromiseRejectedResult;
-                const apiError = firstError?.reason as IApiError;
-                error.value = apiError?.message ?? ERROR_MSG_DISABLE_ALL_FAILED;
-                throw apiError;
+                handleCompleteFailure(results, error, ERROR_MSG_DISABLE_ALL_FAILED);
             }
         }
+
         return { successCount: succeeded.length, failedCount: failed.length };
     }
     return { disableAll };

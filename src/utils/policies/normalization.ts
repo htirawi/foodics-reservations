@@ -1,12 +1,3 @@
-/**
- * @file normalization.ts
- * @summary Normalization policies (idempotency, stability, deep clone)
- * @remarks
- *   - Pure functions; no side effects.
- *   - TypeScript strict; no any/unknown.
- *   - Policy: f(f(x)) === f(x), no mutation, deep clone
- */
-
 import type { SlotTuple } from '@/types/foodics';
 import { compareHHmm } from '@/utils/time';
 

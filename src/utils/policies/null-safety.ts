@@ -1,14 +1,4 @@
 /**
- * @file null-safety.ts
- * @summary Null safety policies (graceful null/undefined/empty handling)
- * @remarks
- *   - Pure functions; no side effects.
- *   - TypeScript strict; no any/unknown.
- *   - Policy: Never throw, return null or ValidationError
- *   - Edge cases: null → null, undefined → null, "" → null
- */
-
-/**
  * Policy: Null Safety
  * - Never throw exceptions
  * - Return null for invalid input

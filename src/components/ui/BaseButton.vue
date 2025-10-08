@@ -11,14 +11,7 @@
   </button>
 </template>
 
-<script setup lang="ts">/**
- * @file BaseButton.vue
- * @summary Module: src/components/ui/BaseButton.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import { computed } from "vue";
 const props = withDefaults(defineProps<{
     variant?: "primary" | "ghost" | "danger";

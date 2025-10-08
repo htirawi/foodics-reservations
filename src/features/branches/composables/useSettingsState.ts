@@ -1,11 +1,3 @@
-/**
- * @file useSettingsState.ts
- * @summary Module: src/features/branches/composables/useSettingsState.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { ref, computed } from "vue";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import type { IBranch, ReservationTimes, ITable } from "@/types/foodics";

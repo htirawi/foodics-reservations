@@ -1,13 +1,4 @@
 /**
- * @file error.ts
- * @summary Error mapping types for centralized error handling
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-
-/**
  * Error classification by kind
  */
 export type ErrorKind = "auth" | "client" | "server";

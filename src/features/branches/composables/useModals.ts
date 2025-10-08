@@ -1,11 +1,3 @@
-/**
- * @file useModals.ts
- * @summary Module: src/features/branches/composables/useModals.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { ref } from "vue";
 export function useModals() {
     const showAddModal = ref(false);

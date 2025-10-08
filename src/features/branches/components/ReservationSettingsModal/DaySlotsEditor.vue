@@ -1,27 +1,11 @@
-<script setup lang="ts">/**
- * @file DaySlotsEditor.vue
- * @summary Day-by-day time slots editor for reservation settings
- * @remarks
- *   - Tiny UI glue; logic in composables/utils.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-// Vue core
+<script setup lang="ts">
 import { toRef, computed } from "vue";
 import { useI18n } from "vue-i18n";
-
-// Type imports
 import type { ReservationTimes, Weekday } from "@/types/foodics";
-
-// Components
 import BaseButton from "@/components/ui/BaseButton.vue";
 import TimePill from "@/components/ui/TimePill.vue";
-
-// Composables
 import { useDaySlotsEditor } from "@/features/branches/composables/useDaySlotsEditor";
 import { getDayValidationErrors } from "@/features/branches/composables/slotValidation";
-
-// Stores
 import { useUIStore } from "@/stores/ui.store";
 
 const props = defineProps<{

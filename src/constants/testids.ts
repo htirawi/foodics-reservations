@@ -1,15 +1,3 @@
-/**
- * @file testids.ts
- * @summary Test IDs (data-testid) for E2E and component tests
- * @remarks
- *   - Centralized test selectors for Playwright/Vitest
- *   - Ensures consistent test target naming
- *   - Use TESTID_* for static IDs, TESTID_*_PREFIX for dynamic templates
- * @example
- *   import { TESTID_ADD_BRANCHES_BTN } from '@/constants/testids';
- *   <BaseButton data-testid={TESTID_ADD_BRANCHES_BTN}>Add</BaseButton>
- */
-
 // Layout
 export const TESTID_HEADER_TITLE = 'header-title';
 export const TESTID_SKIP_TO_MAIN = 'skip-to-main';

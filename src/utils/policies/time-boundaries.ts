@@ -1,13 +1,3 @@
-/**
- * @file time-boundaries.ts
- * @summary Time boundary edge-case policies (00:00, 23:59, overnight, min duration)
- * @remarks
- *   - Pure functions; no side effects.
- *   - TypeScript strict; no any/unknown.
- *   - Returns i18n error keys.
- *   - Policy: 00:00 start allowed, 23:59 end allowed, overnight rejected.
- */
-
 import type { SlotTuple } from '@/types/foodics';
 import { timeToMinutes, isHHmm } from '@/utils/time';
 import { MIN_SLOT_DURATION_MINUTES } from '@/constants/time';

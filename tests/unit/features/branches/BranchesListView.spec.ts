@@ -22,7 +22,10 @@ const i18n = createI18n({
         error: { title: "Error loading branches" },
         toast: { fetchError: "Failed to fetch branches" },
       },
-      errors: { server: { tryAgain: "Server error, please try again" } },
+      errors: {
+        server: { tryAgain: "Server error, please try again" },
+        client: { generic: "Client error occurred" },
+      },
     },
   },
 });
@@ -195,7 +198,7 @@ describe("BranchesListView", () => {
 
     await flushPromises();
 
-    expect(notifySpy).toHaveBeenCalledWith("Failed to fetch branches", "error");
+    expect(notifySpy).toHaveBeenCalledWith("Client error occurred", "error");
   });
 
   it("should render disable all button with correct disabled state", () => {

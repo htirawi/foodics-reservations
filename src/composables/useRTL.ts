@@ -1,11 +1,3 @@
-/**
- * @file useRTL.ts
- * @summary Module: src/composables/useRTL.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { computed } from "vue";
 import { useLocale } from "@/composables/useLocale";
 

@@ -1,9 +1,3 @@
-/**
- * @file slotActions.ts
- * @summary Slot CRUD actions for day slots editor
- * @remarks Pure functions for slot manipulation; no Vue dependencies
- */
-
 import type { ComputedRef } from "vue";
 import type { ReservationTimes, Weekday } from "@/types/foodics";
 import {

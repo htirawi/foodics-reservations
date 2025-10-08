@@ -1,19 +1,6 @@
-/**
- * @file useDisableAll.ts
- * @summary Module: src/features/branches/composables/useDisableAll.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-// Vue core
 import { useI18n } from "vue-i18n";
-
-// Composables
 import { useAsyncAction } from "@/composables/useAsyncAction";
 import { useToast } from "@/composables/useToast";
-
-// Stores
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import { useUIStore } from "@/stores/ui.store";
 export function useDisableAll() {

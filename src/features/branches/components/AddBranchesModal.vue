@@ -94,33 +94,17 @@ stroke-width="4" />
   </UiModal>
 </template>
 
-<script setup lang="ts">/**
- * @file AddBranchesModal.vue
- * @summary Module: src/features/branches/components/AddBranchesModal.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-// Vue core
+<script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { useI18n } from "vue-i18n";
-
-// Third-party libraries
-import { useDebounceFn } from "@vueuse/core";
-
-// Components
 import BaseButton from "@/components/ui/BaseButton.vue";
 import BaseInput from "@/components/ui/BaseInput.vue";
 import EmptyState from "@/components/ui/EmptyState.vue";
 import UiModal from "@/components/ui/UiModal.vue";
-
-// Composables
+import { useDebounceFn } from "@/composables/useDebounce";
 import { useToast } from "@/composables/useToast";
 import { useAddBranchesEnabling } from "@/features/branches/composables/useAddBranchesEnabling";
 import { useAddBranchesModal } from "@/features/branches/composables/useAddBranchesModal";
-
-// Stores
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 const props = defineProps<{
     modelValue: boolean;

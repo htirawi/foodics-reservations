@@ -1,21 +1,6 @@
-/**
- * @file useSettingsActions.ts
- * @summary Module: src/features/branches/composables/useSettingsActions.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-// Vue core
 import { type Ref } from "vue";
-
-// Type imports
 import type { IBranch, Weekday, ReservationTimes } from "@/types/foodics";
-
-// Stores
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
-
-// Constants
 import { WEEKDAYS } from "@/constants/reservations";
 
 const weekdays = WEEKDAYS;

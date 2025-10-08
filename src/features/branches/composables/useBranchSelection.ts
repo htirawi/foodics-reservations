@@ -1,11 +1,3 @@
-/**
- * @file useBranchSelection.ts
- * @summary Module: src/features/branches/composables/useBranchSelection.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { type Ref } from "vue";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import { useToast } from "@/composables/useToast";

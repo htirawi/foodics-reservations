@@ -1,11 +1,4 @@
-<script setup lang="ts">/**
- * @file DurationField.vue
- * @summary Module: src/features/branches/components/ReservationSettingsModal/DurationField.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import { computed, useId, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDurationField } from "@/features/branches/composables/useDurationField";

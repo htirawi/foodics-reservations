@@ -1,11 +1,3 @@
-/**
- * @file ui.ts
- * @summary Types for UI store functionality
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import type { IToast } from "./toast";
 import type { IConfirmOptions } from "./confirm";
 

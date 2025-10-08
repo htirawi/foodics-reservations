@@ -1,11 +1,3 @@
-/**
- * @file useToastDisplay.ts
- * @summary Composable for toast display styling and icons
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { h } from "vue";
 import type { IToast } from "@/types/toast";
 

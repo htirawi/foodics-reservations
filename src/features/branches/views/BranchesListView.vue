@@ -112,63 +112,45 @@ aria-hidden="true">
   </div>
 </template>
 
-<script setup lang="ts">/**
- * @file BranchesListView.vue
- * @summary Module: src/features/branches/views/BranchesListView.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-// Vue core
-import { onMounted, computed } from "vue";
-import { useI18n } from "vue-i18n";
-
-// Type imports
+<script setup lang="ts">
+import { onMounted, computed, defineAsyncComponent } from "vue";
 import type { IApiError } from "@/types/api";
-
-// Components
 import BaseButton from "@/components/ui/BaseButton.vue";
 import EmptyState from "@/components/ui/EmptyState.vue";
 import PageLoading from "@/components/ui/PageLoading.vue";
-import AddBranchesModal from "@/features/branches/components/AddBranchesModal.vue";
 import BranchesCards from "@/features/branches/components/BranchesCards.vue";
 import BranchesTable from "@/features/branches/components/BranchesTable.vue";
-import BranchSettingsModal from "@/features/branches/components/BranchSettingsModal.vue";
 import DisableAllButton from "@/features/branches/components/DisableAllButton.vue";
 
-// Composables
+const AddBranchesModal = defineAsyncComponent(
+  () => import("@/features/branches/components/AddBranchesModal.vue")
+);
+const BranchSettingsModal = defineAsyncComponent(
+  () => import("@/features/branches/components/BranchSettingsModal.vue")
+);
+
 import { useModals } from "@/features/branches/composables/useModals";
-
-// Stores
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
-import { useUIStore } from "@/stores/ui.store";
 
-// Constants
-import { HTTP_STATUS_SERVER_ERROR_MIN } from "@/constants/http";
-const { t } = useI18n();
 const branchesStore = useBranchesStore();
-const uiStore = useUIStore();
 const modals = useModals();
+const { handleError } = useApiErrorHandler();
+
 const loading = computed(() => branchesStore.loading);
 const error = computed(() => branchesStore.error);
 const enabledBranches = computed(() => branchesStore.enabledBranches);
+
 onMounted(async () => {
     try {
         await branchesStore.fetchBranches(true);
     }
     catch (err) {
-        const apiError = err as IApiError;
-        // For 5xx server errors, show toast instead of inline error
-        if (apiError?.status && apiError.status >= HTTP_STATUS_SERVER_ERROR_MIN) {
-            uiStore.notify(t("errors.server.tryAgain"), "error");
-            // Clear the store error to prevent inline error display
-            // This will cause empty state to show instead
-            branchesStore.error = null;
-        } else {
-            // For other errors, show generic fetch error toast
-            uiStore.notify(t("reservations.toast.fetchError"), "error");
-        }
+        handleError(err as IApiError, {
+            clearStoreError: () => {
+                branchesStore.error = null;
+            },
+        });
     }
 });
 </script>

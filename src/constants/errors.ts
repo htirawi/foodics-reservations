@@ -1,14 +1,3 @@
-/**
- * @file errors.ts
- * @summary Fallback error message strings
- * @remarks
- *   - Default error messages when i18n keys are unavailable
- *   - Used in error interceptors and error boundaries
- * @example
- *   import { ERROR_MSG_NETWORK_FALLBACK } from '@/constants/errors';
- *   const msg = error.message ?? ERROR_MSG_NETWORK_FALLBACK;
- */
-
 // Network/HTTP Errors
 export const ERROR_MSG_NETWORK_FALLBACK = 'Network error occurred';
 

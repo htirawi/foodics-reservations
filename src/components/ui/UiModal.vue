@@ -44,14 +44,7 @@ aria-hidden="true">
   </Teleport>
 </template>
 
-<script setup lang="ts">/**
- * @file UiModal.vue
- * @summary Module: src/components/ui/UiModal.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import { ref, watch, onUnmounted, computed } from "vue";
 import { useI18n } from "vue-i18n";
 interface UiModalProps {

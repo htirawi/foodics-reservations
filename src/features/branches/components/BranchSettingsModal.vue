@@ -1,25 +1,11 @@
-<script setup lang="ts">/**
- * @file BranchSettingsModal.vue
- * @summary Module: src/features/branches/components/BranchSettingsModal.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
-// Vue core
+<script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-
-// Type imports
 import type { ITable } from "@/types/foodics";
-
-// Components
 import BaseButton from "@/components/ui/BaseButton.vue";
 import BaseModal from "@/components/ui/BaseModal.vue";
 import DaySlots from "./DaySlots.vue";
 import DurationField from "./ReservationSettingsModal/DurationField.vue";
-
-// Composables
 import { useSettingsForm } from "@/features/branches/composables/useSettingsForm";
 const props = withDefaults(defineProps<{
     branchId: string | null;

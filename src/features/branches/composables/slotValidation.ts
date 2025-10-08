@@ -1,9 +1,3 @@
-/**
- * @file slotValidation.ts
- * @summary Validation functions for day slots editor
- * @remarks Pure validation logic extracted from main composable
- */
-
 import type { ReservationTimes, Weekday, SlotTuple } from "@/types/foodics";
 import { isValidRange, canAddSlot, normalizeDay } from "@/utils/slots";
 import { WEEKDAY_ORDER } from "./slotEditorActions";

@@ -40,14 +40,7 @@
   </div>
 </template>
 
-<script setup lang="ts">/**
- * @file EmptyState.vue
- * @summary Module: src/components/ui/EmptyState.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import BaseButton from "@/components/ui/BaseButton.vue";
 import { TESTID_EMPTY_STATE } from "@/constants/testids";
 

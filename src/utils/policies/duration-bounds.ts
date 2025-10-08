@@ -1,13 +1,3 @@
-/**
- * @file duration-bounds.ts
- * @summary Duration validation policies (1-1440 minutes, clamping, sanitization)
- * @remarks
- *   - Pure functions; no side effects.
- *   - TypeScript strict; no any/unknown.
- *   - Policy: Clamp to [1, 1440], reject <= 0, floor floats
- *   - Edge cases: 0 → null, -10 → null, 1441 → 1440, 15.7 → 15
- */
-
 import { MIN_DURATION_MINUTES, MAX_DURATION_MINUTES } from '@/constants';
 
 /**

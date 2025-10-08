@@ -1,11 +1,3 @@
-/**
- * @file index.ts
- * @summary Module: src/app/i18n/index.ts
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
 import { createI18n } from "vue-i18n";
 import en from "./locales/en.json";
 import ar from "./locales/ar.json";
