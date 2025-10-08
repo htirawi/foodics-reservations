@@ -20,14 +20,16 @@ import { useSlotsManagement } from "./useSlotsManagement";
 import { WEEKDAYS } from "@/constants/reservations";
 
 const weekdays = WEEKDAYS;
-export function useSettingsForm(branchId: Readonly<{
-    branchId: string | null;
-}>, onClose: () => void) {
+export function useSettingsForm(branchId: Readonly<{ branchId: string | null }>, onClose: () => void) {
     const { t } = useI18n();
     const state = useSettingsState(branchId);
     const validation = useSettingsValidationLogic(state.duration, state.weekSlots, t);
     const slots = useSlotsManagement(state.weekSlots);
-    const actions = useSettingsActions(state, validation, onClose);
+    const actions = useSettingsActions(
+        { branch: state.branch, duration: state.duration, weekSlots: state.weekSlots },
+        { checkDuration: validation.checkDuration, checkSlots: validation.checkSlots },
+        onClose
+    );
     watch(state.isOpen, (open) => {
         if (open && state.branch.value) {
             state.duration.value = state.branch.value.reservation_duration;

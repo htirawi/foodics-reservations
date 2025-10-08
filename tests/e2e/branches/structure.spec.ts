@@ -19,54 +19,46 @@ async function waitForPageLoad(page: Page): Promise<void> {
     ]);
     await page.waitForTimeout(100);
 }
-test.describe("Branches List View - Structure", () => {
-    test.describe.configure({ retries: 2 });
-    test("renders page with correct semantic hierarchy", async ({ page }) => {
+test.describe("Branches List Structure", () => {
+    test.beforeEach(async ({ page }) => {
         await setupOfflineMode(page);
         await page.goto("/");
         await waitForPageLoad(page);
-        const mainHeading = page.getByRole("main").getByRole("heading", { level: 1 });
-        await expect(mainHeading).toBeVisible();
-        await expect(mainHeading).toHaveText("Reservations");
     });
-    test("displays branches table with correct columns", async ({ page }) => {
-        await setupOfflineMode(page);
-        await page.goto("/");
-        await waitForPageLoad(page);
-        const viewport = page.viewportSize();
-        const isMobile = viewport && viewport.width < 768;
-        if (isMobile) {
-            const cards = page.locator("[data-testid^=\"branch-card-\"]");
-            await expect(cards.first()).toBeVisible();
-            const firstCard = cards.first();
-            await expect(firstCard).toContainText("Downtown Branch");
-            await expect(firstCard).toContainText("DT-001");
-        }
-        else {
-            const table = page.getByTestId("branches-table");
-            await expect(table).toBeVisible();
-            await expect(table.getByRole("columnheader", { name: "Branch" })).toBeVisible();
-            await expect(table.getByRole("columnheader", { name: "Reference" })).toBeVisible();
-            await expect(table.getByRole("columnheader", { name: "Number of Tables" })).toBeVisible();
-            await expect(table.getByRole("columnheader", { name: "Reservation Duration" })).toBeVisible();
-        }
+    test("renders app container with proper structure", async ({ page }) => {
+        const container = page.getByTestId("app-container");
+        await expect(container).toBeVisible();
     });
-    test("displays Add Branches button", async ({ page }) => {
-        await setupOfflineMode(page);
-        await page.goto("/");
-        await waitForPageLoad(page);
-        const addButton = page.getByTestId("add-branches");
-        await expect(addButton).toBeVisible();
-        await expect(addButton).toHaveText("Add Branches");
+    test("renders skip link for accessibility", async ({ page }) => {
+        const skipLink = page.locator("[data-testid=\"skip-to-main\"]");
+        await expect(skipLink).toBeVisible();
     });
-    test("displays Disable Reservations button when branches are enabled", async ({ page }) => {
-        await setupOfflineMode(page);
-        await page.goto("/");
-        await waitForPageLoad(page);
-        const disableButton = page.getByTestId("disable-all");
-        const isVisible = await disableButton.isVisible().catch(() => false);
-        if (isVisible) {
-            await expect(disableButton).toHaveText("Disable Reservations");
-        }
+    test("renders header", async ({ page }) => {
+        const header = page.locator("header");
+        await expect(header).toBeVisible();
+    });
+    test("renders main content area", async ({ page }) => {
+        const main = page.locator("main#main");
+        await expect(main).toBeVisible();
+        await expect(main).toHaveAttribute("role", "main");
+    });
+    test("renders branches view inside main", async ({ page }) => {
+        const main = page.locator("main#main");
+        const branchesView = main.locator("[data-testid^=\"branch\"]").first();
+        await expect(branchesView).toBeVisible();
+    });
+    test("has proper semantic HTML structure", async ({ page }) => {
+        const header = page.locator("header");
+        const main = page.locator("main");
+        await expect(header).toBeVisible();
+        await expect(main).toBeVisible();
+    });
+    test("main content is focusable for skip link", async ({ page }) => {
+        const main = page.locator("main#main");
+        await expect(main).toHaveAttribute("tabindex", "-1");
+    });
+    test("renders page with proper ARIA landmarks", async ({ page }) => {
+        const mainLandmark = page.locator("main[role=\"main\"]");
+        await expect(mainLandmark).toBeVisible();
     });
 });

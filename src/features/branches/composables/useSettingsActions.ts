@@ -19,30 +19,34 @@ import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import { WEEKDAYS } from "@/constants/reservations";
 
 const weekdays = WEEKDAYS;
-export function useSettingsActions(state: {
-    branch: Ref<IBranch | null>;
-    duration: Ref<number>;
-    weekSlots: Ref<ReservationTimes>;
-}, validation: {
-    checkDuration: () => boolean;
-    checkSlots: (day: Weekday) => boolean;
-}, onClose: () => void) {
+export function useSettingsActions(
+    { branch, duration, weekSlots }: {
+        branch: Ref<IBranch | null>;
+        duration: Ref<number>;
+        weekSlots: Ref<ReservationTimes>;
+    },
+    { checkDuration, checkSlots }: {
+        checkDuration: () => boolean;
+        checkSlots: (day: Weekday) => boolean;
+    },
+    onClose: () => void
+) {
     const branchesStore = useBranchesStore();
     async function handleSave(): Promise<void> {
-        if (!state.branch.value)
+        if (!branch.value)
             return;
-        const isDurationValid = validation.checkDuration();
-        const areSlotsValid = weekdays.every((day) => validation.checkSlots(day));
+        const isDurationValid = checkDuration();
+        const areSlotsValid = weekdays.every((day) => checkSlots(day));
         if (!isDurationValid || !areSlotsValid)
             return;
-        await branchesStore.updateSettings(state.branch.value.id, {
-            reservation_duration: state.duration.value,
-            reservation_times: state.weekSlots.value,
+        await branchesStore.updateSettings(branch.value.id, {
+            reservation_duration: duration.value,
+            reservation_times: weekSlots.value,
         });
         onClose();
     }
     async function handleDisable(): Promise<void> {
-        if (!state.branch.value)
+        if (!branch.value)
             return;
         await branchesStore.enableBranches([]);
         onClose();

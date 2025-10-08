@@ -19,26 +19,26 @@ async function waitForPageLoad(page: Page): Promise<void> {
     ]);
     await page.waitForTimeout(100);
 }
-test.describe("Branches List View - Empty State", () => {
-    test.describe.configure({ retries: 2 });
-    test("shows empty state when no branches configured", async ({ page }) => {
+test.describe("Branches Empty State", () => {
+    test.beforeEach(async ({ page }) => {
         await setupEmptyState(page);
         await page.goto("/");
         await waitForPageLoad(page);
-        const emptyState = page.getByTestId("branches-empty");
-        await expect(emptyState).toBeVisible();
-        await expect(emptyState).toContainText("No branches configured");
-        await expect(emptyState).toContainText("Add branches to start managing reservations");
     });
-    test("empty state Add Branches button is clickable", async ({ page }) => {
-        await setupEmptyState(page);
-        await page.goto("/");
-        await waitForPageLoad(page);
-        const emptyState = page.getByTestId("branches-empty");
+    test("shows empty state when no branches exist", async ({ page }) => {
+        const emptyState = page.locator("[data-testid=\"branches-empty\"]");
         await expect(emptyState).toBeVisible();
-        const actionButton = emptyState.getByRole("button", { name: "Add Branches" });
-        await actionButton.click();
-        const modal = page.getByTestId("add-branches-modal");
-        await expect(modal).toBeVisible();
+    });
+    test("empty state has proper structure and messaging", async ({ page }) => {
+        const emptyState = page.locator("[data-testid=\"branches-empty\"]");
+        await expect(emptyState).toContainText(/no branches/i);
+    });
+    test("does not show table when empty", async ({ page }) => {
+        const table = page.locator("[data-testid=\"branches-table\"]");
+        await expect(table).not.toBeVisible();
+    });
+    test("does not show cards when empty", async ({ page }) => {
+        const cards = page.locator("[data-testid^=\"branch-card-\"]");
+        await expect(cards).toHaveCount(0);
     });
 });

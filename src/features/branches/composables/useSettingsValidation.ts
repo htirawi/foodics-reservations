@@ -11,17 +11,17 @@ import type { Weekday, SlotTuple } from "@/types/foodics";
 import type { IValidationErrors } from "@/types/validation";
 import { isValidRange, isOverlapping } from "@/utils/slots";
 
-function validateIndividualSlots(slots: SlotTuple[], messages: { invalid: string }): string | null {
+function validateIndividualSlots(slots: SlotTuple[], { invalid }: { invalid: string }): string | null {
     for (const slot of slots) {
         const validation = isValidRange(slot);
         if (!validation.ok) {
-            return messages.invalid;
+            return invalid;
         }
     }
     return null;
 }
 
-function validateSlotOverlaps(slots: SlotTuple[], messages: { overlap: string; invalid: string }): string | null {
+function validateSlotOverlaps(slots: SlotTuple[], { overlap }: { overlap: string; invalid: string }): string | null {
     for (let i = 0; i < slots.length; i++) {
         const slot = slots[i];
         if (!slot) continue;
@@ -29,7 +29,7 @@ function validateSlotOverlaps(slots: SlotTuple[], messages: { overlap: string; i
         // Check this slot against all other slots for overlaps
         const hasOverlap = checkSlotOverlaps(slot, slots, i + 1);
         if (hasOverlap) {
-            return messages.overlap;
+            return overlap;
         }
     }
     return null;
@@ -47,17 +47,17 @@ function checkSlotOverlaps(slot: SlotTuple, slots: SlotTuple[], startIndex: numb
     return false;
 }
 
-function validateSlots(slots: SlotTuple[], messages: {
+function validateSlots(slots: SlotTuple[], { invalid, overlap }: {
     missing: string;
     invalid: string;
     overlap: string;
 }): string | null {
     if (!slots || slots.length === 0) return null;
     
-    const individualError = validateIndividualSlots(slots, messages);
+    const individualError = validateIndividualSlots(slots, { invalid });
     if (individualError) return individualError;
     
-    return validateSlotOverlaps(slots, messages);
+    return validateSlotOverlaps(slots, { overlap, invalid });
 }
 
 export function useSettingsValidation() {
@@ -72,7 +72,7 @@ export function useSettingsValidation() {
         return true;
     }
     
-    function validateDaySlots(slots: SlotTuple[], day: Weekday, messages: {
+    function validateDaySlots(slots: SlotTuple[], day: Weekday, { missing, invalid, overlap }: {
         missing: string;
         invalid: string;
         overlap: string;
@@ -81,7 +81,7 @@ export function useSettingsValidation() {
             clearDayError(day);
             return true;
         }
-        const validationResult = validateSlots(slots, messages);
+        const validationResult = validateSlots(slots, { missing, invalid, overlap });
         if (validationResult) {
             setDayError(day, validationResult);
             return false;

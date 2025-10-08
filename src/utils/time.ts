@@ -25,11 +25,12 @@ export function parseHHmm(s: string): { h: number; m: number } | null {
 
 /**
  * Convert { h, m } object to total minutes.
- * @param time - Object with hours and minutes
+ * @param h - Hours
+ * @param m - Minutes
  * @returns Total minutes since midnight
  */
-export function toMinutes(time: { h: number; m: number }): number {
-  return time.h * 60 + time.m;
+export function toMinutes({ h, m }: { h: number; m: number }): number {
+  return h * 60 + m;
 }
 
 /**

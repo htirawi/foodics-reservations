@@ -24,7 +24,17 @@ function useSelectionState<T extends ISelectableItem>(items: Ref<T[] | undefined
         selectionCount,
     };
 }
-function useSelectionActions(selectedIds: Ref<string[]>, items: Ref<ISelectableItem[] | undefined>, isAllSelected: Ref<boolean>, selectedIdsSet: Ref<Set<string>>) {
+function useSelectionActions({
+    selectedIds,
+    items,
+    isAllSelected,
+    selectedIdsSet
+}: {
+    selectedIds: Ref<string[]>;
+    items: Ref<ISelectableItem[] | undefined>;
+    isAllSelected: Ref<boolean>;
+    selectedIdsSet: Ref<Set<string>>;
+}) {
     function toggleOne(id: string): void {
         const index = selectedIds.value.indexOf(id);
         if (index > -1) {
@@ -67,7 +77,12 @@ export function useSelection<T extends ISelectableItem>(items: Ref<T[] | undefin
     isSelected: (id: string) => boolean;
 } {
     const state = useSelectionState(items);
-    const actions = useSelectionActions(state.selectedIds, items, state.isAllSelected, state.selectedIdsSet);
+    const actions = useSelectionActions({
+        selectedIds: state.selectedIds,
+        items,
+        isAllSelected: state.isAllSelected,
+        selectedIdsSet: state.selectedIdsSet
+    });
     return {
         ...state,
         ...actions,

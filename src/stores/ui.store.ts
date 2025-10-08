@@ -107,7 +107,7 @@ function useAuthBanner() {
         onRetry: null,
         autoDismissTimer: null,
     });
-    function showAuthBanner(options?: { message?: string; onRetry?: () => void; autoDismiss?: boolean }): void {
+    function showAuthBanner({ message, onRetry, autoDismiss }: { message?: string; onRetry?: () => void; autoDismiss?: boolean } = {}): void {
         // Clear existing timer if any
         if (authBanner.value.autoDismissTimer) {
             clearTimeout(authBanner.value.autoDismissTimer);
@@ -115,13 +115,13 @@ function useAuthBanner() {
         
         authBanner.value = {
             isVisible: true,
-            message: options?.message ?? null,
-            onRetry: options?.onRetry ?? null,
+            message: message ?? null,
+            onRetry: onRetry ?? null,
             autoDismissTimer: null,
         };
         
         // Set auto-dismiss timer if requested
-        if (options?.autoDismiss) {
+        if (autoDismiss) {
             authBanner.value.autoDismissTimer = setTimeout(() => {
                 hideAuthBanner();
             }, AUTH_BANNER_AUTO_DISMISS_MS);

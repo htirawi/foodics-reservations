@@ -25,9 +25,7 @@ function extractReservableTables(sections: {
     });
     return allTables;
 }
-export function useSettingsState(branchId: Readonly<{
-    branchId: string | null;
-}>) {
+export function useSettingsState(branchId: Readonly<{ branchId: string | null }>) {
     const branchesStore = useBranchesStore();
     const duration = ref<number>(30);
     const weekSlots = ref<ReservationTimes>({

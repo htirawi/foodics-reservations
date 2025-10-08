@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-neutral-50">
+  <div data-testid="app-container" class="min-h-screen bg-neutral-50">
     
     <a
       data-testid="skip-to-main"
