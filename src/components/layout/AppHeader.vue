@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import LocaleSwitcher from "@/components/ui/LocaleSwitcher.vue";
+
+import { TESTID_HEADER_TITLE } from "@/constants/testids";
+</script>
+
 <template>
   <header
     role="banner"
@@ -16,8 +22,3 @@
     </div>
   </header>
 </template>
-
-<script setup lang="ts">
-import LocaleSwitcher from "@/components/ui/LocaleSwitcher.vue";
-import { TESTID_HEADER_TITLE } from "@/constants/testids";
-</script>

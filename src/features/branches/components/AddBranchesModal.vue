@@ -1,3 +1,54 @@
+<script setup lang="ts">
+import { ref, watch, computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+import BaseButton from "@/components/ui/BaseButton.vue";
+import BaseInput from "@/components/ui/BaseInput.vue";
+import EmptyState from "@/components/ui/EmptyState.vue";
+import UiModal from "@/components/ui/UiModal.vue";
+
+import { useDebounceFn } from "@/composables/useDebounce";
+import { useToast } from "@/composables/useToast";
+
+import { useAddBranchesEnabling } from "@/features/branches/composables/useAddBranchesEnabling";
+import { useAddBranchesModal } from "@/features/branches/composables/useAddBranchesModal";
+
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
+
+const props = defineProps<{
+    modelValue: boolean;
+}>();
+
+const emit = defineEmits<{
+    "update:modelValue": [
+        value: boolean
+    ];
+}>();
+
+const { t } = useI18n();
+const toast = useToast();
+const branchesStore = useBranchesStore();
+const { setQuery, filtered, selectedIds, selectedIdsSet, isAllSelected, toggleOne, toggleAll, clear, } = useAddBranchesModal(computed(() => branchesStore.disabledBranches));
+const { saving, handleEnable } = useAddBranchesEnabling(selectedIds, clear, toast, t);
+
+const debouncedQuery = ref("");
+const debouncedSetQuery = useDebounceFn((value: string) => setQuery(value), 200);
+
+function handleFilterChange(value: string): void { debouncedQuery.value = value; debouncedSetQuery(value); }
+
+function handleSave(): void { handleEnable(() => emit("update:modelValue", false)); }
+
+function handleClose(): void { if (!saving.value) {
+    clear();
+    emit("update:modelValue", false);
+} }
+
+watch(() => props.modelValue, (isOpen) => { if (!isOpen)
+    clear(); });
+
+const disabledBranches = branchesStore.disabledBranches;
+</script>
+
 <template>
   <UiModal
     :is-open="modelValue"
@@ -93,41 +144,3 @@ stroke-width="4" />
     </template>
   </UiModal>
 </template>
-
-<script setup lang="ts">
-import { ref, watch, computed } from "vue";
-import { useI18n } from "vue-i18n";
-import BaseButton from "@/components/ui/BaseButton.vue";
-import BaseInput from "@/components/ui/BaseInput.vue";
-import EmptyState from "@/components/ui/EmptyState.vue";
-import UiModal from "@/components/ui/UiModal.vue";
-import { useDebounceFn } from "@/composables/useDebounce";
-import { useToast } from "@/composables/useToast";
-import { useAddBranchesEnabling } from "@/features/branches/composables/useAddBranchesEnabling";
-import { useAddBranchesModal } from "@/features/branches/composables/useAddBranchesModal";
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
-const props = defineProps<{
-    modelValue: boolean;
-}>();
-const emit = defineEmits<{
-    "update:modelValue": [
-        value: boolean
-    ];
-}>();
-const { t } = useI18n();
-const toast = useToast();
-const branchesStore = useBranchesStore();
-const { setQuery, filtered, selectedIds, selectedIdsSet, isAllSelected, toggleOne, toggleAll, clear, } = useAddBranchesModal(computed(() => branchesStore.disabledBranches));
-const { saving, handleEnable } = useAddBranchesEnabling(selectedIds, clear, toast, t);
-const debouncedQuery = ref("");
-const debouncedSetQuery = useDebounceFn((value: string) => setQuery(value), 200);
-function handleFilterChange(value: string): void { debouncedQuery.value = value; debouncedSetQuery(value); }
-function handleSave(): void { handleEnable(() => emit("update:modelValue", false)); }
-function handleClose(): void { if (!saving.value) {
-    clear();
-    emit("update:modelValue", false);
-} }
-watch(() => props.modelValue, (isOpen) => { if (!isOpen)
-    clear(); });
-const disabledBranches = branchesStore.disabledBranches;
-</script>

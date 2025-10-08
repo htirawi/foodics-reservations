@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import { TESTID_LOCALE_SWITCHER } from "@/constants/testids";
+
+import { useLocale } from "@/composables/useLocale";
+
+const { currentLocale, toggleLocale } = useLocale();
+</script>
+
 <template>
   <button
     type="button"
@@ -9,10 +17,3 @@
     {{ currentLocale === 'en' ? $t('app.switchToArabic') : $t('app.switchToEnglish') }}
   </button>
 </template>
-
-<script setup lang="ts">
-import { useLocale } from "@/composables/useLocale";
-import { TESTID_LOCALE_SWITCHER } from "@/constants/testids";
-
-const { currentLocale, toggleLocale } = useLocale();
-</script>

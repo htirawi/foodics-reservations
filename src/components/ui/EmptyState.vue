@@ -1,3 +1,24 @@
+<script setup lang="ts">
+import BaseButton from "@/components/ui/BaseButton.vue";
+
+import { TESTID_EMPTY_STATE } from "@/constants/testids";
+
+withDefaults(defineProps<{
+    title?: string | undefined;
+    description?: string | undefined;
+    actionText?: string | undefined;
+}>(), {
+    title: "",
+    description: "",
+    actionText: "",
+});
+
+defineEmits<{
+    action: [
+    ];
+}>();
+</script>
+
 <template>
   <div
     :data-testid="TESTID_EMPTY_STATE"
@@ -39,22 +60,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import BaseButton from "@/components/ui/BaseButton.vue";
-import { TESTID_EMPTY_STATE } from "@/constants/testids";
-
-withDefaults(defineProps<{
-    title?: string | undefined;
-    description?: string | undefined;
-    actionText?: string | undefined;
-}>(), {
-    title: "",
-    description: "",
-    actionText: "",
-});
-defineEmits<{
-    action: [
-    ];
-}>();
-</script>

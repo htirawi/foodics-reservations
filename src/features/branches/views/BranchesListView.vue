@@ -1,19 +1,66 @@
+<script setup lang="ts">
+import { onMounted, computed, defineAsyncComponent } from "vue";
+
+import type { IApiError } from "@/types/api";
+
+import BaseButton from "@/components/ui/BaseButton.vue";
+import EmptyState from "@/components/ui/EmptyState.vue";
+import PageLoading from "@/components/ui/PageLoading.vue";
+import BranchesCards from "@/features/branches/components/BranchesCards.vue";
+import BranchesTable from "@/features/branches/components/BranchesTable.vue";
+import DisableAllButton from "@/features/branches/components/DisableAllButton.vue";
+
+const AddBranchesModal = defineAsyncComponent(
+  () => import("@/features/branches/components/AddBranchesModal.vue")
+);
+const BranchSettingsModal = defineAsyncComponent(
+  () => import("@/features/branches/components/BranchSettingsModal.vue")
+);
+
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
+
+import { useModals } from "@/features/branches/composables/useModals";
+
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
+
+const branchesStore = useBranchesStore();
+const modals = useModals();
+const { handleError } = useApiErrorHandler();
+
+const loading = computed(() => branchesStore.loading);
+const error = computed(() => branchesStore.error);
+const enabledBranches = computed(() => branchesStore.enabledBranches);
+
+onMounted(async () => {
+    try {
+        await branchesStore.fetchBranches(true);
+    }
+    catch (err) {
+        handleError(err as IApiError, {
+            clearStoreError: () => {
+                branchesStore.error = null;
+            },
+        });
+    }
+});
+</script>
+
 <template>
   <div data-test-id="branches-page" class="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
-    
+
     <div class="mx-auto max-w-7xl mb-6 flex items-center justify-between">
       <h1 class="text-2xl font-semibold text-gray-900">
         {{ $t('reservations.title') }}
       </h1>
-      <DisableAllButton 
+      <DisableAllButton
         :disabled="enabledBranches.length === 0"
       />
     </div>
 
-    
+
     <div class="mx-auto max-w-7xl">
       <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-        
+
         <div class="flex justify-end px-6 py-4 border-b border-gray-200">
           <BaseButton
             data-testid="add-branches"
@@ -24,18 +71,18 @@
           </BaseButton>
         </div>
 
-        
-        <div 
-          v-if="loading" 
+
+        <div
+          v-if="loading"
           data-testid="branches-loading"
           class="px-6 py-12"
         >
           <PageLoading />
         </div>
 
-        
-        <div 
-          v-else-if="error" 
+
+        <div
+          v-else-if="error"
           data-testid="branches-error"
           class="px-6 py-8"
         >
@@ -62,9 +109,9 @@ aria-hidden="true">
           </div>
         </div>
 
-        
-        <div 
-          v-else-if="enabledBranches.length === 0" 
+
+        <div
+          v-else-if="enabledBranches.length === 0"
           data-testid="branches-empty"
           class="px-6 py-12"
         >
@@ -76,9 +123,9 @@ aria-hidden="true">
           />
         </div>
 
-        
+
         <div v-else>
-          
+
           <div class="hidden md:block">
             <BranchesTable
               :branches="enabledBranches"
@@ -87,7 +134,7 @@ aria-hidden="true">
             />
           </div>
 
-          
+
           <div class="md:hidden">
             <BranchesCards
               :branches="enabledBranches"
@@ -99,7 +146,7 @@ aria-hidden="true">
       </div>
     </div>
 
-    
+
     <AddBranchesModal
       v-model="modals.showAddModal.value"
     />
@@ -111,46 +158,3 @@ aria-hidden="true">
     />
   </div>
 </template>
-
-<script setup lang="ts">
-import { onMounted, computed, defineAsyncComponent } from "vue";
-import type { IApiError } from "@/types/api";
-import BaseButton from "@/components/ui/BaseButton.vue";
-import EmptyState from "@/components/ui/EmptyState.vue";
-import PageLoading from "@/components/ui/PageLoading.vue";
-import BranchesCards from "@/features/branches/components/BranchesCards.vue";
-import BranchesTable from "@/features/branches/components/BranchesTable.vue";
-import DisableAllButton from "@/features/branches/components/DisableAllButton.vue";
-
-const AddBranchesModal = defineAsyncComponent(
-  () => import("@/features/branches/components/AddBranchesModal.vue")
-);
-const BranchSettingsModal = defineAsyncComponent(
-  () => import("@/features/branches/components/BranchSettingsModal.vue")
-);
-
-import { useModals } from "@/features/branches/composables/useModals";
-import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
-
-const branchesStore = useBranchesStore();
-const modals = useModals();
-const { handleError } = useApiErrorHandler();
-
-const loading = computed(() => branchesStore.loading);
-const error = computed(() => branchesStore.error);
-const enabledBranches = computed(() => branchesStore.enabledBranches);
-
-onMounted(async () => {
-    try {
-        await branchesStore.fetchBranches(true);
-    }
-    catch (err) {
-        handleError(err as IApiError, {
-            clearStoreError: () => {
-                branchesStore.error = null;
-            },
-        });
-    }
-});
-</script>

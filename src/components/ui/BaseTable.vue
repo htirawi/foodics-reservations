@@ -1,3 +1,9 @@
+<script setup lang="ts">
+defineProps<{
+    dataTestid?: string;
+}>();
+</script>
+
 <template>
   <div class="overflow-x-auto">
     <table :data-testid="dataTestid" class="w-full">
@@ -12,9 +18,3 @@
     </table>
   </div>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-    dataTestid?: string;
-}>();
-</script>

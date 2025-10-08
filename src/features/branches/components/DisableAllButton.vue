@@ -1,3 +1,19 @@
+<script setup lang="ts">
+import BaseButton from "@/components/ui/BaseButton.vue";
+
+import { useDisableAll } from "@/features/branches/composables/useDisableAll";
+
+interface Props {
+    disabled?: boolean;
+}
+
+withDefaults(defineProps<Props>(), {
+    disabled: false,
+});
+
+const { busy, disableAll } = useDisableAll();
+</script>
+
 <template>
   <BaseButton
     data-test-id="disable-all"
@@ -8,16 +24,3 @@
     {{ $t('reservations.disableAll') }}
   </BaseButton>
 </template>
-
-<script setup lang="ts">
-import BaseButton from "@/components/ui/BaseButton.vue";
-import { useDisableAll } from "@/features/branches/composables/useDisableAll";
-interface Props {
-    disabled?: boolean;
-}
-withDefaults(defineProps<Props>(), {
-    disabled: false,
-});
-const { busy, disableAll } = useDisableAll();
-</script>
-

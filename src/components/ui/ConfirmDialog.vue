@@ -1,3 +1,30 @@
+<script setup lang="ts">
+import { storeToRefs } from "pinia";
+
+import BaseButton from "@/components/ui/BaseButton.vue";
+import BaseModal from "@/components/ui/BaseModal.vue";
+
+import { TESTID_CONFIRM_MODAL, TESTID_CONFIRM_CANCEL, TESTID_CONFIRM_OK } from "@/constants/testids";
+
+import { useUIStore } from "@/stores/ui.store";
+
+const uiStore = useUIStore();
+const { confirmDialog } = storeToRefs(uiStore);
+const { resolveConfirm } = uiStore;
+
+function handleConfirm() {
+    resolveConfirm(true);
+}
+
+function handleCancel() {
+    resolveConfirm(false);
+}
+
+function handleClose() {
+    resolveConfirm(false);
+}
+</script>
+
 <template>
   <BaseModal
     :model-value="confirmDialog.isOpen"
@@ -32,24 +59,3 @@
     </template>
   </BaseModal>
 </template>
-
-<script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { useUIStore } from "@/stores/ui.store";
-import BaseModal from "@/components/ui/BaseModal.vue";
-import BaseButton from "@/components/ui/BaseButton.vue";
-import { TESTID_CONFIRM_MODAL, TESTID_CONFIRM_CANCEL, TESTID_CONFIRM_OK } from "@/constants/testids";
-
-const uiStore = useUIStore();
-const { confirmDialog } = storeToRefs(uiStore);
-const { resolveConfirm } = uiStore;
-function handleConfirm() {
-    resolveConfirm(true);
-}
-function handleCancel() {
-    resolveConfirm(false);
-}
-function handleClose() {
-    resolveConfirm(false);
-}
-</script>

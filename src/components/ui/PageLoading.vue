@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { TESTID_PAGE_LOADING } from "@/constants/testids";
+</script>
+
 <template>
   <div
     role="status"
@@ -15,7 +19,3 @@
     <span class="sr-only">{{ $t('loading.message') }}</span>
   </div>
 </template>
-
-<script setup lang="ts">
-import { TESTID_PAGE_LOADING } from "@/constants/testids";
-</script>
