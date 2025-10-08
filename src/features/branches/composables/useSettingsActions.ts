@@ -6,10 +6,19 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
+// Vue core
 import { type Ref } from "vue";
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
+
+// Type imports
 import type { IBranch, Weekday, ReservationTimes } from "@/types/foodics";
-const weekdays: Weekday[] = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
+
+// Stores
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
+
+// Constants
+import { WEEKDAYS } from "@/constants/reservations";
+
+const weekdays = WEEKDAYS;
 export function useSettingsActions(state: {
     branch: Ref<IBranch | null>;
     duration: Ref<number>;

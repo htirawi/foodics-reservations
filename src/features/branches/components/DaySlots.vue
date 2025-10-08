@@ -6,10 +6,15 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
+// Vue core
+import { useI18n } from "vue-i18n";
+
+// Type imports
+import type { Weekday, SlotTuple } from "@/types/foodics";
+
+// Components
 import BaseButton from "@/components/ui/BaseButton.vue";
 import TimePill from "@/components/ui/TimePill.vue";
-import { useI18n } from "vue-i18n";
-import type { Weekday, SlotTuple } from "@/types/foodics";
 defineProps<{
     day: Weekday;
     slots: SlotTuple[];

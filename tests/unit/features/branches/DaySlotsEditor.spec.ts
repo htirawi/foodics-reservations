@@ -6,18 +6,23 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, vi } from "vitest";
-import { mount } from "@vue/test-utils";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { mount, flushPromises } from "@vue/test-utils";
 import { createI18n } from "vue-i18n";
+import { createPinia, setActivePinia } from "pinia";
 import DaySlotsEditor from "@/features/branches/components/ReservationSettingsModal/DaySlotsEditor.vue";
 import type { ReservationTimes } from "@/types/foodics";
+import { useUIStore } from "@/stores/ui.store";
 
-// Mock the useConfirm composable
-vi.mock("@/composables/useConfirm", () => ({
-  useConfirm: () => ({
-    confirm: vi.fn().mockResolvedValue(true), // Always return true for confirmations
-  }),
-}));
+let pinia: ReturnType<typeof createPinia>;
+
+beforeEach(() => {
+  pinia = createPinia();
+  setActivePinia(pinia);
+  const uiStore = useUIStore();
+  // Mock the confirm method to always return true
+  vi.spyOn(uiStore, "confirm").mockResolvedValue(true);
+});
 const i18n = createI18n({
     legacy: false,
     locale: "en",
@@ -69,7 +74,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 modelValue: mockReservationTimes,
             },
             global: {
-                plugins: [i18n],
+                plugins: [i18n, pinia],
             },
         });
         expect(wrapper.find("[data-testid=\"settings-day-slots\"]").exists()).toBe(true);
@@ -83,7 +88,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 modelValue: mockReservationTimes,
             },
             global: {
-                plugins: [i18n],
+                plugins: [i18n, pinia],
             },
         });
         expect(wrapper.find("[data-testid=\"settings-day-saturday-row-0\"]").exists()).toBe(true);
@@ -94,7 +99,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 modelValue: mockReservationTimes,
             },
             global: {
-                plugins: [i18n],
+                plugins: [i18n, pinia],
             },
         });
         await wrapper.find("[data-testid=\"settings-day-sunday-add\"]").trigger("click");
@@ -108,7 +113,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 modelValue: mockReservationTimes,
             },
             global: {
-                plugins: [i18n],
+                plugins: [i18n, pinia],
             },
         });
         const timePill = wrapper.findComponent({ name: "TimePill" });
@@ -123,7 +128,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 modelValue: mockReservationTimes,
             },
             global: {
-                plugins: [i18n],
+                plugins: [i18n, pinia],
             },
         });
         const timePill = wrapper.findComponent({ name: "TimePill" });
@@ -138,7 +143,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 modelValue: mockReservationTimes,
             },
             global: {
-                plugins: [i18n],
+                plugins: [i18n, pinia],
             },
         });
         await wrapper.vm.$nextTick();
@@ -152,10 +157,11 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 modelValue: mockReservationTimes,
             },
             global: {
-                plugins: [i18n],
+                plugins: [i18n, pinia],
             },
         });
         await wrapper.find("[data-testid=\"slots-apply-all\"]").trigger("click");
+        await flushPromises();
         expect(wrapper.emitted("update:modelValue")).toBeTruthy();
         const emittedValue = wrapper.emitted("update:modelValue")?.[0]?.[0] as ReservationTimes;
         expect(emittedValue.sunday).toEqual([["09:00", "17:00"]]);
@@ -180,7 +186,7 @@ describe("ReservationSettingsModal/DaySlotsEditor", () => {
                 modelValue: invalidTimes,
             },
             global: {
-                plugins: [i18n],
+                plugins: [i18n, pinia],
             },
         });
         await wrapper.vm.$nextTick();

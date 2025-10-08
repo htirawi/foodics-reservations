@@ -7,8 +7,9 @@
  *   - Returns i18n error keys (not messages); UI translates via $t().
  */
 
-import type { Weekday, SlotTuple, ReservationTimes } from "@/types/foodics";
+import type { SlotTuple, ReservationTimes } from "@/types/foodics";
 import { isHHmm, timeToMinutes } from "./time";
+import { WEEKDAYS, MAX_SLOTS_PER_DAY } from "@/constants/reservations";
 
 type ValidationResult =
   | { ok: true }
@@ -72,7 +73,7 @@ export function isOverlapping(a: SlotTuple, b: SlotTuple): boolean {
 export function canAddSlot(
   existing: SlotTuple[],
   candidate: SlotTuple,
-  max = 3
+  max = MAX_SLOTS_PER_DAY
 ): ValidationResult {
   const rangeCheck = isValidRange(candidate);
   if (!rangeCheck.ok) {
@@ -102,19 +103,9 @@ export function copySaturdayToAll(rt: ReservationTimes): ReservationTimes {
   const saturdaySlots = rt.saturday;
   const clonedSaturday = saturdaySlots.map((slot) => [slot[0], slot[1]] as SlotTuple);
 
-  const days: Weekday[] = [
-    "saturday",
-    "sunday",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-  ];
-
   const result = {} as ReservationTimes;
 
-  for (const day of days) {
+  for (const day of WEEKDAYS) {
     result[day] = clonedSaturday.map((slot) => [slot[0], slot[1]] as SlotTuple);
   }
 

@@ -10,8 +10,7 @@ import type { SlotTuple, ReservationTimes, Weekday } from "@/types/foodics";
 import type { IReservationTimesValidation } from "@/types/validation";
 import { isHHmm, timeToMinutes } from "@/utils/time";
 import { slotOverlaps } from "./slot.operations";
-
-const MAX_SLOTS_PER_DAY = 3;
+import { MAX_SLOTS_PER_DAY, WEEKDAYS } from "@/constants/reservations";
 
 /**
  * Check if slot represents overnight range (e.g., 22:00-02:00).
@@ -139,7 +138,7 @@ export function validateReservationTimes(
 
   let hasErrors = false;
 
-  (Object.keys(reservationTimes) as Weekday[]).forEach((day) => {
+  WEEKDAYS.forEach((day) => {
     const slots = reservationTimes[day];
     if (!slots) return;
 

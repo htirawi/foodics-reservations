@@ -24,10 +24,7 @@ import {
   validateReservationTimes,
 } from "./slot.validation";
 import type { IReservationTimesValidation } from "@/types/validation";
-
-const MIN_DURATION = 1;
-const MAX_DURATION = 1440;
-const TIME_FORMAT_REGEX = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
+import { TIME_FORMAT_REGEX, MIN_DURATION_MINUTES, MAX_DURATION_MINUTES } from "@/constants";
 
 // Re-export utilities for convenience
 export { parseHHmm, toMinutes, isHHmm, timeToMinutes, compareHHmm };
@@ -59,7 +56,7 @@ function sanitizeNumberDuration(value: number, min: number, max: number): number
         return max;
     return Math.floor(value);
 }
-export function sanitizeDuration(value: unknown, { min = MIN_DURATION, max = MAX_DURATION }: IDurationOptions = {}): number | null {
+export function sanitizeDuration(value: unknown, { min = MIN_DURATION_MINUTES, max = MAX_DURATION_MINUTES }: IDurationOptions = {}): number | null {
     if (value === null || value === undefined)
         return null;
     if (typeof value === "string")
@@ -68,7 +65,7 @@ export function sanitizeDuration(value: unknown, { min = MIN_DURATION, max = MAX
         return sanitizeNumberDuration(value, min, max);
     return null;
 }
-export function isValidDuration(value: unknown, { min = MIN_DURATION, max = MAX_DURATION }: IDurationOptions = {}): value is number {
+export function isValidDuration(value: unknown, { min = MIN_DURATION_MINUTES, max = MAX_DURATION_MINUTES }: IDurationOptions = {}): value is number {
     if (typeof value !== "number" || !Number.isFinite(value))
         return false;
     if (!Number.isInteger(value))

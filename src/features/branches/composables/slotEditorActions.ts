@@ -5,10 +5,9 @@
  */
 import type { ReservationTimes, Weekday, SlotTuple } from "@/types/foodics";
 import type { ISlotUpdateParams } from "@/types/slots";
+import { WEEKDAYS, DEFAULT_SLOT_START, DEFAULT_SLOT_END } from "@/constants/reservations";
 
-export const WEEKDAY_ORDER: ReadonlyArray<Weekday> = [
-  "saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday",
-] as const;
+export const WEEKDAY_ORDER = WEEKDAYS;
 
 /**
  * Add a new slot to a specific day.
@@ -18,7 +17,7 @@ export const WEEKDAY_ORDER: ReadonlyArray<Weekday> = [
  */
 export function addSlotToDay(modelValue: ReservationTimes, day: Weekday): ReservationTimes {
   const newSlots = [...(modelValue[day] ?? [])];
-  newSlots.push(["09:00", "17:00"]);
+  newSlots.push([DEFAULT_SLOT_START, DEFAULT_SLOT_END]);
   return { ...modelValue, [day]: newSlots };
 }
 

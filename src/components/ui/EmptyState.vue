@@ -1,6 +1,6 @@
 <template>
   <div
-    data-testid="empty-state"
+    :data-testid="TESTID_EMPTY_STATE"
     class="flex min-h-64 flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 bg-white p-8 text-center"
   >
     <svg
@@ -49,6 +49,8 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import BaseButton from "@/components/ui/BaseButton.vue";
+import { TESTID_EMPTY_STATE } from "@/constants/testids";
+
 withDefaults(defineProps<{
     title?: string | undefined;
     description?: string | undefined;

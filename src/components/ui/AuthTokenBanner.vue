@@ -41,10 +41,15 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 
+// Third-party libraries
 import { storeToRefs } from "pinia";
-import { useUIStore } from "@/stores/ui.store";
-import UiBanner from "@/components/ui/UiBanner.vue";
+
+// Components
 import BaseButton from "@/components/ui/BaseButton.vue";
+import UiBanner from "@/components/ui/UiBanner.vue";
+
+// Stores
+import { useUIStore } from "@/stores/ui.store";
 
 const uiStore = useUIStore();
 const { authBanner } = storeToRefs(uiStore);

@@ -62,6 +62,8 @@ d="M6 18L18 6M6 6l12 12" />
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { computed, onMounted, onBeforeUnmount } from "vue";
+import { ID_PREFIX_MODAL_TITLE, RADIX_BASE36, ID_RANDOM_SLICE_START } from "@/constants/html";
+
 const props = withDefaults(defineProps<{
     modelValue: boolean;
     title?: string | undefined;
@@ -87,7 +89,7 @@ const modalClasses = computed(() => {
     } as const;
     return `${base} ${sizes[props.size]}`;
 });
-const titleId = computed(() => `modal-title-${Math.random().toString(36).slice(2)}`);
+const titleId = computed(() => `${ID_PREFIX_MODAL_TITLE}${Math.random().toString(RADIX_BASE36).slice(ID_RANDOM_SLICE_START)}`);
 function closeModal() {
     if (!props.preventClose) {
         emit("update:modelValue", false);

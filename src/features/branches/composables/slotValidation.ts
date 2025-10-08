@@ -7,8 +7,7 @@
 import type { ReservationTimes, Weekday, SlotTuple } from "@/types/foodics";
 import { isValidRange, canAddSlot, normalizeDay } from "@/utils/slots";
 import { WEEKDAY_ORDER } from "./slotEditorActions";
-
-const MAX_SLOTS_PER_DAY = 3;
+import { MAX_SLOTS_PER_DAY } from "@/constants/reservations";
 
 /**
  * Validate slots for a single day.

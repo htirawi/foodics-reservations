@@ -10,13 +10,15 @@ import { type Ref } from "vue";
 import type { Weekday, SlotTuple, ReservationTimes } from "@/types/foodics";
 import { useUIStore } from "@/stores/ui.store";
 import { useI18n } from "vue-i18n";
-const weekdays: Weekday[] = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
+import { WEEKDAYS, DEFAULT_SLOT_START, DEFAULT_SLOT_END } from "@/constants/reservations";
+
+const weekdays = WEEKDAYS;
 export function useSlotsManagement(weekSlots: Ref<ReservationTimes>) {
     const uiStore = useUIStore();
     const { t } = useI18n();
 
     function addSlot(day: Weekday): void {
-        weekSlots.value[day].push(["09:00", "17:00"]);
+        weekSlots.value[day].push([DEFAULT_SLOT_START, DEFAULT_SLOT_END]);
     }
     function removeSlot(day: Weekday, index: number): void {
         const slots = weekSlots.value[day];

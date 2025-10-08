@@ -6,8 +6,7 @@
  *   - TypeScript strict; no any/unknown.
  *   - HH:mm format only (24-hour); no date libraries.
  */
-
-const TIME_FORMAT_REGEX = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
+import { TIME_FORMAT_REGEX } from "@/constants/regex";
 
 /**
  * Parse HH:mm string into { h, m } object.

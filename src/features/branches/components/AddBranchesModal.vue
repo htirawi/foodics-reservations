@@ -102,17 +102,26 @@ stroke-width="4" />
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
+// Vue core
 import { ref, watch, computed } from "vue";
-import { useDebounceFn } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
-import UiModal from "@/components/ui/UiModal.vue";
-import BaseInput from "@/components/ui/BaseInput.vue";
+
+// Third-party libraries
+import { useDebounceFn } from "@vueuse/core";
+
+// Components
 import BaseButton from "@/components/ui/BaseButton.vue";
+import BaseInput from "@/components/ui/BaseInput.vue";
 import EmptyState from "@/components/ui/EmptyState.vue";
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
-import { useAddBranchesModal } from "@/features/branches/composables/useAddBranchesModal";
-import { useAddBranchesEnabling } from "@/features/branches/composables/useAddBranchesEnabling";
+import UiModal from "@/components/ui/UiModal.vue";
+
+// Composables
 import { useToast } from "@/composables/useToast";
+import { useAddBranchesEnabling } from "@/features/branches/composables/useAddBranchesEnabling";
+import { useAddBranchesModal } from "@/features/branches/composables/useAddBranchesModal";
+
+// Stores
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
 const props = defineProps<{
     modelValue: boolean;
 }>();

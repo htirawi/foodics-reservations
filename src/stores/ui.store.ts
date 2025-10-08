@@ -11,6 +11,15 @@ import { ref } from "vue";
 import type { IToast } from "@/types/toast";
 import type { IConfirmOptions } from "@/types/confirm";
 import type { ModalName } from "@/types/ui";
+import {
+    CONFIRM_DIALOG_DEFAULT_CONFIRM_TEXT,
+    CONFIRM_DIALOG_DEFAULT_CANCEL_TEXT,
+    CONFIRM_DIALOG_DEFAULT_VARIANT,
+    TOAST_DEFAULT_DURATION_MS,
+    TOAST_TYPE_INFO,
+    AUTH_BANNER_AUTO_DISMISS_MS,
+    STORE_NAME_UI,
+} from "@/constants";
 
 interface AuthBannerState {
   isVisible: boolean;
@@ -30,9 +39,9 @@ function createToast(message: string, type: IToast["type"], duration: number): I
 }
 function buildConfirmOptions(options: IConfirmOptions): IConfirmOptions {
     return {
-        confirmText: "Confirm",
-        cancelText: "Cancel",
-        variant: "info",
+        confirmText: CONFIRM_DIALOG_DEFAULT_CONFIRM_TEXT,
+        cancelText: CONFIRM_DIALOG_DEFAULT_CANCEL_TEXT,
+        variant: CONFIRM_DIALOG_DEFAULT_VARIANT,
         ...options,
     };
 }
@@ -51,7 +60,7 @@ function useModals() {
 }
 function useToasts() {
     const toasts = ref<IToast[]>([]);
-    function notify(message: string, type: IToast["type"] = "info", duration = 5000): string {
+    function notify(message: string, type: IToast["type"] = TOAST_TYPE_INFO, duration = TOAST_DEFAULT_DURATION_MS): string {
         const toast = createToast(message, type, duration);
         toasts.value.push(toast);
         if (duration > 0) {
@@ -115,7 +124,7 @@ function useAuthBanner() {
         if (options?.autoDismiss) {
             authBanner.value.autoDismissTimer = setTimeout(() => {
                 hideAuthBanner();
-            }, 10000); // 10 seconds
+            }, AUTH_BANNER_AUTO_DISMISS_MS);
         }
     }
     function hideAuthBanner(): void {
@@ -133,7 +142,7 @@ function useAuthBanner() {
     }
     return { authBanner, showAuthBanner, hideAuthBanner };
 }
-export const useUIStore = defineStore("ui", () => {
+export const useUIStore = defineStore(STORE_NAME_UI, () => {
     const modalActions = useModals();
     const toastActions = useToasts();
     const confirmActions = useConfirmDialog();

@@ -160,6 +160,7 @@ module.exports = {
       rules: {
         'no-restricted-imports': 'off',
         'no-restricted-syntax': 'off',
+        'max-lines': ['error', { max: 150, skipComments: true, skipBlankLines: true }],
       },
     },
     {

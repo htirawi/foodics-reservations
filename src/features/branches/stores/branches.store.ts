@@ -6,22 +6,28 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { defineStore } from "pinia";
+// Vue core
 import { ref, computed, type Ref, type ComputedRef } from "vue";
-import { BranchesService } from "@/services/branches.service";
+import { defineStore } from "pinia";
+
+// Type imports
 import type { IBranch, IUpdateBranchSettingsPayload } from "@/types/foodics";
 import type { IApiError } from "@/types/api";
-function countReservableTables(branch: IBranch): number {
-    if (!branch.sections)
-        return 0;
-    return branch.sections.reduce((total, section) => {
-        const sectionTables = section.tables ?? [];
-        return total + sectionTables.filter((t) => t.accepts_reservations).length;
-    }, 0);
-}
-function findBranchById(branches: IBranch[], id: string): IBranch | null {
-    return branches.find((b) => b.id === id) ?? null;
-}
+
+// Services
+import { BranchesService } from "@/services/branches.service";
+
+// Utils
+import { countReservableTables, findBranchById } from "@/features/branches/utils/branch.helpers";
+
+// Constants
+import {
+    ERROR_MSG_FETCH_BRANCHES_FAILED,
+    ERROR_MSG_ENABLE_BRANCHES_FAILED,
+    ERROR_MSG_DISABLE_ALL_FAILED,
+    ERROR_MSG_UPDATE_SETTINGS_FAILED,
+    STORE_NAME_BRANCHES,
+} from "@/constants";
 function useBranchesState() {
     const branches = ref<IBranch[]>([]);
     const selectedBranchId = ref<string | null>(null);
@@ -42,7 +48,7 @@ function useFetchBranches(branches: Ref<IBranch[]>, loading: Ref<boolean>, error
         }
         catch (err) {
             const apiError = err as IApiError;
-            error.value = apiError.message ?? "Failed to fetch branches";
+            error.value = apiError.message ?? ERROR_MSG_FETCH_BRANCHES_FAILED;
             throw err;
         }
         finally {
@@ -76,7 +82,7 @@ function useEnableAction(branches: Ref<IBranch[]>, error: Ref<string | null>) {
             if (enabled.length === 0) {
                 const firstError = results.find((r) => r.status === "rejected") as PromiseRejectedResult;
                 const apiError = firstError?.reason as IApiError;
-                error.value = apiError?.message ?? "Failed to enable branches";
+                error.value = apiError?.message ?? ERROR_MSG_ENABLE_BRANCHES_FAILED;
                 throw apiError;
             }
             return { ok: false, enabled, failed };
@@ -96,7 +102,7 @@ function useDisableAllAction(branches: Ref<IBranch[]>, enabledBranches: Computed
         catch (err) {
             branches.value = snapshot;
             const apiError = err as IApiError;
-            error.value = apiError.message ?? "Failed to disable all branches";
+            error.value = apiError.message ?? ERROR_MSG_DISABLE_ALL_FAILED;
             throw err;
         }
     }
@@ -123,13 +129,13 @@ function useUpdateSettings(branches: Ref<IBranch[]>, error: Ref<string | null>) 
         catch (err) {
             branches.value = snapshot;
             const apiError = err as IApiError;
-            error.value = apiError.message ?? "Failed to update branch settings";
+            error.value = apiError.message ?? ERROR_MSG_UPDATE_SETTINGS_FAILED;
             throw err;
         }
     }
     return { updateSettings };
 }
-export const useBranchesStore = defineStore("branches", () => {
+export const useBranchesStore = defineStore(STORE_NAME_BRANCHES, () => {
     const state = useBranchesState();
     const { fetchBranches } = useFetchBranches(state.branches, state.loading, state.error);
     const { enableBranches } = useEnableAction(state.branches, state.error);

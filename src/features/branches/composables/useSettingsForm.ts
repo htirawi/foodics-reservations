@@ -6,13 +6,20 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
+// Vue core
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
+
+// Composables
+import { useSettingsActions } from "./useSettingsActions";
 import { useSettingsState } from "./useSettingsState";
 import { useSettingsValidationLogic } from "./useSettingsValidationLogic";
 import { useSlotsManagement } from "./useSlotsManagement";
-import { useSettingsActions } from "./useSettingsActions";
-const weekdays = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"] as const;
+
+// Constants
+import { WEEKDAYS } from "@/constants/reservations";
+
+const weekdays = WEEKDAYS;
 export function useSettingsForm(branchId: Readonly<{
     branchId: string | null;
 }>, onClose: () => void) {

@@ -32,6 +32,8 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { computed } from "vue";
+import { ID_PREFIX_SELECT, RADIX_BASE36, ID_RANDOM_SLICE_START, ID_RANDOM_SLICE_END } from "@/constants/html";
+
 withDefaults(defineProps<{
     modelValue?: string | number;
     label?: string;
@@ -50,5 +52,5 @@ withDefaults(defineProps<{
 defineEmits<{
     (e: "update:modelValue", value: string): void;
 }>();
-const selectId = computed(() => `select-${Math.random().toString(36).slice(2, 9)}`);
+const selectId = computed(() => `${ID_PREFIX_SELECT}${Math.random().toString(RADIX_BASE36).slice(ID_RANDOM_SLICE_START, ID_RANDOM_SLICE_END)}`);
 </script>

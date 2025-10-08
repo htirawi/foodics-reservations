@@ -10,8 +10,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { SupportedLocale } from "@/types/locale";
 import { useUIStore } from "@/stores/ui.store";
-
-const LOCALE_STORAGE_KEY = "foodics-locale";
+import { LOCALE_STORAGE_KEY } from "@/constants/storage";
 
 export const useLocale = () => {
     const { locale, availableLocales } = useI18n();

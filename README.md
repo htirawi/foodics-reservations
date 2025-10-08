@@ -29,6 +29,7 @@ src/
   components/             # Global, re-usable UI only
     ui/                   # Primitives (Button, Modal, Input...)
     layout/               # AppHeader, Toaster, shells
+  constants/              # Centralized constants (see Constants below)
   features/
     branches/
       views/              # Route-level screens
@@ -45,6 +46,40 @@ tests/
   e2e/                    # Playwright specs
 ```
 
+## Constants & Configuration
+
+All application constants are centralized in `src/constants/` to avoid magic strings/numbers and ensure consistency:
+
+```typescript
+// Import from barrel export
+import { API_ENDPOINT_BRANCHES, MAX_SLOTS_PER_DAY, TOAST_TYPE_SUCCESS } from '@/constants';
+
+// Or from specific modules
+import { WEEKDAYS } from '@/constants/reservations';
+import { TESTID_ADD_BRANCHES_BTN } from '@/constants/testids';
+```
+
+**Convention:**
+- Primitives: `UPPER_SNAKE_CASE` (e.g., `MAX_SLOTS_PER_DAY = 3`)
+- Objects/Arrays: PascalCase with `as const` (e.g., `WEEKDAYS = [...] as const`)
+- All imports use `@/constants/*` path alias
+- No duplicates: each constant defined once, imported everywhere
+
+**Files:**
+- `api.ts` — API endpoints, query params, includes
+- `http.ts` — HTTP status codes, headers, auth prefix
+- `ui.ts` — Toast types, confirm variants, durations
+- `testids.ts` — All `data-testid` values for E2E/unit tests
+- `reservations.ts` — Domain constants (weekdays, slot limits, durations)
+- `locale.ts` — Locale codes, direction values, currencies
+- `time.ts` — Time conversion factors, limits
+- `regex.ts` — Validation regex patterns
+- `i18n-keys.ts` — i18n namespace keys
+- `storage.ts` — localStorage/sessionStorage keys
+- `errors.ts` — Fallback error messages
+- `html.ts` — HTML attribute names, ID prefixes
+- `stores.ts` — Pinia store names
+
 ## Key Design Decisions & Rationale
 
 - **App Layer Structure**: Centralized application wiring in `src/app/` for better organization
@@ -54,6 +89,7 @@ tests/
 - **Minimal Dependencies**: No UI/date kits; tokens-first design with Tailwind
 - **i18n & RTL**: EN/AR support from day 1 with proper RTL handling; accessibility target ≥95
 - **Centralized HTTP**: Axios client with error normalization `{ status, message, details }`
+- **Constants Centralization**: All magic strings/numbers extracted to `src/constants/` for maintainability
 
 ## Setup & Usage
 

@@ -3,7 +3,7 @@
     role="status"
     aria-busy="true"
     :aria-label="$t('loading.message')"
-    data-testid="page-loading"
+    :data-testid="TESTID_PAGE_LOADING"
     class="flex min-h-64 flex-col items-center justify-center p-8"
   >
     <div class="relative h-12 w-12">
@@ -24,4 +24,5 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
+import { TESTID_PAGE_LOADING } from "@/constants/testids";
 </script>
