@@ -1,11 +1,8 @@
-/**
- * @file BranchesListView.spec.ts
- * @summary Unit tests for BranchesListView component
- */
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { createI18n } from "vue-i18n";
+import { ref } from "vue";
 import BranchesListView from "@/features/branches/views/BranchesListView.vue";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import { useUIStore } from "@/stores/ui.store";
@@ -21,23 +18,11 @@ const i18n = createI18n({
       reservations: {
         title: "Reservations",
         addBranches: "Add Branches",
-        empty: {
-          title: "No branches",
-          description: "Add branches to get started",
-          action: "Add Branches",
-        },
-        error: {
-          title: "Error loading branches",
-        },
-        toast: {
-          fetchError: "Failed to fetch branches",
-        },
+        empty: { title: "No branches", description: "Add branches to get started", action: "Add Branches" },
+        error: { title: "Error loading branches" },
+        toast: { fetchError: "Failed to fetch branches" },
       },
-      errors: {
-        server: {
-          tryAgain: "Server error, please try again",
-        },
-      },
+      errors: { server: { tryAgain: "Server error, please try again" } },
     },
   },
 });
@@ -46,13 +31,7 @@ describe("BranchesListView", () => {
   let pinia: ReturnType<typeof createPinia>;
   let branchesStore: ReturnType<typeof useBranchesStore>;
   let uiStore: ReturnType<typeof useUIStore>;
-  let mockModals: {
-    openAddModal: ReturnType<typeof vi.fn>;
-    openSettingsModal: ReturnType<typeof vi.fn>;
-    closeSettingsModal: ReturnType<typeof vi.fn>;
-    showAddModal: { value: boolean };
-    selectedBranchId: { value: number | null };
-  };
+  let mockModals: ReturnType<typeof useModalsModule.useModals>;
 
   beforeEach(() => {
     pinia = createPinia();
@@ -61,11 +40,13 @@ describe("BranchesListView", () => {
     uiStore = useUIStore();
 
     mockModals = {
+      showAddModal: ref(false),
+      showSettingsModal: ref(false),
+      selectedBranchId: ref<string | null>(null),
       openAddModal: vi.fn(),
+      closeAddModal: vi.fn(),
       openSettingsModal: vi.fn(),
       closeSettingsModal: vi.fn(),
-      showAddModal: { value: false },
-      selectedBranchId: { value: null },
     };
 
     vi.spyOn(useModalsModule, "useModals").mockReturnValue(mockModals);
@@ -248,7 +229,6 @@ describe("BranchesListView", () => {
     const serverError: IApiError = {
       message: "Internal Server Error",
       status: HTTP_STATUS_SERVER_ERROR_MIN,
-      errors: {},
     };
 
     vi.spyOn(branchesStore, "fetchBranches").mockRejectedValue(serverError);
@@ -280,7 +260,6 @@ describe("BranchesListView", () => {
     const clientError: IApiError = {
       message: "Bad Request",
       status: 400,
-      errors: {},
     };
 
     vi.spyOn(branchesStore, "fetchBranches").mockRejectedValue(clientError);
