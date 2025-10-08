@@ -1,23 +1,21 @@
-<script setup lang="ts">/**
- * @file SettingsModalIndex.vue
- * @summary Module: src/features/branches/components/ReservationSettingsModal/SettingsModalIndex.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
+
 import type { IBranch, IUpdateBranchSettingsPayload } from "@/types/foodics";
+
 import UiModal from "@/components/ui/UiModal.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
+
 import DurationField from "./DurationField.vue";
 import TablesList from "./TablesList.vue";
 import DaySlotsEditor from "./DaySlotsEditor.vue";
+
 const props = defineProps<{
     branch: IBranch | null;
     isOpen: boolean;
 }>();
+
 const emit = defineEmits<{
     save: [
         payload: IUpdateBranchSettingsPayload
@@ -25,6 +23,7 @@ const emit = defineEmits<{
     close: [
     ];
 }>();
+
 const { t } = useI18n();
 const duration = ref<number | null>(null);
 const reservationTimes = ref(props.branch?.reservation_times ?? {
@@ -38,15 +37,18 @@ const reservationTimes = ref(props.branch?.reservation_times ?? {
 });
 const isDurationValid = ref<boolean>(false);
 const areSlotsValid = ref<boolean>(false);
+
 const isFormValid = computed<boolean>(() => {
     return props.branch !== null && isDurationValid.value && areSlotsValid.value;
 });
+
 watch(() => props.branch, (newBranch) => {
     if (newBranch) {
         duration.value = newBranch.reservation_duration;
         reservationTimes.value = { ...newBranch.reservation_times };
     }
 }, { immediate: true });
+
 function handleSave(): void {
     if (!isFormValid.value || duration.value === null)
         return;
@@ -56,6 +58,7 @@ function handleSave(): void {
     };
     emit("save", payload);
 }
+
 function handleClose(): void {
     emit("close");
 }
@@ -116,4 +119,3 @@ function handleClose(): void {
     </template>
   </UiModal>
 </template>
-

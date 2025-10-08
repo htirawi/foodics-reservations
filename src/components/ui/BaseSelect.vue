@@ -1,3 +1,31 @@
+<script setup lang="ts">
+import { computed } from "vue";
+
+import { ID_PREFIX_SELECT, RADIX_BASE36, ID_RANDOM_SLICE_START, ID_RANDOM_SLICE_END } from "@/constants/html";
+
+withDefaults(defineProps<{
+    modelValue?: string | number;
+    label?: string;
+    placeholder?: string;
+    disabled?: boolean;
+    required?: boolean;
+    dataTestid?: string;
+}>(), {
+    modelValue: "",
+    label: "",
+    placeholder: "",
+    disabled: false,
+    required: false,
+    dataTestid: "",
+});
+
+defineEmits<{
+    (e: "update:modelValue", value: string): void;
+}>();
+
+const selectId = computed(() => `${ID_PREFIX_SELECT}${Math.random().toString(RADIX_BASE36).slice(ID_RANDOM_SLICE_START, ID_RANDOM_SLICE_END)}`);
+</script>
+
 <template>
   <div class="w-full">
     <label
@@ -22,28 +50,3 @@
     </select>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from "vue";
-import { ID_PREFIX_SELECT, RADIX_BASE36, ID_RANDOM_SLICE_START, ID_RANDOM_SLICE_END } from "@/constants/html";
-
-withDefaults(defineProps<{
-    modelValue?: string | number;
-    label?: string;
-    placeholder?: string;
-    disabled?: boolean;
-    required?: boolean;
-    dataTestid?: string;
-}>(), {
-    modelValue: "",
-    label: "",
-    placeholder: "",
-    disabled: false,
-    required: false,
-    dataTestid: "",
-});
-defineEmits<{
-    (e: "update:modelValue", value: string): void;
-}>();
-const selectId = computed(() => `${ID_PREFIX_SELECT}${Math.random().toString(RADIX_BASE36).slice(ID_RANDOM_SLICE_START, ID_RANDOM_SLICE_END)}`);
-</script>

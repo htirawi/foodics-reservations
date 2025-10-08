@@ -1,3 +1,31 @@
+<script setup lang="ts">
+import { useI18n } from "vue-i18n";
+
+import type { IBranch } from "@/types/foodics";
+
+interface Props {
+    branches: IBranch[];
+    reservableCount: (branch: IBranch) => number;
+}
+
+interface Emits {
+    (e: "open-settings", branchId: string): void;
+}
+
+defineProps<Props>();
+
+const emit = defineEmits<Emits>();
+const { t } = useI18n();
+
+function handleCardClick(branchId: string): void {
+    emit("open-settings", branchId);
+}
+
+function formatDuration(minutes: number): string {
+    return t("reservations.duration.minutes", { count: minutes });
+}
+</script>
+
 <template>
   <div class="divide-y divide-gray-100">
     <div
@@ -42,25 +70,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import type { IBranch } from "@/types/foodics";
-interface Props {
-    branches: IBranch[];
-    reservableCount: (branch: IBranch) => number;
-}
-interface Emits {
-    (e: "open-settings", branchId: string): void;
-}
-defineProps<Props>();
-const emit = defineEmits<Emits>();
-const { t } = useI18n();
-function handleCardClick(branchId: string): void {
-    emit("open-settings", branchId);
-}
-function formatDuration(minutes: number): string {
-    return t("reservations.duration.minutes", { count: minutes });
-}
-</script>
-

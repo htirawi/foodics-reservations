@@ -41,6 +41,16 @@ export function isValidRange(slot: SlotTuple): ValidationResult {
 }
 
 /**
+ * Alias for isValidRange - spec compliance naming.
+ * Validates a time range [start, end] ensuring start < end.
+ * @param slot - Tuple [start, end] in HH:mm format
+ * @returns Validation result with i18n error key if invalid
+ */
+export function isValidTimeRange(slot: SlotTuple): ValidationResult {
+  return isValidRange(slot);
+}
+
+/**
  * Check if two slot tuples overlap strictly.
  * Touching boundaries (e.g., [09:00, 12:00] and [12:00, 15:00]) is NOT overlap.
  * @param a - First slot tuple

@@ -1,11 +1,4 @@
-<script setup lang="ts">/**
- * @file TimePill.vue
- * @summary Module: src/components/ui/TimePill.vue
- * @remarks
- *   - Tiny components; logic in composables/services.
- *   - TypeScript strict; no any/unknown; use ?./??.
- *   - i18n/RTL ready; a11y ≥95; minimal deps.
- */
+<script setup lang="ts">
 withDefaults(defineProps<{
     from?: string;
     to?: string;
@@ -21,6 +14,7 @@ withDefaults(defineProps<{
     editable: false,
     dataTestid: "",
 });
+
 const emit = defineEmits<{
     "update:from": [
         value: string
@@ -31,14 +25,17 @@ const emit = defineEmits<{
     remove: [
     ];
 }>();
+
 function handleFromChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     emit("update:from", target.value);
 }
+
 function handleToChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     emit("update:to", target.value);
 }
+
 function handleRemove(): void {
     emit("remove");
 }

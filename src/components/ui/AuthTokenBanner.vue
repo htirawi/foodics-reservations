@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import { storeToRefs } from "pinia";
+
+import BaseButton from "@/components/ui/BaseButton.vue";
+import UiBanner from "@/components/ui/UiBanner.vue";
+
+import { useUIStore } from "@/stores/ui.store";
+
+const uiStore = useUIStore();
+const { authBanner } = storeToRefs(uiStore);
+
+function handleClose(): void {
+  uiStore.hideAuthBanner();
+}
+
+function handleRetry(): void {
+  authBanner.value.onRetry?.();
+}
+</script>
+
 <template>
   <UiBanner
     v-if="authBanner.isVisible"
@@ -28,21 +48,3 @@
     </div>
   </UiBanner>
 </template>
-
-<script setup lang="ts">
-import { storeToRefs } from "pinia";
-import BaseButton from "@/components/ui/BaseButton.vue";
-import UiBanner from "@/components/ui/UiBanner.vue";
-import { useUIStore } from "@/stores/ui.store";
-
-const uiStore = useUIStore();
-const { authBanner } = storeToRefs(uiStore);
-
-function handleClose(): void {
-  uiStore.hideAuthBanner();
-}
-
-function handleRetry(): void {
-  authBanner.value.onRetry?.();
-}
-</script>

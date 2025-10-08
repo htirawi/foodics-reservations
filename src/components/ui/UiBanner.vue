@@ -1,57 +1,4 @@
-<template>
-  <div
-    v-if="isVisible"
-    :class="[
-      'flex items-start gap-3 rounded-xl p-4 border',
-      variantClasses,
-    ]"
-    :data-testid="testId"
-    role="alert"
-    aria-live="polite"
-  >
-    <div class="flex-shrink-0">
-      <component :is="iconComponent" class="h-5 w-5" aria-hidden="true" />
-    </div>
-
-    <div class="flex-1 min-w-0">
-      <slot />
-    </div>
-
-    <button
-      v-if="dismissible"
-      type="button"
-      :aria-label="t('app.close')"
-      class="flex-shrink-0 inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:opacity-75 transition-opacity"
-      :class="closeButtonClasses"
-      data-testid="banner-close"
-      @click="handleClose"
-    >
-      <span class="sr-only">{{ t('app.close') }}</span>
-      <svg
-        class="h-5 w-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-  </div>
-</template>
-
 <script setup lang="ts">
-/**
- * @file UiBanner.vue
- * @summary Inline banner for auth, global, and client error messages
- * @remarks
- *   - Semantic markup with role="alert" and aria-live
- *   - RTL-safe with logical properties (gap, padding-inline)
- *   - Tailwind tokens for colors, spacing, radii
- *   - Keyboard accessible with visible focus rings
- */
-
 import { ref, computed, h } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -123,3 +70,45 @@ function handleClose(): void {
 }
 </script>
 
+<template>
+  <div
+    v-if="isVisible"
+    :class="[
+      'flex items-start gap-3 rounded-xl p-4 border',
+      variantClasses,
+    ]"
+    :data-testid="testId"
+    role="alert"
+    aria-live="polite"
+  >
+    <div class="flex-shrink-0">
+      <component :is="iconComponent" class="h-5 w-5" aria-hidden="true" />
+    </div>
+
+    <div class="flex-1 min-w-0">
+      <slot />
+    </div>
+
+    <button
+      v-if="dismissible"
+      type="button"
+      :aria-label="t('app.close')"
+      class="flex-shrink-0 inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:opacity-75 transition-opacity"
+      :class="closeButtonClasses"
+      data-testid="banner-close"
+      @click="handleClose"
+    >
+      <span class="sr-only">{{ t('app.close') }}</span>
+      <svg
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+</template>

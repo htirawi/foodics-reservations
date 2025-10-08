@@ -1,3 +1,9 @@
+<script setup lang="ts">
+defineProps<{
+    dataTestid?: string;
+}>();
+</script>
+
 <template>
   <div
     :data-testid="dataTestid"
@@ -6,9 +12,3 @@
     <slot />
   </div>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-    dataTestid?: string;
-}>();
-</script>

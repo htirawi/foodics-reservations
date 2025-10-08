@@ -1,3 +1,59 @@
+<script setup lang="ts">
+import { computed, onMounted, onBeforeUnmount } from "vue";
+
+import { ID_PREFIX_MODAL_TITLE, RADIX_BASE36, ID_RANDOM_SLICE_START } from "@/constants/html";
+
+const props = withDefaults(defineProps<{
+    modelValue: boolean;
+    title?: string | undefined;
+    size?: "sm" | "md" | "lg" | "xl";
+    dataTestid?: string | undefined;
+    preventClose?: boolean | undefined;
+}>(), {
+    title: "",
+    size: "md",
+    dataTestid: "",
+    preventClose: false,
+});
+
+const emit = defineEmits<{
+    (e: "update:modelValue", value: boolean): void;
+}>();
+
+const modalClasses = computed(() => {
+    const base = "relative bg-white rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto";
+    const sizes = {
+        sm: "w-full max-w-md",
+        md: "w-full max-w-2xl",
+        lg: "w-full max-w-4xl",
+        xl: "w-full max-w-6xl",
+    };
+    return `${base} ${sizes[props.size]}`;
+});
+
+const titleId = computed(() => `${ID_PREFIX_MODAL_TITLE}${Math.random().toString(RADIX_BASE36).slice(ID_RANDOM_SLICE_START)}`);
+
+function closeModal() {
+    if (!props.preventClose) {
+        emit("update:modelValue", false);
+    }
+}
+
+function handleKeydown(event: KeyboardEvent) {
+    if (event.key === "Escape" && props.modelValue && !props.preventClose) {
+        closeModal();
+    }
+}
+
+onMounted(() => {
+    window.addEventListener("keydown", handleKeydown);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("keydown", handleKeydown);
+});
+</script>
+
 <template>
   <Teleport to="body">
     <Transition name="modal">
@@ -52,54 +108,6 @@ d="M6 18L18 6M6 6l12 12" />
     </Transition>
   </Teleport>
 </template>
-
-<script setup lang="ts">
-import { computed, onMounted, onBeforeUnmount } from "vue";
-import { ID_PREFIX_MODAL_TITLE, RADIX_BASE36, ID_RANDOM_SLICE_START } from "@/constants/html";
-
-const props = withDefaults(defineProps<{
-    modelValue: boolean;
-    title?: string | undefined;
-    size?: "sm" | "md" | "lg" | "xl";
-    dataTestid?: string | undefined;
-    preventClose?: boolean | undefined;
-}>(), {
-    title: "",
-    size: "md",
-    dataTestid: "",
-    preventClose: false,
-});
-const emit = defineEmits<{
-    (e: "update:modelValue", value: boolean): void;
-}>();
-const modalClasses = computed(() => {
-    const base = "relative bg-white rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto";
-    const sizes = {
-        sm: "w-full max-w-md",
-        md: "w-full max-w-2xl",
-        lg: "w-full max-w-4xl",
-        xl: "w-full max-w-6xl",
-    };
-    return `${base} ${sizes[props.size]}`;
-});
-const titleId = computed(() => `${ID_PREFIX_MODAL_TITLE}${Math.random().toString(RADIX_BASE36).slice(ID_RANDOM_SLICE_START)}`);
-function closeModal() {
-    if (!props.preventClose) {
-        emit("update:modelValue", false);
-    }
-}
-function handleKeydown(event: KeyboardEvent) {
-    if (event.key === "Escape" && props.modelValue && !props.preventClose) {
-        closeModal();
-    }
-}
-onMounted(() => {
-    window.addEventListener("keydown", handleKeydown);
-});
-onBeforeUnmount(() => {
-    window.removeEventListener("keydown", handleKeydown);
-});
-</script>
 
 <style scoped>
 .modal-enter-active,
