@@ -112,29 +112,4 @@ test.describe("Edge-Case Policies - E2E (Documented)", () => {
     });
   });
 
-  /*
-   * TODO: Implement full E2E tests when component wiring is complete:
-   *
-   * - tests/e2e/edge.policies.week-order.spec.ts
-   * - tests/e2e/edge.policies.overlaps.spec.ts
-   * - tests/e2e/edge.policies.max-slots.spec.ts
-   * - tests/e2e/edge.policies.overnight.spec.ts
-   * - tests/e2e/edge.policies.empty-days.spec.ts
-   * - tests/e2e/edge.policies.apply-all.spec.ts
-   * - tests/e2e/edge.policies.no-tables.spec.ts
-   * - tests/e2e/edge.policies.persistence.spec.ts
-   *
-   * Each spec should:
-   * 1. Use setupOfflineModeWithSections() for offline mode
-   * 2. Test in both EN and AR locales
-   * 3. Assert localized strings and html[dir]
-   * 4. Use stable data-testid selectors
-   * 5. Verify error messages appear inline
-   * 6. Check Save button enabled/disabled state
-   *
-   * Current blockers:
-   * - DaySlotsEditor may not expose day-level error test IDs
-   * - Inline error display wiring may need enhancement
-   * - Some test IDs may need to be added to components
-   */
 });
