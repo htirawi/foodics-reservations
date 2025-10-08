@@ -8,6 +8,7 @@
  */
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import type { IApiError } from "@/types/api";
+import { useUIStore } from "@/stores/ui.store";
 const httpClient = axios.create({
     baseURL: "/api",
     headers: {
@@ -24,15 +25,32 @@ httpClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 httpClient.interceptors.response.use((response) => response, (error: AxiosError<{
     message?: string;
     error?: string;
+    code?: string;
 }>) => {
+    const code = error.response?.data?.code;
     const normalized: IApiError = {
         status: error.response?.status ?? 500,
+        ...(code !== undefined ? { code } : {}),
         message: error.response?.data?.message ??
             error.response?.data?.error ??
             error.message ??
             "Network error occurred",
         details: error.response?.data,
     };
+    
+    // Show auth banner for 401 errors with auto-dismiss and retry
+    if (normalized.status === 401) {
+        const uiStore = useUIStore();
+        uiStore.showAuthBanner({
+            autoDismiss: true,
+            onRetry: () => {
+                // Hide banner and reload page to retry authentication
+                uiStore.hideAuthBanner();
+                window.location.reload();
+            },
+        });
+    }
+    
     return Promise.reject(normalized);
 });
 export { httpClient };

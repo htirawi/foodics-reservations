@@ -10,6 +10,26 @@
     "deselectAll": "Deselect All",
     "skipToMain": "Skip to main content"
   },
+  "errors": {
+    "auth": {
+      "title": "Authentication failed",
+      "message": "Please check your access token and try again.",
+      "token": "Authentication failed. Please check your access token and try again."
+    },
+    "client": {
+      "generic": "Invalid request. Please check your input and try again.",
+      "BRANCH_NOT_FOUND": "The requested branch was not found.",
+      "VALIDATION_FAILED": "Validation failed. Please check the form fields."
+    },
+    "server": {
+      "tryAgain": "A server error occurred. Please try again in a moment."
+    }
+  },
+  "actions": {
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "saving": "Saving..."
+  },
   "reservations": {
     "title": "Reservations",
     "disableAll": "Disable Reservations",

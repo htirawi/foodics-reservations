@@ -123,8 +123,9 @@ aria-hidden="true">
 import { onMounted, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
-import { useToast } from "@/composables/useToast";
+import { useUIStore } from "@/stores/ui.store";
 import { useModals } from "@/features/branches/composables/useModals";
+import type { IApiError } from "@/types/api";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import PageLoading from "@/components/ui/PageLoading.vue";
 import EmptyState from "@/components/ui/EmptyState.vue";
@@ -135,7 +136,7 @@ import AddBranchesModal from "@/features/branches/components/AddBranchesModal.vu
 import BranchSettingsModal from "@/features/branches/components/BranchSettingsModal.vue";
 const { t } = useI18n();
 const branchesStore = useBranchesStore();
-const toast = useToast();
+const uiStore = useUIStore();
 const modals = useModals();
 const loading = computed(() => branchesStore.loading);
 const error = computed(() => branchesStore.error);
@@ -144,8 +145,18 @@ onMounted(async () => {
     try {
         await branchesStore.fetchBranches(true);
     }
-    catch {
-        toast.error(t("reservations.toast.fetchError"));
+    catch (err) {
+        const apiError = err as IApiError;
+        // For 5xx server errors, show toast instead of inline error
+        if (apiError?.status && apiError.status >= 500) {
+            uiStore.notify(t("errors.server.tryAgain"), "error");
+            // Clear the store error to prevent inline error display
+            // This will cause empty state to show instead
+            branchesStore.error = null;
+        } else {
+            // For other errors, show generic fetch error toast  
+            uiStore.notify(t("reservations.toast.fetchError"), "error");
+        }
     }
 });
 </script>

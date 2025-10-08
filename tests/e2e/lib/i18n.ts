@@ -29,11 +29,21 @@ const LOCALE_DATA: Record<Locale, LocaleAssertions> = {
     },
 };
 export async function switchToLocale(page: Page, targetLocale: Locale): Promise<void> {
+    // Check if we're on a page - if not, navigate first
+    const currentUrl = page.url();
+    if (!currentUrl || currentUrl === "about:blank") {
+        await page.goto("/", { waitUntil: "domcontentloaded" });
+    }
+    
+    // Wait for page to be loaded by checking for locale-switcher
+    const switcher = page.getByTestId("locale-switcher");
+    await switcher.waitFor({ state: "visible", timeout: 10000 });
+    
     const currentLocale = await page.evaluate(() => document.documentElement.lang) as Locale;
     if (currentLocale === targetLocale) {
         return;
     }
-    const switcher = page.getByTestId("locale-switcher");
+    
     await switcher.click();
     await page.waitForTimeout(100);
 }

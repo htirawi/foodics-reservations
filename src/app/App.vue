@@ -11,6 +11,11 @@
     </a>
     
     <AppHeader />
+    
+    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <AuthTokenBanner />
+    </div>
+    
     <main
       id="main"
       role="main"
@@ -36,6 +41,7 @@ import { onMounted } from "vue";
 import AppHeader from "@/components/layout/AppHeader.vue";
 import AppToaster from "@/components/layout/AppToaster.vue";
 import ConfirmDialog from "@/components/ui/ConfirmDialog.vue";
+import AuthTokenBanner from "@/components/ui/AuthTokenBanner.vue";
 import BranchesListView from "@/features/branches/views/BranchesListView.vue";
 import { useLocale } from "@/composables/useLocale";
 import { useUIStore } from "@/stores/ui.store";

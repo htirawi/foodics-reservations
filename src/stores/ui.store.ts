@@ -12,6 +12,13 @@ import type { IToast } from "@/types/toast";
 import type { IConfirmOptions } from "@/types/confirm";
 import type { ModalName } from "@/types/ui";
 
+interface AuthBannerState {
+  isVisible: boolean;
+  message: string | null;
+  onRetry: (() => void) | null;
+  autoDismissTimer: ReturnType<typeof setTimeout> | null;
+}
+
 interface ConfirmDialogState {
   isOpen: boolean;
   options: IConfirmOptions | null;
@@ -84,13 +91,57 @@ function useConfirmDialog() {
     }
     return { confirmDialog, confirm, resolveConfirm };
 }
+function useAuthBanner() {
+    const authBanner = ref<AuthBannerState>({
+        isVisible: false,
+        message: null,
+        onRetry: null,
+        autoDismissTimer: null,
+    });
+    function showAuthBanner(options?: { message?: string; onRetry?: () => void; autoDismiss?: boolean }): void {
+        // Clear existing timer if any
+        if (authBanner.value.autoDismissTimer) {
+            clearTimeout(authBanner.value.autoDismissTimer);
+        }
+        
+        authBanner.value = {
+            isVisible: true,
+            message: options?.message ?? null,
+            onRetry: options?.onRetry ?? null,
+            autoDismissTimer: null,
+        };
+        
+        // Set auto-dismiss timer if requested
+        if (options?.autoDismiss) {
+            authBanner.value.autoDismissTimer = setTimeout(() => {
+                hideAuthBanner();
+            }, 10000); // 10 seconds
+        }
+    }
+    function hideAuthBanner(): void {
+        // Clear timer if active
+        if (authBanner.value.autoDismissTimer) {
+            clearTimeout(authBanner.value.autoDismissTimer);
+        }
+        
+        authBanner.value = {
+            isVisible: false,
+            message: null,
+            onRetry: null,
+            autoDismissTimer: null,
+        };
+    }
+    return { authBanner, showAuthBanner, hideAuthBanner };
+}
 export const useUIStore = defineStore("ui", () => {
     const modalActions = useModals();
     const toastActions = useToasts();
     const confirmActions = useConfirmDialog();
+    const authBannerActions = useAuthBanner();
     return {
         ...modalActions,
         ...toastActions,
         ...confirmActions,
+        ...authBannerActions,
     };
 });
