@@ -6,12 +6,14 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
+import { toRef, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import TimePill from "@/components/ui/TimePill.vue";
-import type { ReservationTimes } from "@/types/foodics";
+import type { ReservationTimes, Weekday } from "@/types/foodics";
 import { useDaySlotsEditor } from "@/features/branches/composables/useDaySlotsEditor";
-import { useConfirm } from "@/composables/useConfirm";
+import { useUIStore } from "@/stores/ui.store";
+import { getDayValidationErrors } from "@/features/branches/composables/slotValidation";
 
 const props = defineProps<{
   modelValue: ReservationTimes;
@@ -23,17 +25,36 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const { confirm } = useConfirm();
+const uiStore = useUIStore();
+const confirm = uiStore.confirm;
 
 const {
   weekdays,
-  dayErrors,
   canAdd,
   addSlot,
   removeSlot,
   updateSlot,
   applyToAllDaysWithConfirm,
-} = useDaySlotsEditor(props.modelValue, emit, confirm, t);
+} = useDaySlotsEditor(toRef(props, 'modelValue'), emit, confirm, t);
+
+// Compute errors directly from props to ensure reactivity
+const dayErrors = computed<Record<Weekday, string[]>>(() => {
+  const errors: Record<Weekday, string[]> = {
+    saturday: [],
+    sunday: [],
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+  };
+
+  weekdays.forEach((day) => {
+    errors[day] = getDayValidationErrors(props.modelValue[day] ?? []);
+  });
+
+  return errors;
+});
 </script>
 
 <template>
@@ -48,7 +69,7 @@ const {
       class="space-y-3"
     >
       <fieldset
-        :data-testid="`settings-slot-day-${day}`"
+        :data-testid="`day-${day}`"
         class="rounded-lg border border-neutral-200 bg-neutral-50 p-4"
         :aria-labelledby="`day-heading-${day}`"
       >
@@ -68,7 +89,7 @@ const {
             v-if="day === 'saturday'"
             variant="ghost"
             size="sm"
-            :data-testid="`slots-apply-all`"
+            :data-testid="`apply-all-${day}`"
             @click="() => applyToAllDaysWithConfirm(day)"
           >
             {{ t('settings.slots.applyAll') }}
@@ -89,7 +110,7 @@ const {
             :to="slot[1]"
             :editable="true"
             :removable="true"
-            :data-testid="`settings-day-${day}-row-${idx}`"
+            :data-testid="`settings-slot-row-${day}-${idx}`"
             role="listitem"
             @update:from="(val) => updateSlot(day, idx, 'from', val)"
             @update:to="(val) => updateSlot(day, idx, 'to', val)"
@@ -102,7 +123,7 @@ const {
           size="sm"
           class="mt-3"
           :disabled="!canAdd(day)"
-          :data-testid="`settings-day-${day}-add`"
+          :data-testid="`add-slot-${day}`"
           @click="addSlot(day)"
         >
           + {{ t('settings.slots.add') }}

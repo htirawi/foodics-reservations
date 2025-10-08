@@ -8,8 +8,13 @@
  */
 import { type Ref } from "vue";
 import type { Weekday, SlotTuple, ReservationTimes } from "@/types/foodics";
+import { useUIStore } from "@/stores/ui.store";
+import { useI18n } from "vue-i18n";
 const weekdays: Weekday[] = ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
 export function useSlotsManagement(weekSlots: Ref<ReservationTimes>) {
+    const uiStore = useUIStore();
+    const { t } = useI18n();
+
     function addSlot(day: Weekday): void {
         weekSlots.value[day].push(["09:00", "17:00"]);
     }
@@ -26,7 +31,14 @@ export function useSlotsManagement(weekSlots: Ref<ReservationTimes>) {
             return;
         slot[field === "from" ? 0 : 1] = value;
     }
-    function applyToAllDays(day: Weekday): void {
+    async function applyToAllDays(day: Weekday): Promise<void> {
+        const confirmed = await uiStore.confirm({
+            title: t("settings.slots.applyAll"),
+            message: t("settings.slots.confirmApplyAll"),
+        });
+
+        if (!confirmed) return;
+
         const slotsToApply = weekSlots.value[day].map(([f, t]: SlotTuple) => [f, t] as SlotTuple);
         weekdays.forEach((d) => {
             weekSlots.value[d] = [...slotsToApply];

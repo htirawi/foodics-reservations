@@ -14,11 +14,16 @@
 
     <template #actions>
       <div class="flex justify-end space-x-3">
-        <BaseButton variant="ghost" @click="handleCancel">
+        <BaseButton
+          variant="ghost"
+          data-testid="confirm-cancel"
+          @click="handleCancel"
+        >
           {{ confirmDialog.options?.cancelText || $t('reservations.confirm.disableAll.cancel') }}
         </BaseButton>
         <BaseButton
           :variant="confirmDialog.options?.variant === 'danger' ? 'danger' : 'primary'"
+          data-testid="confirm-ok"
           @click="handleConfirm"
         >
           {{ confirmDialog.options?.confirmText || $t('reservations.confirm.disableAll.confirm') }}

@@ -7,25 +7,7 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import type { Page, Route } from "@playwright/test";
-import { readFileSync } from "node:fs";
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const FIXTURES_DIR = resolve(__dirname, "../fixtures");
-function loadFixture(filename: string): unknown {
-    const path = resolve(FIXTURES_DIR, filename);
-    const content = readFileSync(path, "utf-8");
-    return JSON.parse(content);
-}
-function isAllowedUrl(url: string): boolean {
-    return (url.includes("localhost:5173") ||
-        url.includes("127.0.0.1:5173") ||
-        url.startsWith("http://localhost:5173") ||
-        url.includes("/@vite") ||
-        url.includes("/@fs") ||
-        url.includes("/node_modules/"));
-}
+import { loadFixture, isAllowedUrl } from "../utils/network";
 async function interceptBranchesGet(page: Page, tracker: string[]): Promise<void> {
     await page.route(/\/api\/branches(\?.*)?$/, async (route: Route) => {
         if (route.request().method() !== "GET") {

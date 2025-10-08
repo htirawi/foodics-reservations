@@ -4,6 +4,7 @@
  * @remarks Deterministic, fast, offline; no DOM
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ref } from "vue";
 import { useDaySlotsEditor } from "@/features/branches/composables/useDaySlotsEditor";
 import type { ReservationTimes } from "@/types/foodics";
 
@@ -26,7 +27,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
 
   describe("weekdays property", () => {
     it("should return fixed order: Saturday → Friday", () => {
-      const { weekdays } = useDaySlotsEditor(emptyTimes, mockEmit);
+      const { weekdays } = useDaySlotsEditor(ref(emptyTimes), mockEmit);
       expect(weekdays).toEqual([
         "saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday",
       ]);
@@ -39,7 +40,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["09:00", "12:00"], ["13:00", "17:00"]],
       };
-      const { dayErrors } = useDaySlotsEditor(times, mockEmit);
+      const { dayErrors } = useDaySlotsEditor(ref(times), mockEmit);
       expect(dayErrors.value.saturday).toEqual([]);
     });
 
@@ -48,7 +49,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["9:00", "12:00"]],
       };
-      const { dayErrors } = useDaySlotsEditor(times, mockEmit);
+      const { dayErrors } = useDaySlotsEditor(ref(times), mockEmit);
       expect(dayErrors.value.saturday.length).toBeGreaterThan(0);
       expect(dayErrors.value.saturday[0]).toContain("format");
     });
@@ -60,7 +61,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
           ["09:00", "10:00"], ["11:00", "12:00"], ["13:00", "14:00"], ["15:00", "16:00"],
         ],
       };
-      const { dayErrors } = useDaySlotsEditor(times, mockEmit);
+      const { dayErrors } = useDaySlotsEditor(ref(times), mockEmit);
       expect(dayErrors.value.saturday.length).toBeGreaterThan(0);
       expect(dayErrors.value.saturday[0]).toContain("max");
     });
@@ -70,7 +71,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["09:00", "12:30"], ["12:00", "15:00"]],
       };
-      const { dayErrors } = useDaySlotsEditor(times, mockEmit);
+      const { dayErrors } = useDaySlotsEditor(ref(times), mockEmit);
       expect(dayErrors.value.saturday.length).toBeGreaterThan(0);
       expect(dayErrors.value.saturday[0]).toContain("overlap");
     });
@@ -80,7 +81,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["09:00", "12:00"], ["12:00", "15:00"]],
       };
-      const { dayErrors } = useDaySlotsEditor(times, mockEmit);
+      const { dayErrors } = useDaySlotsEditor(ref(times), mockEmit);
       expect(dayErrors.value.saturday).toEqual([]);
     });
 
@@ -89,7 +90,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["14:00", "12:00"]], // Invalid order (2 PM to 12 PM)
       };
-      const { dayErrors } = useDaySlotsEditor(times, mockEmit);
+      const { dayErrors } = useDaySlotsEditor(ref(times), mockEmit);
       expect(dayErrors.value.saturday.length).toBeGreaterThan(0);
       expect(dayErrors.value.saturday[0]).toBe("settings.slots.errors.order");
     });
@@ -101,7 +102,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["09:00", "12:00"]],
       };
-      const { canAdd } = useDaySlotsEditor(times, mockEmit);
+      const { canAdd } = useDaySlotsEditor(ref(times), mockEmit);
       expect(canAdd("saturday")).toBe(true);
     });
 
@@ -110,14 +111,14 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["09:00", "10:00"], ["11:00", "12:00"], ["13:00", "14:00"]],
       };
-      const { canAdd } = useDaySlotsEditor(times, mockEmit);
+      const { canAdd } = useDaySlotsEditor(ref(times), mockEmit);
       expect(canAdd("saturday")).toBe(false);
     });
   });
 
   describe("addSlot function", () => {
     it("should add new slot with default times", () => {
-      const { addSlot } = useDaySlotsEditor(emptyTimes, mockEmit);
+      const { addSlot } = useDaySlotsEditor(ref(emptyTimes), mockEmit);
       addSlot("saturday");
 
       expect(mockEmit).toHaveBeenCalledWith("update:modelValue", {
@@ -127,7 +128,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
     });
 
     it("should emit validity after adding", () => {
-      const { addSlot } = useDaySlotsEditor(emptyTimes, mockEmit);
+      const { addSlot } = useDaySlotsEditor(ref(emptyTimes), mockEmit);
       addSlot("saturday");
       expect(mockEmit).toHaveBeenCalledWith("update:valid", true);
     });
@@ -137,7 +138,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["09:00", "10:00"], ["11:00", "12:00"], ["13:00", "14:00"]],
       };
-      const { addSlot } = useDaySlotsEditor(times, mockEmit);
+      const { addSlot } = useDaySlotsEditor(ref(times), mockEmit);
       addSlot("saturday");
       expect(mockEmit).not.toHaveBeenCalledWith("update:modelValue", expect.anything());
     });
@@ -149,7 +150,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["09:00", "12:00"], ["13:00", "17:00"]],
       };
-      const { removeSlot } = useDaySlotsEditor(times, mockEmit);
+      const { removeSlot } = useDaySlotsEditor(ref(times), mockEmit);
       removeSlot("saturday", 0);
 
       expect(mockEmit).toHaveBeenCalledWith("update:modelValue", {
@@ -165,7 +166,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["09:00", "12:00"]],
       };
-      const { updateSlot } = useDaySlotsEditor(times, mockEmit);
+      const { updateSlot } = useDaySlotsEditor(ref(times), mockEmit);
       updateSlot("saturday", 0, "from", "10:00");
 
       expect(mockEmit).toHaveBeenCalledWith("update:modelValue", {
@@ -179,7 +180,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["09:00", "12:00"]],
       };
-      const { updateSlot } = useDaySlotsEditor(times, mockEmit);
+      const { updateSlot } = useDaySlotsEditor(ref(times), mockEmit);
       updateSlot("saturday", 0, "to", "13:00");
 
       expect(mockEmit).toHaveBeenCalledWith("update:modelValue", {
@@ -195,7 +196,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["13:00", "17:00"], ["09:00", "12:00"]],
       };
-      const { getDaySlots } = useDaySlotsEditor(times, mockEmit);
+      const { getDaySlots } = useDaySlotsEditor(ref(times), mockEmit);
       const slots = getDaySlots("saturday");
 
       expect(slots[0]).toEqual(["09:00", "12:00"]);
@@ -207,7 +208,7 @@ describe("useDaySlotsEditor - Basic Operations", () => {
         ...emptyTimes,
         saturday: [["09:00", "12:00"], ["09:00", "12:00"]],
       };
-      const { getDaySlots } = useDaySlotsEditor(times, mockEmit);
+      const { getDaySlots } = useDaySlotsEditor(ref(times), mockEmit);
       expect(getDaySlots("saturday").length).toBe(1);
     });
   });

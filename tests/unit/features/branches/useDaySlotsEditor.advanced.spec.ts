@@ -4,6 +4,7 @@
  * @remarks Deterministic, fast, offline; no DOM
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ref } from "vue";
 import { useDaySlotsEditor } from "@/features/branches/composables/useDaySlotsEditor";
 import type { ReservationTimes } from "@/types/foodics";
 import type { ConfirmFn } from "@/types/confirm";
@@ -35,7 +36,7 @@ describe("useDaySlotsEditor - Advanced Features", () => {
         ...emptyTimes,
         saturday: [["09:00", "12:00"], ["13:00", "17:00"]],
       };
-      const { applyToAllDaysWithConfirm } = useDaySlotsEditor(times, mockEmit);
+      const { applyToAllDaysWithConfirm } = useDaySlotsEditor(ref(times), mockEmit);
       applyToAllDaysWithConfirm("saturday");
 
       expect(mockEmit).toHaveBeenCalledWith("update:modelValue", {
@@ -57,7 +58,7 @@ describe("useDaySlotsEditor - Advanced Features", () => {
       mockConfirm.mockResolvedValue(true);
 
       const { applyToAllDaysWithConfirm } = useDaySlotsEditor(
-        times,
+        ref(times),
         mockEmit,
         mockConfirm,
         mockT
@@ -78,7 +79,7 @@ describe("useDaySlotsEditor - Advanced Features", () => {
       mockConfirm.mockResolvedValue(true);
 
       const { applyToAllDaysWithConfirm } = useDaySlotsEditor(
-        times,
+        ref(times),
         mockEmit,
         mockConfirm,
         mockT
@@ -100,7 +101,7 @@ describe("useDaySlotsEditor - Advanced Features", () => {
       mockConfirm.mockResolvedValue(false);
 
       const { applyToAllDaysWithConfirm } = useDaySlotsEditor(
-        times,
+        ref(times),
         mockEmit,
         mockConfirm,
         mockT
@@ -118,7 +119,7 @@ describe("useDaySlotsEditor - Advanced Features", () => {
         saturday: [["09:00", "12:00"]],
         sunday: [["10:00", "13:00"]],
       };
-      useDaySlotsEditor(times, mockEmit);
+      useDaySlotsEditor(ref(times), mockEmit);
       expect(mockEmit).toHaveBeenCalledWith("update:valid", true);
     });
 
@@ -128,12 +129,12 @@ describe("useDaySlotsEditor - Advanced Features", () => {
         saturday: [["09:00", "12:00"]],
         sunday: [["12:00", "09:00"]],
       };
-      useDaySlotsEditor(times, mockEmit);
+      useDaySlotsEditor(ref(times), mockEmit);
       expect(mockEmit).toHaveBeenCalledWith("update:valid", false);
     });
 
     it("should emit valid:true for empty days", () => {
-      useDaySlotsEditor(emptyTimes, mockEmit);
+      useDaySlotsEditor(ref(emptyTimes), mockEmit);
       expect(mockEmit).toHaveBeenCalledWith("update:valid", true);
     });
   });
@@ -144,7 +145,7 @@ describe("useDaySlotsEditor - Advanced Features", () => {
         ...emptyTimes,
         saturday: [["09:00", "12:00"]],
       };
-      const { validateDay } = useDaySlotsEditor(times, mockEmit);
+      const { validateDay } = useDaySlotsEditor(ref(times), mockEmit);
       const result = validateDay("saturday");
 
       expect(result.ok).toBe(true);
@@ -156,7 +157,7 @@ describe("useDaySlotsEditor - Advanced Features", () => {
         ...emptyTimes,
         saturday: [["12:00", "09:00"]],
       };
-      const { validateDay } = useDaySlotsEditor(times, mockEmit);
+      const { validateDay } = useDaySlotsEditor(ref(times), mockEmit);
       const result = validateDay("saturday");
 
       expect(result.ok).toBe(false);

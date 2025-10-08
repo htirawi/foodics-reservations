@@ -7,18 +7,18 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  */
 
-import { computed } from "vue";
+import { computed, type Ref } from "vue";
 import type { ReservationTimes, Weekday } from "@/types/foodics";
 import type { ConfirmFn } from "@/types/confirm";
 import { WEEKDAY_ORDER } from "./slotEditorActions";
 import { createSlotActions } from "./slotActions";
 import { setupWatchers } from "./slotWatchers";
-import { 
-  emitValidity, 
-  getDaySlots, 
-  canAddSlotToDay, 
+import {
+  emitValidity,
+  getDaySlots,
+  canAddSlotToDay,
   validateDaySlotsFor,
-  getDayValidationErrors 
+  getDayValidationErrors
 } from "./slotValidation";
 
 interface DaySlotsEditorEmits {
@@ -31,7 +31,7 @@ type TranslateFn = (key: string) => string;
 /**
  * Create per-day errors computed ref.
  */
-function createDayErrors(modelValue: ReservationTimes) {
+function createDayErrors(modelValue: Ref<ReservationTimes>) {
   return computed<Record<Weekday, string[]>>(() => {
     const errors: Record<Weekday, string[]> = {
       saturday: [],
@@ -44,7 +44,7 @@ function createDayErrors(modelValue: ReservationTimes) {
     };
 
     WEEKDAY_ORDER.forEach((day) => {
-      errors[day] = getDayValidationErrors(modelValue[day]);
+      errors[day] = getDayValidationErrors(modelValue.value[day]);
     });
 
     return errors;
@@ -55,26 +55,26 @@ function createDayErrors(modelValue: ReservationTimes) {
 
 /**
  * Composable for day-by-day time slots editor.
- * 
- * @param modelValue - Current reservation times
+ *
+ * @param modelValue - Current reservation times (reactive ref)
  * @param emit - Emitter for updates and validity
  * @param confirm - Confirmation dialog function
  * @param t - Translation function
  * @returns Slot management API
  */
 export function useDaySlotsEditor(
-  modelValue: ReservationTimes,
+  modelValue: Ref<ReservationTimes>,
   emit: DaySlotsEditorEmits,
   confirm?: ConfirmFn,
   t?: TranslateFn
 ) {
   const dayErrors = createDayErrors(modelValue);
   const actions = createSlotActions({
-    modelValue, 
-    emit, 
-    emitValidity, 
-    canAddSlotToDay, 
-    getDaySlots, 
+    modelValue: computed(() => modelValue.value),
+    emit,
+    emitValidity,
+    canAddSlotToDay,
+    getDaySlots,
     validateDaySlotsFor
   });
 
