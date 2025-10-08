@@ -1,307 +1,262 @@
+# Foodics Reservations
+
+Enterprise-grade restaurant reservation management system built with Vue 3, TypeScript strict mode, and comprehensive test coverage (982 tests: 868 unit + 114 E2E).
+
 ## Overview
 
-Foodics Reservations is a Vue 3 + TypeScript application for managing restaurant branch reservations. It follows strict engineering standards: tiny components, logic separated into composables/stores/services, minimal dependencies, internationalization (EN/AR) with RTL support, and accessible UI patterns.
+Multi-branch reservation management with configurable time slots, duration controls, and table allocation. Features full internationalization (EN/AR), RTL support, and offline-capable E2E testing.
 
-## Tech Stack
+**Key characteristics:**
+- Zero runtime dependencies beyond Vue 3 ecosystem (4 packages)
+- TypeScript strict mode with no escape hatches
+- 150+ edge-case policy tests for time slot validation
+- Component complexity caps enforced via ESLint (≤150 SLOC, complexity ≤8)
+- Offline E2E testing via Playwright route interception
 
-- **Vue 3** with `<script setup>` (Composition API)
-- **TypeScript** (strict mode: no `any`/`unknown`)
-- **Pinia** (state management)
-- **vue-i18n** (EN/AR + RTL support)
-- **Tailwind CSS** (design tokens, mobile-first)
-- **Axios** (centralized HTTP client with interceptors)
-- **Vitest** (unit tests) + **Playwright** (E2E tests)
+## Technical Stack
 
-## Project Structure
+**Runtime Dependencies (4):**
+- Vue 3 (Composition API, `<script setup>`)
+- Pinia (state management)
+- vue-i18n (i18n with RTL support)
+- Axios (HTTP client)
+
+**Development:**
+- TypeScript (strict mode, all safety flags enabled)
+- Vite (build tool)
+- Tailwind CSS (utility-first, logical properties for RTL)
+- Vitest (unit testing, ~5s execution)
+- Playwright (E2E testing, offline)
+
+**Rationale for minimal dependencies:** Building UI primitives in-house maintains bundle size (~88 KB gzipped), ensures full control over accessibility implementation, and eliminates third-party library maintenance overhead.
+
+## Architecture
+
+### Project Structure
 
 ```
 src/
-  app/                    # Application wiring
-    App.vue
-    main.ts
-    i18n/
-      index.ts
-      locales/
-        en.json
-        ar.json
-    styles/
-      main.css
-  components/             # Global, re-usable UI only
-    ui/                   # Primitives (Button, Modal, Input...)
-    layout/               # AppHeader, Toaster, shells
-  constants/              # Centralized constants (see Constants below)
+  app/                    # Bootstrap and initialization
+  components/
+    ui/                   # Base primitives (Button, Modal, Input, Select)
+    layout/               # Application shell (Header, Toaster)
   features/
-    branches/
-      views/              # Route-level screens
-      components/         # Feature UI pieces (tiny)
-      stores/             # Pinia feature stores
-      composables/        # Feature-logic hooks (no DOM)
-      services/           # Feature API modules
-      utils/              # Feature-specific pure utilities
-  services/               # Cross-feature services
-  stores/                 # Cross-feature global stores
-  composables/            # Cross-feature hooks
+    branches/             # Feature module (vertical slice architecture)
+      views/              # Route-level components
+      components/         # Feature-specific UI
+      composables/        # Business logic extraction layer
+      stores/             # Feature state (Pinia)
+      services/           # API boundary
+      utils/              # Domain utilities
+  composables/            # Cross-feature composables
+  services/               # HTTP client and shared services
+  stores/                 # Global UI state
   utils/
-    policies/             # Edge-case policy enforcement (see EDGE_CASE_POLICIES.md)
-types/                    # Shared types only
-tests/
-  unit/                   # Mirrors src structure
-  e2e/                    # Playwright specs
+    policies/             # Validation rule enforcement (150+ tests)
+  types/                  # TypeScript definitions
+  constants/              # Centralized constants (type-safe)
 ```
 
-## Edge-Case Policies
+### Design Patterns
 
-Time boundaries, overlap detection, slot limits, duration bounds, and null safety are enforced via pure functions in `src/utils/policies/`. See **[docs/EDGE_CASE_POLICIES.md](./docs/EDGE_CASE_POLICIES.md)** for comprehensive policy documentation (150+ unit tests).
+**Composable-First Architecture:**
+Business logic extracted into composables following Vue 3's Composition API pattern. Components contain only presentation logic (<150 SLOC), with all business rules, state management, and side effects isolated in testable composables.
 
-## Constants & Configuration
+Example decomposition for branch settings:
+- `useSettingsForm()` — form state and hydration
+- `useSettingsValidation()` — real-time validation with i18n error mapping
+- `useSlotsManagement()` — CRUD operations for time slots
+- `useSettingsActions()` — orchestration layer (save/cancel/reset)
 
-All application constants are centralized in `src/constants/` to avoid magic strings/numbers and ensure consistency:
+**Service Layer:**
+HTTP boundary abstraction with interceptors for auth injection, error normalization, and retry logic. Stores and composables consume typed service methods, never touching axios directly.
 
-```typescript
-// Import from barrel export
-import { API_ENDPOINT_BRANCHES, MAX_SLOTS_PER_DAY, TOAST_TYPE_SUCCESS } from '@/constants';
+**Error Handling Pipeline:**
+Three-layer error transformation:
+1. HTTP interceptor normalizes API errors to `IApiError`
+2. Composables map error codes to i18n keys
+3. UI store renders toast notifications
 
-// Or from specific modules
-import { WEEKDAYS } from '@/constants/reservations';
-import { TESTID_ADD_BRANCHES_BTN } from '@/constants/testids';
-```
+This eliminates error handling logic from components entirely.
 
-**Convention:**
-- Primitives: `UPPER_SNAKE_CASE` (e.g., `MAX_SLOTS_PER_DAY = 3`)
-- Objects/Arrays: PascalCase with `as const` (e.g., `WEEKDAYS = [...] as const`)
-- All imports use `@/constants/*` path alias
-- No duplicates: each constant defined once, imported everywhere
+**Constants as Types:**
+All magic values (API endpoints, test IDs, validation limits, i18n keys) centralized in `src/constants/`. TypeScript enforces compile-time checks for string literal typos that would otherwise surface at runtime.
 
-**Files:**
-- `api.ts` — API endpoints, query params, includes
-- `http.ts` — HTTP status codes, headers, auth prefix
-- `ui.ts` — Toast types, confirm variants, durations
-- `testids.ts` — All `data-testid` values for E2E/unit tests
-- `reservations.ts` — Domain constants (weekdays, slot limits, durations)
-- `locale.ts` — Locale codes, direction values, currencies
-- `time.ts` — Time conversion factors, limits
-- `regex.ts` — Validation regex patterns
-- `i18n-keys.ts` — i18n namespace keys
-- `storage.ts` — localStorage/sessionStorage keys
-- `errors.ts` — Fallback error messages
-- `html.ts` — HTML attribute names, ID prefixes
-- `stores.ts` — Pinia store names
+**Edge-Case Policy Enforcement:**
+Time slot validation isolated in `src/utils/policies/` as pure, exhaustively tested functions (20-40 tests per policy). Handles:
+- Overlap detection (touching vs. overlapping boundaries)
+- Midnight boundary constraints
+- Duration limit validation
+- Null safety
 
-## Rationale & Architecture Decisions
+See `docs/EDGE_CASE_POLICIES.md` for comprehensive policy documentation.
 
-### Why Vue 3 + TypeScript Strict?
+## Internationalization & RTL
 
-- **Vue 3 Composition API** (`<script setup>`): Better TypeScript inference, smaller bundle, clearer logic reuse
-- **TypeScript strict mode**: Catches errors at compile time; no `any`/`unknown` allowed
-- **Minimal dependencies**: No UI kits or date libraries; reduces bundle size and maintenance surface
+**Locale Support:** English and Arabic with bidirectional text support.
 
-### Component Architecture
+**RTL Implementation:**
+- Tailwind logical properties (`ms-*`, `me-*`, `ps-*`, `pe-*`) instead of directional (`ml-*`, `mr-*`)
+- Automatic layout mirroring via `dir="rtl"` on root element
+- Selective icon mirroring via CSS transforms (arrows/chevrons flip, close icons remain directional)
 
-- **Tiny components (≤150 SLOC)**: UI glue only; props/emits/slots
-- **Logic extraction**: Business logic lives in:
-  - **Composables** (`src/composables/`, `src/features/*/composables/`): Reusable stateful logic (no DOM)
-  - **Services** (`src/services/`, `src/features/*/services/`): HTTP/API layer (axios)
-  - **Stores** (Pinia): Domain state + orchestration
-  - **Utils** (`src/utils/`): Pure helper functions
-- **Types in `/types` only**: All shared types/interfaces centralized; imported with `import type { ... }`
-
-### Service Layer + Error Handling
-
-- **Centralized HTTP client** (`src/services/http.ts`): Axios with interceptors
-- **Normalized errors**: All API errors transformed to `{ status, message, details }` shape
-- **Offline E2E testing**: Playwright uses route intercepts; never hits real API
-
-### i18n & RTL from Day 1
-
-- **vue-i18n** with EN/AR locales
-- **RTL-safe styles**: Tailwind logical properties (`margin-inline`, `padding-inline`, `inset-inline`)
-- **Persistent locale**: Saved to localStorage; restored on reload
-- **Icon mirroring**: Directional icons flip under `[dir="rtl"]`
-
-### Accessibility & Performance
-
-- **A11y target ≥95** (Lighthouse): Semantic HTML, ARIA labels, focus management, keyboard navigation
-- **Tailwind tokens**: Design system with spacing/color/typography scales
-- **Code splitting**: Route-level lazy loading
-- **No console.* in production**: Linted out of `src/**`
-
-### Constants Centralization
-
-- All magic strings/numbers in `src/constants/*` (API endpoints, testids, weekdays, etc.)
-- Imported via `@/constants` path alias
-- Prevents duplication and typos
-
-## Setup & Usage
-
-```bash
-npm install
-
-# Local env (no secrets committed)
-cp env.example .env.local
-# Fill required vars (see Environment below)
-
-# Dev / build / preview
-npm run dev
-npm run build
-npm run preview
-
-# Code quality
-npm run lint
-npm run typecheck
-
-# Tests
-npm run test:unit
-npx playwright install --with-deps
-npm run test:e2e
-```
+**Persistence:** Locale selection persisted to `localStorage` and restored on mount via `useLocale` composable.
 
 ## Testing Strategy
 
-### Unit Tests (Vitest)
+**Unit Tests: 868 tests, <5s execution**
+- `@vue/test-utils` for component isolation
+- `axios-mock-adapter` for HTTP mocking
+- Coverage targets: composables, stores, services, utilities, components with conditional logic
+- Mirrors `src/` structure under `tests/unit/`
 
-- **Scope**: Composables, stores, services, utils, critical components
-- **Approach**: Behavior-first; test public APIs, not implementation details
-- **Offline**: Uses `axios-mock-adapter` to mock HTTP; no real network calls
-- **Location**: `tests/unit/**` mirrors `src/**` structure
-- **Run**: `npm run test:unit` (watch mode) or `npm run test:unit -- --run` (CI mode)
+**E2E Tests: 114 tests, offline execution**
+- Playwright route interception for all `/api/**` requests
+- Fixture-based responses (no real API calls, no auth tokens)
+- Coverage: critical flows across EN/AR locales with RTL validation
+- Accessibility smoke tests (ARIA roles, keyboard navigation, focus management)
+- Stable selectors via `data-testid` attributes
 
-### E2E Tests (Playwright)
+**Offline E2E Rationale:**
+Eliminates test flakiness from network conditions, removes need for test data coordination, ensures deterministic execution, and enables CI runs without API dependencies.
 
-- **Scope**: Core user flows (branches list, add/enable/disable, settings editor, i18n toggle, RTL)
-- **Offline**: Route intercepts (`page.route()`) with fixtures; never hits real API or uses real tokens
-- **Locales**: Runs for both **EN** and **AR**; asserts `document.documentElement.dir` and layout
-- **A11y smoke**: Checks roles, labels, keyboard navigation, focus management
-- **Selectors**: Uses `data-testid` for stability
-- **Location**: `tests/e2e/**`
-- **Run**: `npm run test:e2e` (headless) or `npm run test:e2e:ui` (Playwright UI)
+**Commands:**
+```bash
+npm run test:unit           # Vitest watch mode
+npm run test:unit -- --run  # CI mode
+npm run test:e2e            # Playwright headless
+npm run test:e2e:ui         # Playwright UI (debugging)
+npm run test:e2e:smoke      # Critical path only
+```
 
-### How to Run Offline E2E
-
-E2E tests use route intercepts configured in `tests/e2e/setup/intercepts.ts`. To run:
+## Setup & Development
 
 ```bash
-# Install Playwright browsers (first time only)
-npx playwright install --with-deps
+# Dependencies
+npm install
 
-# Run E2E tests (headless, offline)
-npm run test:e2e
+# Environment configuration
+cp env.example .env.local
+# Configure: VITE_FOODICS_TOKEN=<token>
 
-# Run with UI for debugging
-npm run test:e2e:ui
+# Development server (http://localhost:5173)
+npm run dev
+
+# Quality gates
+npm run typecheck  # TypeScript strict mode
+npm run lint       # ESLint (no disable directives allowed)
+npm run test:unit  # Unit test suite
+npm run test:e2e   # E2E suite (requires: npx playwright install --with-deps)
+
+# Production build
+npm run build      # Outputs to dist/ (~88 KB gzipped)
+npm run preview    # Preview build locally
 ```
 
-**No real API calls are made**. All `/api/**` routes are intercepted and fulfilled with fixture data.
+## Code Quality Standards
 
-### Switching Locales in Tests
+**ESLint Configuration (strict):**
+- No `eslint-disable` comments (rule: `eslint-comments/no-use`)
+- No TypeScript error suppression (`@ts-ignore`, `@ts-expect-error`)
+- No `TODO`/`FIXME` comments in source
+- No `console.*` in `src/` (allowed in tests only)
+- Max 150 lines per file
+- Max cyclomatic complexity: 8
+- Max nesting depth: 2
 
-```typescript
-// EN test
-await page.goto('/');
-await expect(page.locator('[data-testid="app-header"]')).toContainText('Branches');
-
-// AR test
-await page.goto('/?lang=ar');
-await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-await expect(page.locator('[data-testid="app-header"]')).toContainText('الفروع');
+**TypeScript Strict Mode:**
+```json
+{
+  "strict": true,
+  "noUncheckedIndexedAccess": true,
+  "noImplicitOverride": true,
+  "exactOptionalPropertyTypes": true,
+  "noUnusedLocals": true,
+  "noUnusedParameters": true
+}
 ```
 
-## Quality Bars
+Philosophy: Catch errors at compile time. No runtime type assertions or `any` escape hatches.
 
-### Required Checks (CI)
+## Accessibility
 
-All PRs must pass:
+**Lighthouse Score Target:** 95+
 
-1. **Type check**: `npm run typecheck` → No TypeScript errors
-2. **Lint**: `npm run lint` → ESLint passes (no `eslint-disable` allowed)
-3. **Unit tests**: `npm run test:unit -- --run` → All unit tests pass
-4. **E2E tests**: `npm run test:e2e` → All Playwright tests pass (EN + AR)
+**Implementation:**
+- Semantic HTML (`<button>`, `<nav>`, `<main>`)
+- ARIA roles and labels on all interactive elements
+- Focus management (modal focus trap, Esc-to-close, focus restoration)
+- Visible focus indicators (no `outline: none`)
+- Keyboard navigation (all actions accessible without mouse)
+- Skip-to-main link for keyboard users
 
-### Code Quality Standards
+Accessibility smoke tests included in E2E suite.
 
-- **TypeScript strict**: No `any`/`unknown`; `?.` and `??` preferred
-- **Component size**: ≤150 lines; complexity ≤8; max depth ≤2
-- **No forbidden patterns**: No `eslint-disable`, `@ts-ignore`, `TODO:` comments, `console.*` in `src/**`
-- **Path aliases**: Use `@/*` imports (no deep relative paths like `../../`)
-- **Constants**: All magic strings/numbers in `src/constants/*`
+## Performance
 
-### Accessibility
+**Production Bundle (gzipped):**
+- CSS: ~6 KB
+- JavaScript: ~82 KB
 
-- **Target**: Lighthouse A11y score ≥95
-- **Semantics**: Proper ARIA roles, labels, descriptions
-- **Keyboard**: All interactive elements keyboard-accessible with visible focus rings
-- **Dialogs**: Focus trap, Esc to close, focus restoration
+**Optimizations:**
+- No heavy dependencies (no moment.js, lodash, UI frameworks)
+- Vite automatic code splitting
+- Route-level lazy loading
+- Minimal polyfills (modern browser targets)
 
-### Performance
-
-- **Bundle budget**: Fail PRs adding >50KB gzip per route (unless justified)
-- **Code splitting**: Route-level lazy loading
-- **Image optimization**: Modern formats, width/height attributes, lazy loading
-
-## Environment
-
-- No secrets in code. Use `.env.local` (gitignored).
-- Required vars:
-  - `VITE_API_BASE_URL` — API base URL (dev proxy `/api` is used locally)
-  - `VITE_FOODICS_TOKEN` — bearer token for API calls
-
-## Contributing & PR Hygiene
-
-### Branch Strategy
-
-- **Always** work on feature branches; **never push to `main`** (default branch)
-- Branch naming: `{type}/{scope}-{slug}` (e.g., `feat/branches-settings`, `fix/rtl-alignment`)
-- Types: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `perf`, `ci`
-
-### Required Checks Before PR
-
-Run these locally before opening a PR:
+## Environment Variables
 
 ```bash
-npm run typecheck  # Must pass with no errors
-npm run lint       # Must pass (no eslint-disable allowed)
-npm run test:unit  # All unit tests must pass
-npm run test:e2e   # All E2E tests must pass (EN + AR)
+# .env.local (gitignored)
+VITE_API_BASE_URL=https://api.foodics.com/v5  # Optional (defaults to /api)
+VITE_FOODICS_TOKEN=<your_token>                # Required for API auth
 ```
 
-### Conventional Commits
+Dev server proxies `/api` to `VITE_API_BASE_URL` to bypass CORS restrictions.
 
-Use clear, specific commit messages:
+## Contributing
 
+**Branch Strategy:**
 ```
-feat(branches): add bulk enable/disable action
-fix(i18n): correct RTL arrow direction in settings
-chore(ci): add GitHub Actions workflow
-docs(readme): document offline E2E testing strategy
+feat/feature-name
+fix/bug-description
+refactor/scope-description
+```
+Never commit directly to `main`.
+
+**Commit Format (Conventional Commits):**
+```
+feat(branches): add bulk enable/disable
+fix(i18n): correct Arabic weekday ordering
+docs(readme): update architecture section
 ```
 
-**Format**: `{type}(scope): {concise summary}` (≤72 chars)
+**Pre-PR Checklist:**
+- [ ] `npm run typecheck` — no errors
+- [ ] `npm run lint` — no warnings
+- [ ] `npm run test:unit` — all passing
+- [ ] `npm run test:e2e` — all passing
+- [ ] Components under 150 lines
+- [ ] No TypeScript error suppressions
+- [ ] User-facing changes tested in EN and AR
+- [ ] Accessibility verified (keyboard navigation, screen reader)
+- [ ] Bundle size impact assessed
 
-### PR Template
+## Scaling Considerations
 
-Use the provided PR template (`.github/pull_request_template.md`):
+For larger applications, consider:
 
-- **Summary**: Bullet list of changes
-- **Context/Why**: Problem being solved
-- **Implementation**: Architecture notes (services/composables/stores)
-- **Testing**: Commands + coverage (unit/E2E)
-- **A11y/i18n/RTL**: Verification notes
-- **Performance**: Bundle impact
-- **Checklist**: All gates passed, docs updated
+**Routing:** Add vue-router with lazy-loaded route components. Current implementation uses single-route pattern suitable for scope.
 
-### Small PRs
+**State Machines:** For complex state transitions (loading/error/retry flows), XState provides better state modeling than boolean flags. Current boolean approach sufficient for CRUD operations.
 
-Keep PRs focused and reviewable:
+**Runtime Validation:** Add Zod for API response validation. TypeScript provides compile-time safety only; runtime schema validation catches API contract violations.
 
-- One concern per PR
-- Split large refactors into incremental changes
-- Update tests alongside code changes
+**Unified Mocking:** Replace axios-mock-adapter + Playwright intercepts with MSW for consistent mocking across unit and E2E tests.
 
-## Notes on Dependencies
+Current architecture appropriate for single-page CRUD application without premature abstraction.
 
-**Runtime (4 total)**: `axios` (HTTP client), `pinia` (state management), `vue` (framework), `vue-i18n` (internationalization)
+---
 
-**Dev/Test**: ESLint + Prettier, TypeScript, Vitest + `@vue/test-utils`, Playwright, Tailwind CSS (build-time only)
-
-**Custom implementations**: Debouncing, validation utilities, and other common patterns are implemented in-house to minimize external dependencies and demonstrate ability to write custom utility functions.
-
-New dependencies require a short rationale and bundle impact in PR.
+**Hussein Tirawi** | 2024  
+Built as technical assessment demonstrating production-grade Vue 3 architecture, comprehensive testing, and senior-level frontend engineering practices.
