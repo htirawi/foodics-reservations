@@ -92,19 +92,27 @@ function useEnableAction(branches: Ref<IBranch[]>, error: Ref<string | null>) {
     return { enableBranches };
 }
 function useDisableAllAction(branches: Ref<IBranch[]>, enabledBranches: ComputedRef<IBranch[]>, error: Ref<string | null>) {
-    async function disableAll(): Promise<void> {
+    async function disableAll(): Promise<{ successCount: number; failedCount: number }> {
         const snapshot = branches.value.map((b) => ({ ...b }));
         const enabledIds = enabledBranches.value.map((b) => b.id);
         branches.value = branches.value.map((b) => ({ ...b, accepts_reservations: false }));
-        try {
-            await Promise.all(enabledIds.map((id) => BranchesService.disableBranch(id)));
+        const results = await Promise.allSettled(enabledIds.map(async (id) => {
+            await BranchesService.disableBranch(id);
+            return id;
+        }));
+        const succeeded = results.filter((r) => r.status === "fulfilled");
+        const failed = results.filter((r) => r.status === "rejected");
+        if (failed.length > 0) {
+            const successfulIds = succeeded.map((r) => (r as PromiseFulfilledResult<string>).value);
+            branches.value = snapshot.map((b) => successfulIds.includes(b.id) ? { ...b, accepts_reservations: false } : b);
+            if (succeeded.length === 0) {
+                const firstError = results.find((r) => r.status === "rejected") as PromiseRejectedResult;
+                const apiError = firstError?.reason as IApiError;
+                error.value = apiError?.message ?? ERROR_MSG_DISABLE_ALL_FAILED;
+                throw apiError;
+            }
         }
-        catch (err) {
-            branches.value = snapshot;
-            const apiError = err as IApiError;
-            error.value = apiError.message ?? ERROR_MSG_DISABLE_ALL_FAILED;
-            throw err;
-        }
+        return { successCount: succeeded.length, failedCount: failed.length };
     }
     return { disableAll };
 }

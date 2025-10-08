@@ -10,15 +10,15 @@
  */
 
 // Base URL
-export const API_BASE_URL = '/api' as const;
+export const API_BASE_URL = '/api';
 
 // Endpoints
-export const API_ENDPOINT_BRANCHES = '/branches' as const;
+export const API_ENDPOINT_BRANCHES = '/branches';
 
 // Query parameter keys
-export const API_PARAM_INCLUDE_0 = 'include[0]' as const;
-export const API_PARAM_INCLUDE_1 = 'include[1]' as const;
+export const API_PARAM_INCLUDE_0 = 'include[0]';
+export const API_PARAM_INCLUDE_1 = 'include[1]';
 
 // Include values (for nested resource loading)
-export const API_INCLUDE_SECTIONS = 'sections' as const;
-export const API_INCLUDE_SECTIONS_TABLES = 'sections.tables' as const;
+export const API_INCLUDE_SECTIONS = 'sections';
+export const API_INCLUDE_SECTIONS_TABLES = 'sections.tables';

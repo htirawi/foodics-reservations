@@ -80,7 +80,7 @@ const sizeClasses = computed(() => {
         md: "max-w-lg",
         lg: "max-w-2xl",
         xl: "max-w-4xl",
-    } as const;
+    };
     return sizes[props.size];
 });
 function handleBackdropClick(): void {

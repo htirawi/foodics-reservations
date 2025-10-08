@@ -86,7 +86,7 @@ const modalClasses = computed(() => {
         md: "w-full max-w-2xl",
         lg: "w-full max-w-4xl",
         xl: "w-full max-w-6xl",
-    } as const;
+    };
     return `${base} ${sizes[props.size]}`;
 });
 const titleId = computed(() => `${ID_PREFIX_MODAL_TITLE}${Math.random().toString(RADIX_BASE36).slice(ID_RANDOM_SLICE_START)}`);

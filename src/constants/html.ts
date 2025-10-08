@@ -10,15 +10,15 @@
  */
 
 // HTML Attribute Names
-export const HTML_ATTR_DIR = 'dir' as const;
-export const HTML_ATTR_LANG = 'lang' as const;
+export const HTML_ATTR_DIR = 'dir';
+export const HTML_ATTR_LANG = 'lang';
 
 // ID Prefixes (for component ID generation)
-export const ID_PREFIX_INPUT = 'input-' as const;
-export const ID_PREFIX_SELECT = 'select-' as const;
-export const ID_PREFIX_MODAL_TITLE = 'modal-title-' as const;
+export const ID_PREFIX_INPUT = 'input-';
+export const ID_PREFIX_SELECT = 'select-';
+export const ID_PREFIX_MODAL_TITLE = 'modal-title-';
 
 // Random ID Generation Constants
-export const RADIX_BASE36 = 36 as const;
-export const ID_RANDOM_SLICE_START = 2 as const;
-export const ID_RANDOM_SLICE_END = 9 as const;
+export const RADIX_BASE36 = 36;
+export const ID_RANDOM_SLICE_START = 2;
+export const ID_RANDOM_SLICE_END = 9;

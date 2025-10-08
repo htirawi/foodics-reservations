@@ -104,3 +104,34 @@ export function fromMinutes(total: number): { h: number; m: number } {
   const m = clamped % 60;
   return { h, m };
 }
+
+/**
+ * Check if time is start of day (00:00).
+ * @param time - Time string in HH:mm format
+ * @returns true if 00:00
+ */
+export function isStartOfDay(time: string): boolean {
+  return time === '00:00';
+}
+
+/**
+ * Check if time is end of day (23:59).
+ * @param time - Time string in HH:mm format
+ * @returns true if 23:59
+ */
+export function isEndOfDay(time: string): boolean {
+  return time === '23:59';
+}
+
+/**
+ * Check if slot has minimum duration (1 minute).
+ * @param start - Start time HH:mm
+ * @param end - End time HH:mm
+ * @returns true if duration >= 1 minute
+ */
+export function isMinimumDuration(start: string, end: string): boolean {
+  const startMin = timeToMinutes(start);
+  const endMin = timeToMinutes(end);
+  if (startMin === null || endMin === null) return false;
+  return (endMin - startMin) >= 1;
+}

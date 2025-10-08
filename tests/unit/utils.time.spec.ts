@@ -13,6 +13,9 @@ import {
   compareHHmm,
   formatTime,
   fromMinutes,
+  isStartOfDay,
+  isEndOfDay,
+  isMinimumDuration,
 } from "@/utils/time";
 
 describe("parseHHmm", () => {
@@ -170,5 +173,74 @@ describe("Roundtrip tests", () => {
       const parsed = parseTime(formatted);
       expect(parsed).toEqual({ h, m });
     }
+  });
+});
+
+describe("Boundary helpers", () => {
+  describe("isStartOfDay", () => {
+    it("should return true for 00:00", () => {
+      expect(isStartOfDay("00:00")).toBe(true);
+    });
+
+    it("should return false for other times", () => {
+      expect(isStartOfDay("00:01")).toBe(false);
+      expect(isStartOfDay("09:00")).toBe(false);
+      expect(isStartOfDay("23:59")).toBe(false);
+    });
+
+    it("should return false for invalid format", () => {
+      expect(isStartOfDay("0:00")).toBe(false);
+      expect(isStartOfDay("invalid")).toBe(false);
+    });
+  });
+
+  describe("isEndOfDay", () => {
+    it("should return true for 23:59", () => {
+      expect(isEndOfDay("23:59")).toBe(true);
+    });
+
+    it("should return false for other times", () => {
+      expect(isEndOfDay("23:58")).toBe(false);
+      expect(isEndOfDay("00:00")).toBe(false);
+      expect(isEndOfDay("12:00")).toBe(false);
+    });
+
+    it("should return false for invalid format", () => {
+      expect(isEndOfDay("23:9")).toBe(false);
+      expect(isEndOfDay("invalid")).toBe(false);
+    });
+  });
+
+  describe("isMinimumDuration", () => {
+    it("should return true for 1-minute duration", () => {
+      expect(isMinimumDuration("00:00", "00:01")).toBe(true);
+      expect(isMinimumDuration("09:00", "09:01")).toBe(true);
+      expect(isMinimumDuration("23:58", "23:59")).toBe(true);
+    });
+
+    it("should return true for longer durations", () => {
+      expect(isMinimumDuration("09:00", "12:00")).toBe(true);
+      expect(isMinimumDuration("00:00", "23:59")).toBe(true);
+    });
+
+    it("should return false for zero duration", () => {
+      expect(isMinimumDuration("09:00", "09:00")).toBe(false);
+    });
+
+    it("should return false for negative duration", () => {
+      expect(isMinimumDuration("12:00", "09:00")).toBe(false);
+    });
+
+    it("should return false for invalid format", () => {
+      expect(isMinimumDuration("invalid", "09:00")).toBe(false);
+      expect(isMinimumDuration("09:00", "invalid")).toBe(false);
+    });
+
+    it("should handle boundary cases", () => {
+      expect(isMinimumDuration("00:00", "00:01")).toBe(true);
+      expect(isMinimumDuration("23:58", "23:59")).toBe(true);
+      expect(isMinimumDuration("00:00", "00:00")).toBe(false);
+      expect(isMinimumDuration("23:59", "23:59")).toBe(false);
+    });
   });
 });

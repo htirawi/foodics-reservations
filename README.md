@@ -37,14 +37,21 @@ src/
       stores/             # Pinia feature stores
       composables/        # Feature-logic hooks (no DOM)
       services/           # Feature API modules
+      utils/              # Feature-specific pure utilities
   services/               # Cross-feature services
   stores/                 # Cross-feature global stores
   composables/            # Cross-feature hooks
+  utils/
+    policies/             # Edge-case policy enforcement (see EDGE_CASE_POLICIES.md)
 types/                    # Shared types only
 tests/
   unit/                   # Mirrors src structure
   e2e/                    # Playwright specs
 ```
+
+## Edge-Case Policies
+
+Time boundaries, overlap detection, slot limits, duration bounds, and null safety are enforced via pure functions in `src/utils/policies/`. See **[docs/EDGE_CASE_POLICIES.md](./docs/EDGE_CASE_POLICIES.md)** for comprehensive policy documentation (150+ unit tests).
 
 ## Constants & Configuration
 

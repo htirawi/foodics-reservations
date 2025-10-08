@@ -5,11 +5,19 @@
  *   - Pure functions; no side effects; no DOM; no Date libraries.
  *   - TypeScript strict; no any/unknown.
  *   - Returns i18n error keys (not messages); UI translates via $t().
+ *   - Edge-case policies: see docs/EDGE_CASE_POLICIES.md
  */
 
 import type { SlotTuple, ReservationTimes } from "@/types/foodics";
 import { isHHmm, timeToMinutes } from "./time";
 import { WEEKDAYS, MAX_SLOTS_PER_DAY } from "@/constants/reservations";
+
+// Policy implementations available in src/utils/policies/
+// - time-boundaries: 00:00/23:59 handling, overnight rejection
+// - overlap-detection: Touching allowed, strict overlap forbidden
+// - slot-limits: MAX_SLOTS_PER_DAY enforcement
+// - normalization: Idempotency, stability, deep clone
+// - null-safety: Graceful null/undefined handling
 
 type ValidationResult =
   | { ok: true }

@@ -9,5 +9,5 @@
  *   export const useUIStore = defineStore(STORE_NAME_UI, () => { ... });
  */
 
-export const STORE_NAME_UI = 'ui' as const;
-export const STORE_NAME_BRANCHES = 'branches' as const;
+export const STORE_NAME_UI = 'ui';
+export const STORE_NAME_BRANCHES = 'branches';

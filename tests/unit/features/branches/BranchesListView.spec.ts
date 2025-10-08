@@ -27,6 +27,36 @@ const i18n = createI18n({
   },
 });
 
+const defaultStubs = {
+  BaseButton: true,
+  DisableAllButton: true,
+  PageLoading: true,
+  EmptyState: true,
+  AddBranchesModal: true,
+  BranchSettingsModal: true,
+  BranchesTable: true,
+  BranchesCards: true,
+};
+
+const createMockBranch = (id = "1", name = "Branch 1") => ({
+  id,
+  name,
+  name_localized: null,
+  reference: `REF-${id}`,
+  type: 1,
+  accepts_reservations: true,
+  reservation_duration: 30,
+  reservation_times: {
+    saturday: [], sunday: [], monday: [], tuesday: [], wednesday: [], thursday: [], friday: [],
+  },
+  receives_online_orders: false,
+  opening_from: "09:00",
+  opening_to: "22:00",
+  created_at: "2024-01-01T00:00:00Z",
+  updated_at: "2024-01-01T00:00:00Z",
+  deleted_at: null,
+});
+
 describe("BranchesListView", () => {
   let pinia: ReturnType<typeof createPinia>;
   let branchesStore: ReturnType<typeof useBranchesStore>;
@@ -59,43 +89,19 @@ describe("BranchesListView", () => {
 
   it("should render page with title", () => {
     const wrapper = mount(BranchesListView, {
-      global: {
-        plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: true,
-          DisableAllButton: true,
-          PageLoading: true,
-          EmptyState: true,
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: true,
-          BranchesCards: true,
-        },
-      },
+      global: { plugins: [pinia, i18n], stubs: defaultStubs },
     });
-
     expect(wrapper.find("h1").text()).toBe("Reservations");
   });
 
   it("should show loading state when loading", () => {
     branchesStore.loading = true;
-
     const wrapper = mount(BranchesListView, {
       global: {
         plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: true,
-          DisableAllButton: true,
-          PageLoading: { template: '<div data-testid="loading">Loading...</div>' },
-          EmptyState: true,
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: true,
-          BranchesCards: true,
-        },
+        stubs: { ...defaultStubs, PageLoading: { template: '<div data-testid="loading">Loading...</div>' } },
       },
     });
-
     expect(wrapper.find('[data-testid="branches-loading"]').exists()).toBe(true);
   });
 
@@ -104,19 +110,7 @@ describe("BranchesListView", () => {
     branchesStore.error = "Failed to load branches";
 
     const wrapper = mount(BranchesListView, {
-      global: {
-        plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: true,
-          DisableAllButton: true,
-          PageLoading: true,
-          EmptyState: true,
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: true,
-          BranchesCards: true,
-        },
-      },
+      global: { plugins: [pinia, i18n], stubs: defaultStubs },
     });
 
     expect(wrapper.find('[data-testid="branches-error"]').exists()).toBe(true);
@@ -127,93 +121,30 @@ describe("BranchesListView", () => {
     branchesStore.loading = false;
     branchesStore.error = null;
     branchesStore.branches = [];
-
     const wrapper = mount(BranchesListView, {
       global: {
         plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: true,
-          DisableAllButton: true,
-          PageLoading: true,
-          EmptyState: { template: '<div data-testid="empty-state">Empty</div>' },
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: true,
-          BranchesCards: true,
-        },
+        stubs: { ...defaultStubs, EmptyState: { template: '<div data-testid="empty-state">Empty</div>' } },
       },
     });
-
     expect(wrapper.find('[data-testid="branches-empty"]').exists()).toBe(true);
   });
 
   it("should show branches table when branches exist", () => {
     branchesStore.loading = false;
     branchesStore.error = null;
-    branchesStore.branches = [
-      {
-        id: "1",
-        name: "Branch 1",
-        name_localized: null,
-        reference: "REF-1",
-        type: 1,
-        accepts_reservations: true,
-        reservation_duration: 30,
-        reservation_times: {
-          saturday: [],
-          sunday: [],
-          monday: [],
-          tuesday: [],
-          wednesday: [],
-          thursday: [],
-          friday: [],
-        },
-        receives_online_orders: false,
-        opening_from: "09:00",
-        opening_to: "22:00",
-        created_at: "2024-01-01T00:00:00Z",
-        updated_at: "2024-01-01T00:00:00Z",
-        deleted_at: null,
-      },
-    ];
-
+    branchesStore.branches = [createMockBranch()];
     const wrapper = mount(BranchesListView, {
-      global: {
-        plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: true,
-          DisableAllButton: true,
-          PageLoading: true,
-          EmptyState: true,
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: false,
-          BranchesCards: true,
-        },
-      },
+      global: { plugins: [pinia, i18n], stubs: { ...defaultStubs, BranchesTable: false } },
     });
-
     const branchesTable = wrapper.findComponent({ name: "BranchesTable" });
     expect(branchesTable.exists()).toBe(true);
   });
 
   it("should call openAddModal when add branches button is clicked", async () => {
     const wrapper = mount(BranchesListView, {
-      global: {
-        plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: false,
-          DisableAllButton: true,
-          PageLoading: true,
-          EmptyState: true,
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: true,
-          BranchesCards: true,
-        },
-      },
+      global: { plugins: [pinia, i18n], stubs: { ...defaultStubs, BaseButton: false } },
     });
-
     await wrapper.find('[data-testid="add-branches"]').trigger("click");
     expect(mockModals.openAddModal).toHaveBeenCalled();
   });
@@ -222,19 +153,7 @@ describe("BranchesListView", () => {
     const fetchSpy = vi.spyOn(branchesStore, "fetchBranches").mockResolvedValue();
 
     mount(BranchesListView, {
-      global: {
-        plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: true,
-          DisableAllButton: true,
-          PageLoading: true,
-          EmptyState: true,
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: true,
-          BranchesCards: true,
-        },
-      },
+      global: { plugins: [pinia, i18n], stubs: defaultStubs },
     });
 
     await flushPromises();
@@ -252,19 +171,7 @@ describe("BranchesListView", () => {
     const notifySpy = vi.spyOn(uiStore, "notify");
 
     mount(BranchesListView, {
-      global: {
-        plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: true,
-          DisableAllButton: true,
-          PageLoading: true,
-          EmptyState: true,
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: true,
-          BranchesCards: true,
-        },
-      },
+      global: { plugins: [pinia, i18n], stubs: defaultStubs },
     });
 
     await flushPromises();
@@ -283,19 +190,7 @@ describe("BranchesListView", () => {
     const notifySpy = vi.spyOn(uiStore, "notify");
 
     mount(BranchesListView, {
-      global: {
-        plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: true,
-          DisableAllButton: true,
-          PageLoading: true,
-          EmptyState: true,
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: true,
-          BranchesCards: true,
-        },
-      },
+      global: { plugins: [pinia, i18n], stubs: defaultStubs },
     });
 
     await flushPromises();
@@ -305,42 +200,16 @@ describe("BranchesListView", () => {
 
   it("should render disable all button with correct disabled state", () => {
     branchesStore.branches = [];
-
     const wrapper = mount(BranchesListView, {
-      global: {
-        plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: true,
-          DisableAllButton: false,
-          PageLoading: true,
-          EmptyState: true,
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: true,
-          BranchesCards: true,
-        },
-      },
+      global: { plugins: [pinia, i18n], stubs: { ...defaultStubs, DisableAllButton: false } },
     });
-
     const disableAllButton = wrapper.findComponent({ name: "DisableAllButton" });
     expect(disableAllButton.props("disabled")).toBe(true);
   });
 
   it("should have correct data-test-id on page root", () => {
     const wrapper = mount(BranchesListView, {
-      global: {
-        plugins: [pinia, i18n],
-        stubs: {
-          BaseButton: true,
-          DisableAllButton: true,
-          PageLoading: true,
-          EmptyState: true,
-          AddBranchesModal: true,
-          BranchSettingsModal: true,
-          BranchesTable: true,
-          BranchesCards: true,
-        },
-      },
+      global: { plugins: [pinia, i18n], stubs: defaultStubs },
     });
 
     expect(wrapper.find('[data-test-id="branches-page"]').exists()).toBe(true);

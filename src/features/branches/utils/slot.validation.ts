@@ -84,7 +84,7 @@ function validateSingleSlot(slot: SlotTuple, index: number, allSlots: SlotTuple[
   if (formatError) return formatError;
 
   if (isOvernightRange(slot)) {
-    return `settings.slots.errors.overnight`;
+    return `settings.slots.errors.overnightNotSupported`;
   }
 
   if (!isValidSlotOrder(slot)) {

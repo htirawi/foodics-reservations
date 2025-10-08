@@ -212,14 +212,14 @@ describe("validateDaySlots", () => {
     const slots: SlotTuple[] = [["12:00", "09:00"]]; // End before start
     const result = validateDaySlots(slots);
     expect(result.ok).toBe(false);
-    expect(result.errors).toContain("settings.slots.errors.overnight");
+    expect(result.errors).toContain("settings.slots.errors.overnightNotSupported");
   });
 
   it("detects overnight ranges", () => {
     const slots: SlotTuple[] = [["22:00", "02:00"]]; // Overnight
     const result = validateDaySlots(slots);
     expect(result.ok).toBe(false);
-    expect(result.errors).toContain("settings.slots.errors.overnight");
+    expect(result.errors).toContain("settings.slots.errors.overnightNotSupported");
   });
 
   it("detects overlapping slots", () => {

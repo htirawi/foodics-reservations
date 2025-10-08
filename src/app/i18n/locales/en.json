@@ -28,7 +28,8 @@
   "actions": {
     "retry": "Retry",
     "cancel": "Cancel",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "partialResult": "Enabled {success} — failed {failed}"
   },
   "reservations": {
     "title": "Reservations",
@@ -116,7 +117,8 @@
         "order": "Start time must be before end time.",
         "max": "At most 3 slots per day.",
         "overlap": "Slots must not overlap.",
-        "overnight": "Overnight ranges not supported."
+        "overnightNotSupported": "Overnight ranges aren't supported.",
+        "touchingOk": "Adjacent time ranges that touch are allowed."
       }
     },
     "days": {

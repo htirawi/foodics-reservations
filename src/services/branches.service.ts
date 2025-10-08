@@ -37,4 +37,4 @@ export const BranchesService = {
         const { data } = await httpClient.put<IFoodicsResponse<IBranch>>(`${API_ENDPOINT_BRANCHES}/${id}`, payload);
         return data.data;
     },
-} as const;
+};
