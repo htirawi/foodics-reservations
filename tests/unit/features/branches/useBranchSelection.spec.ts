@@ -24,11 +24,16 @@ const mockBranchesStore = {
     enableBranches: vi.fn(),
 };
 const mockToast = {
+    toasts: ref([]),
+    show: vi.fn(),
+    remove: vi.fn(),
     success: vi.fn(),
     error: vi.fn(),
+    warning: vi.fn(),
+    info: vi.fn(),
 };
 const mockI18n = {
-    t: vi.fn((key: string, params?: Record<string, any>) => {
+    t: vi.fn((key: string, params?: Record<string, unknown>) => {
         const translations: Record<string, string> = {
             "reservations.toast.enableAllSuccess": `Successfully enabled ${params?.["count"] ?? 0} branches.`,
             "reservations.toast.enablePartialSuccess": `Enabled ${params?.["enabledCount"] ?? 0} branches. Failed to enable ${params?.["failedCount"] ?? 0} branches.`,
@@ -40,9 +45,9 @@ const mockI18n = {
 describe("useBranchSelection", () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        (useBranchesStore as any).mockReturnValue(mockBranchesStore);
-        (useToast as any).mockReturnValue(mockToast);
-        (useI18n as any).mockReturnValue(mockI18n);
+        vi.mocked(useBranchesStore).mockReturnValue(mockBranchesStore as unknown as ReturnType<typeof useBranchesStore>);
+        vi.mocked(useToast).mockReturnValue(mockToast as unknown as ReturnType<typeof useToast>);
+        vi.mocked(useI18n).mockReturnValue(mockI18n as unknown as ReturnType<typeof useI18n>);
     });
     afterEach(() => {
         vi.resetAllMocks();

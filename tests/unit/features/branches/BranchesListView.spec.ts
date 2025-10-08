@@ -154,10 +154,27 @@ describe("BranchesListView", () => {
       {
         id: "1",
         name: "Branch 1",
+        name_localized: null,
+        reference: "REF-1",
+        type: 1,
         accepts_reservations: true,
-        is_reservation_enabled: true,
-        reservation_times: null,
-      } as any,
+        reservation_duration: 30,
+        reservation_times: {
+          saturday: [],
+          sunday: [],
+          monday: [],
+          tuesday: [],
+          wednesday: [],
+          thursday: [],
+          friday: [],
+        },
+        receives_online_orders: false,
+        opening_from: "09:00",
+        opening_to: "22:00",
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2024-01-01T00:00:00Z",
+        deleted_at: null,
+      },
     ];
 
     const wrapper = mount(BranchesListView, {

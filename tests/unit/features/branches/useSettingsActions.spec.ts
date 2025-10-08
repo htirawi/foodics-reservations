@@ -25,7 +25,15 @@ describe("useSettingsActions", () => {
         id: "branch-123",
         name: "Test Branch",
         reference: "REF-123",
-        is_active: true,
+        name_localized: null,
+        type: 1,
+        accepts_reservations: true,
+        receives_online_orders: false,
+        opening_from: "09:00",
+        opening_to: "22:00",
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2024-01-01T00:00:00Z",
+        deleted_at: null,
         reservation_duration: 30,
         reservation_times: {
           saturday: [],
@@ -77,7 +85,15 @@ describe("useSettingsActions", () => {
         id: "branch-123",
         name: "Test Branch",
         reference: "REF-123",
-        is_active: true,
+        name_localized: null,
+        type: 1,
+        accepts_reservations: true,
+        receives_online_orders: false,
+        opening_from: "09:00",
+        opening_to: "22:00",
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2024-01-01T00:00:00Z",
+        deleted_at: null,
         reservation_duration: 30,
         reservation_times: {
           saturday: [],
@@ -124,7 +140,15 @@ describe("useSettingsActions", () => {
         id: "branch-123",
         name: "Test Branch",
         reference: "REF-123",
-        is_active: true,
+        name_localized: null,
+        type: 1,
+        accepts_reservations: true,
+        receives_online_orders: false,
+        opening_from: "09:00",
+        opening_to: "22:00",
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2024-01-01T00:00:00Z",
+        deleted_at: null,
         reservation_duration: 30,
         reservation_times: {
           saturday: [],
@@ -203,7 +227,15 @@ describe("useSettingsActions", () => {
         id: "branch-456",
         name: "Test Branch",
         reference: "REF-456",
-        is_active: true,
+        name_localized: null,
+        type: 1,
+        accepts_reservations: true,
+        receives_online_orders: false,
+        opening_from: "09:00",
+        opening_to: "22:00",
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2024-01-01T00:00:00Z",
+        deleted_at: null,
         reservation_duration: 30,
         reservation_times: {
           saturday: [],
@@ -236,7 +268,11 @@ describe("useSettingsActions", () => {
         checkSlots: vi.fn(),
       };
 
-      vi.spyOn(branchesStore, "enableBranches").mockResolvedValue(undefined);
+      vi.spyOn(branchesStore, "enableBranches").mockResolvedValue({
+        ok: true,
+        enabled: ["branch-123"],
+        failed: [],
+      });
 
       const { handleDisable } = useSettingsActions(
         state,
@@ -269,7 +305,11 @@ describe("useSettingsActions", () => {
         checkSlots: vi.fn(),
       };
 
-      vi.spyOn(branchesStore, "enableBranches").mockResolvedValue(undefined);
+      vi.spyOn(branchesStore, "enableBranches").mockResolvedValue({
+        ok: true,
+        enabled: ["branch-123"],
+        failed: [],
+      });
 
       const { handleDisable } = useSettingsActions(
         state,

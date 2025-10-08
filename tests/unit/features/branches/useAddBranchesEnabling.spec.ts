@@ -17,9 +17,13 @@ describe("useAddBranchesEnabling", () => {
     const selectedIds = ref<string[]>([]);
     const clear = vi.fn();
     const toast = {
+      toasts: ref([]),
+      show: vi.fn(),
+      remove: vi.fn(),
       success: vi.fn(),
       error: vi.fn(),
       warning: vi.fn(),
+      info: vi.fn(),
     };
     const t = (key: string) => key;
 
@@ -32,9 +36,13 @@ describe("useAddBranchesEnabling", () => {
     const selectedIds = ref<string[]>([]);
     const clear = vi.fn();
     const toast = {
+      toasts: ref([]),
+      show: vi.fn(),
+      remove: vi.fn(),
       success: vi.fn(),
       error: vi.fn(),
       warning: vi.fn(),
+      info: vi.fn(),
     };
     const t = (key: string) => key;
     const onSuccess = vi.fn();
@@ -59,12 +67,15 @@ describe("useAddBranchesEnabling", () => {
     const selectedIds = ref<string[]>(["branch-1", "branch-2"]);
     const clear = vi.fn();
     const toast = {
+      toasts: ref([]),
+      show: vi.fn(),
+      remove: vi.fn(),
       success: vi.fn(),
       error: vi.fn(),
       warning: vi.fn(),
+      info: vi.fn(),
     };
-    const t = (key: string, params?: any) =>
-      `${key}:${JSON.stringify(params)}`;
+    const t = (key: string, ..._args: unknown[]) => key;
     const onSuccess = vi.fn();
 
     const branchesStore = useBranchesStore();
@@ -96,12 +107,15 @@ describe("useAddBranchesEnabling", () => {
     const selectedIds = ref<string[]>(["branch-1", "branch-2", "branch-3"]);
     const clear = vi.fn();
     const toast = {
+      toasts: ref([]),
+      show: vi.fn(),
+      remove: vi.fn(),
       success: vi.fn(),
       error: vi.fn(),
       warning: vi.fn(),
+      info: vi.fn(),
     };
-    const t = (key: string, params?: any) =>
-      `${key}:${JSON.stringify(params)}`;
+    const t = (key: string, ..._args: unknown[]) => key;
     const onSuccess = vi.fn();
 
     const branchesStore = useBranchesStore();
@@ -130,9 +144,13 @@ describe("useAddBranchesEnabling", () => {
     const selectedIds = ref<string[]>(["branch-1"]);
     const clear = vi.fn();
     const toast = {
+      toasts: ref([]),
+      show: vi.fn(),
+      remove: vi.fn(),
       success: vi.fn(),
       error: vi.fn(),
       warning: vi.fn(),
+      info: vi.fn(),
     };
     const t = (key: string) => key;
     const onSuccess = vi.fn();

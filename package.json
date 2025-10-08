@@ -10,16 +10,15 @@
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write \"src/**/*.{js,ts,vue,css,scss,md}\"",
-    "test:unit": "vitest",
+    "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "PWDEBUG=1 playwright test --timeout=0 --retries=0 --workers=1",
     "test:e2e:smoke": "playwright test tests/e2e/smoke.spec.ts tests/e2e/app-shell.spec.ts",
-    "test:ci": "vitest run && playwright test",
-    "test:quick": "npm run lint && npm run typecheck && npm run test:unit",
-    "test:full": "npm run lint && npm run typecheck && npm run test:unit && npm run test:e2e"
+    "test:ci": "npm run typecheck && npm run lint && npm run test:unit && npm run test:e2e",
+    "test:quick": "npm run typecheck && npm run lint && npm run test:unit:watch"
   },
   "dependencies": {
     "@vueuse/core": "^13.9.0",

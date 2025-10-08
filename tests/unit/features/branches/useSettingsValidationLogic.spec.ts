@@ -158,7 +158,7 @@ describe("useSettingsValidationLogic", () => {
       const weekSlots = ref<ReservationTimes>({
         saturday: [],
         sunday: [],
-        monday: undefined as any,
+        monday: [],
         tuesday: [],
         wednesday: [],
         thursday: [],

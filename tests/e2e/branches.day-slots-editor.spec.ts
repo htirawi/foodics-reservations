@@ -369,7 +369,7 @@ test.describe("Day Slots Editor - Settings Modal", () => {
 
     test("should include day slots when saving settings", async ({ page }) => {
       // Intercept PUT request
-      let savedData: any = null;
+      let savedData: Record<string, unknown> | null = null;
       await page.route("**/api/branches/test-branch-1", async (route) => {
         if (route.request().method() === "PUT") {
           savedData = JSON.parse(route.request().postData() || "{}");
@@ -407,8 +407,10 @@ test.describe("Day Slots Editor - Settings Modal", () => {
       await page.waitForTimeout(200);
 
       // Verify saved data includes reservation_times
+      expect(savedData).not.toBeNull();
       expect(savedData).toHaveProperty("reservation_times");
-      expect(savedData.reservation_times.sunday).toHaveLength(4); // 3 from fixture + 1 added
+      const data = savedData as unknown as { reservation_times?: { sunday?: unknown[] } };
+      expect(data?.reservation_times?.sunday).toHaveLength(4); // 3 from fixture + 1 added
     });
 
     test.skip("should prevent save when slots have validation errors", async ({ page }) => {

@@ -43,8 +43,8 @@ describe("useLocale", () => {
         
         // Default mock for useUIStore
         vi.mocked(useUIStore).mockReturnValue({
-            notify: vi.fn(),
-        } as any);
+            notify: vi.fn(() => "toast-id"),
+        } as unknown as ReturnType<typeof useUIStore>);
     });
     afterEach(() => {
         localStorage.clear();
@@ -89,7 +89,7 @@ describe("useLocale", () => {
             const mockNotify = vi.fn();
             vi.mocked(useUIStore).mockReturnValue({
                 notify: mockNotify,
-            } as any);
+            } as unknown as ReturnType<typeof useUIStore>);
             
             const { setLocale } = useLocale();
             
@@ -139,7 +139,7 @@ describe("useLocale", () => {
             const mockNotify = vi.fn();
             vi.mocked(useUIStore).mockReturnValue({
                 notify: mockNotify,
-            } as any);
+            } as unknown as ReturnType<typeof useUIStore>);
             
             const { restoreLocale } = useLocale();
             

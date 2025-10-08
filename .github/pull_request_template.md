@@ -1,35 +1,61 @@
-## What
+## Summary
 
-Brief description of the changes.
+<!-- Brief bullet list of what changed -->
 
-## Why
+- 
+- 
 
-Why is this needed? What problem does it solve?
+## Context / Why
+
+<!-- What problem does this solve? What requirements drove this change? -->
+
+## Implementation Notes
+
+<!-- Architecture: which services/composables/stores/utils were added or changed? -->
+
+<!-- Any key patterns or trade-offs worth noting? -->
 
 ## Testing
 
-How did you test this?
-
+**Commands:**
 ```bash
-# Commands used to test
+npm run typecheck
+npm run lint
 npm run test:unit
-npm run test:e2e:chrome
+npm run test:e2e
 ```
 
-## Screenshots
+**Coverage:**
+- Unit: <!-- Which composables/stores/services/utils have new/updated tests? -->
+- E2E: <!-- Which flows were tested? EN/AR coverage? -->
 
-(If UI changes, add before/after screenshots)
+## Accessibility / i18n / RTL
+
+<!-- Any new strings added to locales? RTL tested? A11y semantics verified? -->
+
+## Design / Tokens
+
+<!-- If UI changed: which Tailwind tokens were used? Design parity notes? -->
+
+## Performance
+
+<!-- Bundle impact? Any lazy loading, code splitting, or caching changes? -->
+
+## Risk & Rollback
+
+**Risks:** <!-- What could break? Migration concerns? -->
+
+**Rollback:** <!-- How to revert if needed? -->
 
 ## Checklist
 
-- [ ] Tested locally
-- [ ] Lint and type checks pass
-- [ ] Unit tests added/updated
-- [ ] E2E tests added/updated (if needed)
-- [ ] i18n keys added for new text
-- [ ] Accessibility verified (keyboard nav, screen reader)
-- [ ] Works in RTL mode (Arabic)
-
-## Notes
-
-(Any additional context, follow-ups, or concerns)
+- [ ] `typecheck` passes
+- [ ] `lint` passes
+- [ ] `test:unit` passes
+- [ ] `test:e2e` passes
+- [ ] README updated (if commands/setup changed)
+- [ ] Public docs updated (if architecture/APIs changed)
+- [ ] i18n keys added for new strings (EN + AR)
+- [ ] A11y verified (roles, labels, keyboard nav)
+- [ ] RTL tested (if UI changed)
+- [ ] Conventional commit message

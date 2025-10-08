@@ -28,7 +28,7 @@ describe("useSettingsValidation", () => {
     it("should return false and set error for missing duration", () => {
       const { validateDuration, errors } = useSettingsValidation();
 
-      const result = validateDuration(null as any, "Duration is required");
+      const result = validateDuration(0, "Duration is required");
 
       expect(result).toBe(false);
       expect(errors.value.duration).toBe("Duration is required");

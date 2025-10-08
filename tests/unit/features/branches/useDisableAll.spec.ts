@@ -20,9 +20,9 @@ vi.mock("vue-i18n", () => ({
     }),
 }));
 describe("useDisableAll", () => {
-    let mockBranchesStore: any;
-    let mockUIStore: any;
-    let mockToast: any;
+    let mockBranchesStore: { disableAll: ReturnType<typeof vi.fn> };
+    let mockUIStore: { confirm: ReturnType<typeof vi.fn> };
+    let mockToast: { success: ReturnType<typeof vi.fn>; error: ReturnType<typeof vi.fn> };
     beforeEach(() => {
         vi.clearAllMocks();
         mockBranchesStore = {
@@ -35,9 +35,9 @@ describe("useDisableAll", () => {
             success: vi.fn(),
             error: vi.fn(),
         };
-        vi.mocked(useBranchesStore).mockReturnValue(mockBranchesStore);
-        vi.mocked(useUIStore).mockReturnValue(mockUIStore);
-        vi.mocked(useToast).mockReturnValue(mockToast);
+        vi.mocked(useBranchesStore).mockReturnValue(mockBranchesStore as unknown as ReturnType<typeof useBranchesStore>);
+        vi.mocked(useUIStore).mockReturnValue(mockUIStore as unknown as ReturnType<typeof useUIStore>);
+        vi.mocked(useToast).mockReturnValue(mockToast as unknown as ReturnType<typeof useToast>);
     });
     it("should initialize with correct state", () => {
         const { busy } = useDisableAll();

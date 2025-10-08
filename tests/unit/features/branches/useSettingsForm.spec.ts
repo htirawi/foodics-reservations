@@ -8,8 +8,6 @@ import { createPinia, setActivePinia } from "pinia";
 import { createI18n } from "vue-i18n";
 import { mount } from "@vue/test-utils";
 import { useSettingsForm } from "@/features/branches/composables/useSettingsForm";
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
-import type { IBranch } from "@/types/foodics";
 
 const i18n = createI18n({
   legacy: false,

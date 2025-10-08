@@ -3,8 +3,10 @@
  * @summary Unit tests for useRTL composable
  */
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import { computed, type ComputedRef } from "vue";
 import { useRTL } from "@/composables/useRTL";
 import * as useLocaleModule from "@/composables/useLocale";
+import type { SupportedLocale } from "@/types/locale";
 
 describe("useRTL", () => {
   beforeEach(() => {
@@ -13,11 +15,12 @@ describe("useRTL", () => {
 
   it("should return isRTL from useLocale", () => {
     vi.spyOn(useLocaleModule, "useLocale").mockReturnValue({
-      isRTL: { value: false } as any,
-      locale: { value: "en" } as any,
+      isRTL: computed(() => false) as ComputedRef<boolean>,
+      currentLocale: computed(() => "en" as SupportedLocale) as ComputedRef<SupportedLocale>,
       setLocale: vi.fn(),
       availableLocales: [],
-      getLocaleName: vi.fn(),
+      restoreLocale: vi.fn(),
+      toggleLocale: vi.fn(),
     });
 
     const { isRTL } = useRTL();
@@ -27,11 +30,12 @@ describe("useRTL", () => {
 
   it("should return baseClasses when rtlClasses is undefined", () => {
     vi.spyOn(useLocaleModule, "useLocale").mockReturnValue({
-      isRTL: { value: false } as any,
-      locale: { value: "en" } as any,
+      isRTL: computed(() => false) as ComputedRef<boolean>,
+      currentLocale: computed(() => "en" as SupportedLocale) as ComputedRef<SupportedLocale>,
       setLocale: vi.fn(),
       availableLocales: [],
-      getLocaleName: vi.fn(),
+      restoreLocale: vi.fn(),
+      toggleLocale: vi.fn(),
     });
 
     const { getRTLClasses } = useRTL();
@@ -41,11 +45,12 @@ describe("useRTL", () => {
 
   it("should return baseClasses when isRTL is false", () => {
     vi.spyOn(useLocaleModule, "useLocale").mockReturnValue({
-      isRTL: { value: false } as any,
-      locale: { value: "en" } as any,
+      isRTL: computed(() => false) as ComputedRef<boolean>,
+      currentLocale: computed(() => "en" as SupportedLocale) as ComputedRef<SupportedLocale>,
       setLocale: vi.fn(),
       availableLocales: [],
-      getLocaleName: vi.fn(),
+      restoreLocale: vi.fn(),
+      toggleLocale: vi.fn(),
     });
 
     const { getRTLClasses } = useRTL();
@@ -55,11 +60,12 @@ describe("useRTL", () => {
 
   it("should return rtlClasses when isRTL is true", () => {
     vi.spyOn(useLocaleModule, "useLocale").mockReturnValue({
-      isRTL: { value: true } as any,
-      locale: { value: "ar" } as any,
+      isRTL: computed(() => true) as ComputedRef<boolean>,
+      currentLocale: computed(() => "ar" as SupportedLocale) as ComputedRef<SupportedLocale>,
       setLocale: vi.fn(),
       availableLocales: [],
-      getLocaleName: vi.fn(),
+      restoreLocale: vi.fn(),
+      toggleLocale: vi.fn(),
     });
 
     const { getRTLClasses } = useRTL();
@@ -69,11 +75,12 @@ describe("useRTL", () => {
 
   it("should return empty string for icon transform when needsFlip is false", () => {
     vi.spyOn(useLocaleModule, "useLocale").mockReturnValue({
-      isRTL: { value: true } as any,
-      locale: { value: "ar" } as any,
+      isRTL: computed(() => true) as ComputedRef<boolean>,
+      currentLocale: computed(() => "ar" as SupportedLocale) as ComputedRef<SupportedLocale>,
       setLocale: vi.fn(),
       availableLocales: [],
-      getLocaleName: vi.fn(),
+      restoreLocale: vi.fn(),
+      toggleLocale: vi.fn(),
     });
 
     const { getIconTransform } = useRTL();
@@ -83,11 +90,12 @@ describe("useRTL", () => {
 
   it("should return empty string for icon transform when isRTL is false", () => {
     vi.spyOn(useLocaleModule, "useLocale").mockReturnValue({
-      isRTL: { value: false } as any,
-      locale: { value: "en" } as any,
+      isRTL: computed(() => false) as ComputedRef<boolean>,
+      currentLocale: computed(() => "en" as SupportedLocale) as ComputedRef<SupportedLocale>,
       setLocale: vi.fn(),
       availableLocales: [],
-      getLocaleName: vi.fn(),
+      restoreLocale: vi.fn(),
+      toggleLocale: vi.fn(),
     });
 
     const { getIconTransform } = useRTL();
@@ -97,11 +105,12 @@ describe("useRTL", () => {
 
   it("should return rotate class for icon transform when isRTL is true", () => {
     vi.spyOn(useLocaleModule, "useLocale").mockReturnValue({
-      isRTL: { value: true } as any,
-      locale: { value: "ar" } as any,
+      isRTL: computed(() => true) as ComputedRef<boolean>,
+      currentLocale: computed(() => "ar" as SupportedLocale) as ComputedRef<SupportedLocale>,
       setLocale: vi.fn(),
       availableLocales: [],
-      getLocaleName: vi.fn(),
+      restoreLocale: vi.fn(),
+      toggleLocale: vi.fn(),
     });
 
     const { getIconTransform } = useRTL();
@@ -111,11 +120,12 @@ describe("useRTL", () => {
 
   it("should return correct logical position classes", () => {
     vi.spyOn(useLocaleModule, "useLocale").mockReturnValue({
-      isRTL: { value: false } as any,
-      locale: { value: "en" } as any,
+      isRTL: computed(() => false) as ComputedRef<boolean>,
+      currentLocale: computed(() => "en" as SupportedLocale) as ComputedRef<SupportedLocale>,
       setLocale: vi.fn(),
       availableLocales: [],
-      getLocaleName: vi.fn(),
+      restoreLocale: vi.fn(),
+      toggleLocale: vi.fn(),
     });
 
     const { getLogicalPosition } = useRTL();
@@ -127,11 +137,12 @@ describe("useRTL", () => {
 
   it("should return correct logical text align classes", () => {
     vi.spyOn(useLocaleModule, "useLocale").mockReturnValue({
-      isRTL: { value: false } as any,
-      locale: { value: "en" } as any,
+      isRTL: computed(() => false) as ComputedRef<boolean>,
+      currentLocale: computed(() => "en" as SupportedLocale) as ComputedRef<SupportedLocale>,
       setLocale: vi.fn(),
       availableLocales: [],
-      getLocaleName: vi.fn(),
+      restoreLocale: vi.fn(),
+      toggleLocale: vi.fn(),
     });
 
     const { getLogicalTextAlign } = useRTL();

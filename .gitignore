@@ -1,8 +1,18 @@
-# Generated documentation (not pushed to repo)
+# Private interview/prep docs (not pushed to repo)
 /docs
+
+# Private build/test artifacts
+CHANGELOG.md
+CONTRIBUTING.md
+REPORT_TYPES_AUDIT.md
+test-*.log
+test-results.json
 
 # Local development scripts (not pushed to repo)
 /scripts
+
+# Cursor workspace files
+.cursor/
 
 # Dependencies
 node_modules/

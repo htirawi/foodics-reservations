@@ -44,7 +44,7 @@ test.describe("Settings Day Slots - Utils Validation Wiring", () => {
             for (const key of i18nKeys) {
               const translation = await page.evaluate((key) => {
                 // Access the i18n instance from the Vue app
-                const app = document.querySelector('#app') as any;
+                const app = document.querySelector('#app') as HTMLElement & { __vue_app__?: { config?: { globalProperties?: { $t?: (key: string) => string } } } };
                 if (app?.__vue_app__?.config?.globalProperties?.$t) {
                   return app.__vue_app__.config.globalProperties.$t(key);
                 }
