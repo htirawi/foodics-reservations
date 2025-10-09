@@ -75,7 +75,7 @@ stroke-width="2">
 
     <div class="rounded-lg bg-neutral-50 p-4">
       <div class="flex items-center justify-between gap-4">
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2 flex-1">
           <TimePill
             v-for="(slot, idx) in slots"
             :key="idx"
@@ -88,6 +88,12 @@ stroke-width="2">
             @update:to="(val) => handleUpdateSlot(idx, 'to', val)"
             @remove="handleRemove(idx)"
           />
+          <p
+            v-if="!slots || slots.length === 0"
+            class="text-sm text-neutral-500 italic py-2"
+          >
+            {{ t('settings.timeSlots.emptyState') }}
+          </p>
         </div>
         <button
           type="button"
@@ -112,12 +118,15 @@ d="M12 4v16m8-8H4" />
       </div>
     </div>
 
-    <p
+    <div
       v-if="error"
+      role="alert"
+      aria-live="polite"
+      aria-atomic="true"
       class="mt-2 text-sm text-red-600"
       :data-testid="`error-${day}`"
     >
       {{ error }}
-    </p>
+    </div>
   </div>
 </template>

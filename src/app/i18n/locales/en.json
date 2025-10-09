@@ -135,7 +135,8 @@
       "applyToAll": "Apply on all days",
       "remove": "Remove time slot",
       "from": "From",
-      "to": "To"
+      "to": "To",
+      "emptyState": "No time slots configured. Click the + button to add one."
     },
     "actions": {
       "save": "Save",
@@ -156,6 +157,14 @@
       "saveError": "Failed to save settings. Please try again.",
       "disableSuccess": "Branch reservations have been disabled.",
       "disableError": "Failed to disable reservations. Please try again."
+    },
+    "confirm": {
+      "unsavedChanges": {
+        "title": "Unsaved Changes",
+        "message": "You have unsaved changes. Are you sure you want to close without saving?",
+        "confirm": "Discard Changes",
+        "cancel": "Keep Editing"
+      }
     }
   },
   "addBranches": {

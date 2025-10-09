@@ -11,6 +11,20 @@ import { useSettingsActions } from "@/features/branches/composables/useSettingsA
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import type { IBranch, ReservationTimes } from "@/types/foodics";
 
+// Mock vue-i18n
+vi.mock("vue-i18n", () => ({
+  useI18n: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+// Mock UI store
+vi.mock("@/stores/ui.store", () => ({
+  useUIStore: () => ({
+    notify: vi.fn(),
+  }),
+}));
+
 describe("useSettingsActions", () => {
   let branchesStore: ReturnType<typeof useBranchesStore>;
   let mockOnClose: ReturnType<typeof vi.fn>;

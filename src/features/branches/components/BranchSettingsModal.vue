@@ -1,28 +1,30 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch, nextTick } from "vue";
 
 import { useI18n } from "vue-i18n";
 
-import BaseButton from "@/components/ui/BaseButton.vue";
 import BaseModal from "@/components/ui/BaseModal.vue";
+import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts";
 import { TESTID_SETTINGS_MODAL } from "@/constants/testids";
 import { useSettingsForm } from "@/features/branches/composables/useSettingsForm";
-import type { ITable } from "@/types/foodics";
 
 import DaySlots  from "@features/branches/components/DaySlots.vue";
 import DurationField  from "@features/branches/components/ReservationSettingsModal/DurationField.vue";
+import SettingsModalActions  from "@features/branches/components/ReservationSettingsModal/SettingsModalActions.vue";
 
 const props = withDefaults(defineProps<{
     branchId: string | null;
 }>(), {
     branchId: null,
 });
+
 const emit = defineEmits<{
-    close: [
-    ];
+    close: [];
 }>();
+
 const { t } = useI18n();
-const { isOpen, branch, duration, weekSlots, weekdays, availableTables, errors, addSlot, removeSlot, updateSlot, applyToAllDays, handleSave, handleDisable, isSaving, isDisabling } = useSettingsForm(props, () => emit("close"));
+const { isOpen, branch, duration, weekSlots, weekdays, availableTables, errors, getTableDisplayName, addSlot, removeSlot, updateSlot, applyToAllDays, handleSave, handleDisable, handleClose, isSaving, isDisabling } = useSettingsForm(props, () => emit("close"));
+
 const canSave = computed<boolean>(() => {
     if (!duration.value || duration.value < 1) return false;
     if (errors.value.duration) return false;
@@ -30,14 +32,23 @@ const canSave = computed<boolean>(() => {
     return true;
 });
 
-function getTableDisplayName(table: ITable): string {
-    const section = branch.value?.sections?.find(s => s.tables?.some(t => t.id === table.id));
-    const sectionName = section?.name ?? 'Unknown';
-    const tableName = table.name ?? table.id;
-    return `${sectionName} - ${tableName}`;
-}
+const isKeyboardEnabled = computed(() => isOpen.value && !isSaving.value && !isDisabling.value);
+useKeyboardShortcuts({
+    isEnabled: isKeyboardEnabled,
+    onEscape: handleClose,
+    onSave: handleSave,
+    canSave,
+});
 
-function handleClose(): void { emit("close"); }
+watch(isOpen, async (open) => {
+    if (open) {
+        await nextTick();
+        const durationInput = document.querySelector('[data-testid="duration-input"]') as HTMLInputElement;
+        if (durationInput) {
+            durationInput.focus();
+        }
+    }
+});
 </script>
 
 <template>
@@ -45,14 +56,33 @@ function handleClose(): void { emit("close"); }
     :model-value="isOpen"
     size="xl"
     :testid="TESTID_SETTINGS_MODAL"
+    role="dialog"
+    aria-labelledby="settings-modal-title"
+    aria-describedby="settings-modal-description"
     @update:model-value="handleClose"
   >
     <template #title>
-      {{ branch ? t('settings.title', { branchName: branch.name }) : '' }}
+      <span id="settings-modal-title">
+        {{ branch ? t('settings.title', { branchName: branch.name }) : '' }}
+      </span>
     </template>
 
-    <div v-if="branch" class="space-y-6">
-      <div class="bg-blue-50 border-t-2 border-b-2 border-blue-500 px-4 py-3 text-blue-700" data-testid="working-hours-info">
+    <!-- Loading skeleton -->
+    <div v-if="isOpen && !branch" class="space-y-6 animate-pulse">
+      <div class="h-12 bg-neutral-200 rounded"></div>
+      <div class="h-20 bg-neutral-200 rounded"></div>
+      <div class="h-32 bg-neutral-200 rounded"></div>
+      <div class="h-96 bg-neutral-200 rounded"></div>
+    </div>
+
+    <div v-else-if="branch" class="space-y-6">
+      <div
+        id="settings-modal-description"
+        class="bg-blue-50 border-t-2 border-b-2 border-blue-500 px-4 py-3 text-blue-700"
+        data-testid="working-hours-info"
+        role="status"
+        aria-live="polite"
+      >
         {{ t('settings.workingHours', { from: branch.opening_from, to: branch.opening_to }) }}
       </div>
 
@@ -99,66 +129,14 @@ function handleClose(): void { emit("close"); }
     </div>
 
     <template #actions>
-      <BaseButton
-        variant="danger"
-        data-testid="disable-button"
-        :disabled="isDisabling || isSaving"
-        @click="handleDisable"
-      >
-        <span v-if="isDisabling" class="inline-flex items-center gap-2">
-          <svg
-class="h-4 w-4 animate-spin"
-xmlns="http://www.w3.org/2000/svg"
-fill="none"
-viewBox="0 0 24 24">
-            <circle
-class="opacity-25"
-cx="12"
-cy="12"
-r="10"
-stroke="currentColor"
-stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          {{ t('settings.actions.disabling') }}
-        </span>
-        <span v-else>{{ t('settings.actions.disableReservations') }}</span>
-      </BaseButton>
-      <div class="flex gap-3">
-        <BaseButton
-          variant="ghost"
-          data-testid="settings-cancel"
-          :disabled="isSaving || isDisabling"
-          @click="handleClose"
-        >
-          {{ t('settings.actions.close') }}
-        </BaseButton>
-        <BaseButton
-          variant="primary"
-          :disabled="!canSave || isSaving || isDisabling"
-          data-testid="save-button"
-          @click="handleSave"
-        >
-          <span v-if="isSaving" class="inline-flex items-center gap-2">
-            <svg
-class="h-4 w-4 animate-spin"
-xmlns="http://www.w3.org/2000/svg"
-fill="none"
-viewBox="0 0 24 24">
-              <circle
-class="opacity-25"
-cx="12"
-cy="12"
-r="10"
-stroke="currentColor"
-stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            {{ t('settings.actions.saving') }}
-          </span>
-          <span v-else>{{ t('settings.actions.save') }}</span>
-        </BaseButton>
-      </div>
+      <SettingsModalActions
+        :can-save="canSave"
+        :is-saving="isSaving"
+        :is-disabling="isDisabling"
+        @save="handleSave"
+        @disable="handleDisable"
+        @close="handleClose"
+      />
     </template>
   </BaseModal>
 </template>
