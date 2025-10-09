@@ -37,6 +37,7 @@
     "@types/node": "^24.6.2",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.45.0",
+    "@vercel/node": "^5.3.26",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vitest/coverage-v8": "^1.6.1",
     "@vue/test-utils": "^2.4.4",

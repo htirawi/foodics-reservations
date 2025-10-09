@@ -1,5 +1,5 @@
-// Base URL
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api';
+// Base URL (use /api for serverless proxy in production)
+export const API_BASE_URL = '/api';
 
 // Endpoints
 export const API_ENDPOINT_BRANCHES = '/branches';
