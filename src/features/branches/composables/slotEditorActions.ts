@@ -64,7 +64,7 @@ export function updateSlotField(
 export function applyToAllDays(modelValue: ReservationTimes, sourceDay: Weekday): ReservationTimes {
   const template = modelValue[sourceDay] ?? [];
   const updated: ReservationTimes = { ...modelValue };
-  WEEKDAY_ORDER.forEach((day) => {
+  WEEKDAY_ORDER.forEach((day: Weekday) => {
     updated[day] = [...template];
   });
   return updated;

@@ -22,7 +22,7 @@ export function useSettingsActions(
         if (!branch.value)
             return;
         const isDurationValid = checkDuration();
-        const areSlotsValid = weekdays.every((day) => checkSlots(day));
+        const areSlotsValid = weekdays.every((day: Weekday) => checkSlots(day));
         if (!isDurationValid || !areSlotsValid)
             return;
         await branchesStore.updateSettings(branch.value.id, {

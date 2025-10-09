@@ -8,7 +8,7 @@ import {
   applyToAllDays,
   WEEKDAY_ORDER,
 } from "@/features/branches/composables/slotEditorActions";
-import type { ReservationTimes } from "@/types/foodics";
+import type { ReservationTimes, Weekday } from "@/types/foodics";
 
 describe("slotEditorActions", () => {
   const emptyTimes: ReservationTimes = {
@@ -177,7 +177,7 @@ describe("slotEditorActions", () => {
     it("should copy slots to all days", () => {
       const result = applyToAllDays(timesWithSlots, "saturday");
 
-      WEEKDAY_ORDER.forEach((day) => {
+      WEEKDAY_ORDER.forEach((day: Weekday) => {
         expect(result[day]).toEqual(timesWithSlots.saturday);
       });
     });
@@ -185,7 +185,7 @@ describe("slotEditorActions", () => {
     it("should handle empty source day", () => {
       const result = applyToAllDays(timesWithSlots, "sunday");
 
-      WEEKDAY_ORDER.forEach((day) => {
+      WEEKDAY_ORDER.forEach((day: Weekday) => {
         expect(result[day]).toEqual([]);
       });
     });

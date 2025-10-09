@@ -1,5 +1,5 @@
 import { WEEKDAYS, MAX_SLOTS_PER_DAY } from "@/constants/reservations";
-import type { SlotTuple, ReservationTimes } from "@/types/foodics";
+import type { SlotTuple, ReservationTimes, Weekday } from "@/types/foodics";
 import type { ValidationResult } from "@/types/validation";
 
 import { isHHmm, timeToMinutes } from "@utils/time";
@@ -104,7 +104,7 @@ export function copySaturdayToAll(rt: ReservationTimes): ReservationTimes {
 
   const result = {} as ReservationTimes;
 
-  for (const day of WEEKDAYS) {
+  for (const day of WEEKDAYS as readonly Weekday[]) {
     result[day] = clonedSaturday.map((slot) => [slot[0], slot[1]] as SlotTuple);
   }
 

@@ -58,7 +58,7 @@ export function emitValidity(
   times: ReservationTimes,
   emit: (e: "update:valid", valid: boolean) => void
 ): void {
-  const allValid = WEEKDAY_ORDER.every((day) => validateDaySlots(times[day] ?? []));
+  const allValid = WEEKDAY_ORDER.every((day: Weekday) => validateDaySlots(times[day] ?? []));
   emit("update:valid", allValid);
 }
 

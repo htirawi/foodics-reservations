@@ -131,7 +131,7 @@ export function validateReservationTimes(
 
   let hasErrors = false;
 
-  WEEKDAYS.forEach((day) => {
+  WEEKDAYS.forEach((day: Weekday) => {
     const slots = reservationTimes[day];
     if (!slots) return;
 

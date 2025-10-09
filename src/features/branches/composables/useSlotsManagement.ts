@@ -50,7 +50,7 @@ export function useSlotsManagement(weekSlots: Ref<ReservationTimes>) {
             );
         }
 
-        weekdays.forEach((d) => {
+        weekdays.forEach((d: Weekday) => {
             weekSlots.value[d] = [...slotsToApply];
         });
     }
