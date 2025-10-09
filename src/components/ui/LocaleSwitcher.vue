@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { useLocale } from "@/composables/useLocale";
 import { TESTID_LOCALE_SWITCHER } from "@/constants/testids";
 
-import { useLocale } from "@/composables/useLocale";
 
 const { currentLocale, toggleLocale } = useLocale();
 </script>

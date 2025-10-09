@@ -2,9 +2,11 @@
  * @file useSettingsState.spec.ts
  * @summary Unit tests for useSettingsState composable
  */
-import { describe, it, expect, beforeEach } from "vitest";
-import { createPinia, setActivePinia } from "pinia";
 import { reactive } from "vue";
+
+import { createPinia, setActivePinia } from "pinia";
+import { describe, it, expect, beforeEach } from "vitest";
+
 import { useSettingsState } from "@/features/branches/composables/useSettingsState";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import type { IBranch } from "@/types/foodics";

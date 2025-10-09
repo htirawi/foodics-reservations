@@ -26,13 +26,9 @@ import { compareHHmm } from '@/utils/time';
 export function normalizeSlotArray(slots: SlotTuple[]): SlotTuple[] {
   if (slots.length === 0) return [];
 
-  // Deep clone first (ensure no mutation)
   const cloned = slots.map(slot => [slot[0], slot[1]] as SlotTuple);
-
-  // Sort by start time
   const sorted = cloned.sort((a, b) => compareHHmm(a[0], b[0]));
 
-  // Deduplicate
   const deduped: SlotTuple[] = [];
   for (const slot of sorted) {
     const isDuplicate = deduped.some(
@@ -82,11 +78,9 @@ export function isDeepClone(fn: (x: SlotTuple[]) => SlotTuple[], input: SlotTupl
   const result = fn(input);
   if (result.length === 0) return true;
 
-  // Mutate result
   if (result[0]) {
     result[0] = ['99:99', '99:99'];
   }
 
-  // Check if input unchanged
   return input.length === 0 || (input[0] !== undefined && input[0][0] !== '99:99');
 }

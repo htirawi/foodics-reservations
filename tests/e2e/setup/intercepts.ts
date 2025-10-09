@@ -7,7 +7,9 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import type { Page, Route } from "@playwright/test";
-import { loadFixture, isAllowedUrl } from "../utils/network";
+
+import { loadFixture, isAllowedUrl } from "@tests/e2e/utils/network";
+
 async function interceptBranchesGet(page: Page, tracker: string[]): Promise<void> {
     await page.route(/\/api\/branches(\?.*)?$/, async (route: Route) => {
         if (route.request().method() !== "GET") {
@@ -149,18 +151,7 @@ export async function setupOfflineModeWithSections(page: Page): Promise<void> {
     const escapedRequests: string[] = [];
     await setupCatchAll(page, escapedRequests);
     await interceptBranchMutations(page, interceptedRequests);
-    await page.route(/\/api\/branches(\?.*)?$/, async (route: Route) => {
-        if (route.request().method() !== "GET") {
-            await route.continue();
-            return;
-        }
-        interceptedRequests.push("GET /api/branches (with sections)");
-        await route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify(loadFixture("branches-with-sections.json")),
-        });
-    });
+    await interceptBranchesGet(page, interceptedRequests);
     await page.waitForFunction(() => true, { timeout: 100 });
     await page.evaluate(({ intercepted, escaped }) => {
         (window as unknown as {

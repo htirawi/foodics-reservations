@@ -3,12 +3,13 @@
  * @summary Unit tests for slot limit enforcement policies (15+ test cases)
  */
 import { describe, it, expect } from 'vitest';
+
+import type { SlotTuple } from '@/types/foodics';
 import {
   canAddWithinLimit,
   isAtLimit,
   remainingCapacity
 } from '@/utils/policies/slot-limits';
-import type { SlotTuple } from '@/types/foodics';
 
 describe('Slot Limit Policies', () => {
   describe('canAddWithinLimit', () => {

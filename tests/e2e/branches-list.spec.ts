@@ -8,7 +8,9 @@
  */
 import { test, expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
-import { setupOfflineMode } from "./setup/intercepts";
+
+import { setupOfflineMode } from "@tests/e2e/setup/intercepts";
+
 async function waitForPageLoad(page: Page): Promise<void> {
     await page.waitForLoadState("networkidle").catch(() => { });
     await Promise.race([

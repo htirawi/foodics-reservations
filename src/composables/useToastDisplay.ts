@@ -1,4 +1,5 @@
 import { h } from "vue";
+
 import type { IToast } from "@/types/toast";
 
 function getToastClasses(type: IToast["type"]): string {

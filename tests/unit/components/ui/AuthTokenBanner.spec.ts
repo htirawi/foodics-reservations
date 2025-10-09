@@ -4,10 +4,12 @@
  * @remarks Tests visibility, dismiss, and i18n integration
  */
 
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount } from "@vue/test-utils";
+
 import { createPinia, setActivePinia } from "pinia";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { createI18n } from "vue-i18n";
+
 import AuthTokenBanner from "@/components/ui/AuthTokenBanner.vue";
 import { useUIStore } from "@/stores/ui.store";
 

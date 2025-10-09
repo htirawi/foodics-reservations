@@ -7,6 +7,7 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { test, expect } from "@playwright/test";
+
 test.describe("Accessibility - Skip Link", () => {
     test("should navigate to main content when skip link is activated", async ({ page }) => {
         await page.goto("/");

@@ -1,6 +1,8 @@
 import { ref, computed } from "vue";
+
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import type { IBranch, ReservationTimes, ITable } from "@/types/foodics";
+
 function extractReservableTables(sections: {
     tables?: ITable[];
 }[]): ITable[] {

@@ -6,10 +6,13 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
+
+import { describe, it, expect, beforeEach } from "vitest";
 import { createI18n } from "vue-i18n";
+
 import LocaleSwitcher from "@/components/ui/LocaleSwitcher.vue";
+
 const i18n = createI18n({
     legacy: false,
     locale: "en",

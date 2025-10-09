@@ -1,6 +1,6 @@
-import type { Config } from "tailwindcss";
 import forms from "@tailwindcss/forms";
 import typography from "@tailwindcss/typography";
+import type { Config } from "tailwindcss";
 
 export default {
   content: [

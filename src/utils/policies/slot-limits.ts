@@ -1,7 +1,6 @@
-import type { SlotTuple } from '@/types/foodics';
 import { MAX_SLOTS_PER_DAY } from '@/constants/reservations';
-
-type LimitResult = { ok: true } | { ok: false; error: string };
+import type { SlotTuple } from '@/types/foodics';
+import type { LimitResult } from '@/types/validation';
 
 /**
  * Policy: Slot Limits

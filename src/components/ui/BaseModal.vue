@@ -7,12 +7,12 @@ const props = withDefaults(defineProps<{
     modelValue: boolean;
     title?: string | undefined;
     size?: "sm" | "md" | "lg" | "xl";
-    dataTestid?: string | undefined;
+    testid?: string | undefined;
     preventClose?: boolean | undefined;
 }>(), {
     title: "",
     size: "md",
-    dataTestid: "",
+    testid: "",
     preventClose: false,
 });
 
@@ -64,7 +64,7 @@ onBeforeUnmount(() => {
       >
         <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeModal"></div>
         <div
-          :data-testid="dataTestid"
+          :data-testid="testid"
           :class="modalClasses"
           role="dialog"
           aria-modal="true"

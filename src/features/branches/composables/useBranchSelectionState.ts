@@ -7,8 +7,10 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { ref, computed, watch, type Ref } from "vue";
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
+
 import { useAsyncAction } from "@/composables/useAsyncAction";
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
+
 export function useBranchSelectionState(isOpen: Ref<boolean>) {
     const selectedBranchIds = ref<string[]>([]);
     const branchesStore = useBranchesStore();

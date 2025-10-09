@@ -6,10 +6,13 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, beforeEach } from "vitest";
 import { ref, nextTick } from "vue";
+
+import { describe, it, expect, beforeEach } from "vitest";
+
 import { useAddBranchesModal } from "@/features/branches/composables/useAddBranchesModal";
 import type { Branch } from "@/types/foodics";
+
 function createBranch(id: string, name: string, reference: string): Branch {
     return {
         id,

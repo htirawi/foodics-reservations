@@ -1,8 +1,10 @@
 import { computed } from "vue";
+
 import { useI18n } from "vue-i18n";
-import type { SupportedLocale } from "@/types/locale";
-import { useUIStore } from "@/stores/ui.store";
+
 import { LOCALE_STORAGE_KEY } from "@/constants/storage";
+import { useUIStore } from "@/stores/ui.store";
+import type { SupportedLocale } from "@/types/locale";
 
 export const useLocale = () => {
     const { locale, availableLocales } = useI18n();

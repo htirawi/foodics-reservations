@@ -2,10 +2,12 @@
  * @file useRTL.spec.ts
  * @summary Unit tests for useRTL composable
  */
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import { computed, type ComputedRef } from "vue";
-import { useRTL } from "@/composables/useRTL";
+
+import { describe, it, expect, beforeEach, vi } from "vitest";
+
 import * as useLocaleModule from "@/composables/useLocale";
+import { useRTL } from "@/composables/useRTL";
 import type { SupportedLocale } from "@/types/locale";
 
 describe("useRTL", () => {

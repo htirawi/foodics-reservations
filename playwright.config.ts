@@ -1,10 +1,15 @@
+import { defineConfig, devices } from "@playwright/test";
 import * as dotenv from "dotenv";
 
-import { defineConfig, devices } from "@playwright/test";
 
 // Load .env.e2e for E2E tests (offline mode by default)
 // This ensures we never accidentally use real tokens in tests
 dotenv.config({ path: ".env.e2e", quiet: true });
+
+// Safeguard: Remove FORCE_COLOR if NO_COLOR is set to prevent conflicts
+if (process.env.NO_COLOR && process.env.FORCE_COLOR) {
+  delete process.env.FORCE_COLOR;
+}
 
 // Note: Color behavior is controlled via package.json scripts
 // Use FORCE_COLOR=0 for no color, or let tools default to colored output

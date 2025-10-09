@@ -3,13 +3,14 @@
  * @summary Unit tests for normalization policies (15+ test cases)
  */
 import { describe, it, expect } from 'vitest';
+
+import type { SlotTuple } from '@/types/foodics';
 import {
   normalizeSlotArray,
   isIdempotent,
   isStable,
   isDeepClone
 } from '@/utils/policies/normalization';
-import type { SlotTuple } from '@/types/foodics';
 
 describe('Normalization Policies', () => {
   describe('normalizeSlotArray - Basic functionality', () => {

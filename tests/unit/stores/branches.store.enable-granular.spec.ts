@@ -6,12 +6,14 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { ApiError } from "@/types/api";
 import { setActivePinia, createPinia } from "pinia";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import { BranchesService } from "@/services/branches.service";
+import type { ApiError } from "@/types/api";
 import type { Branch } from "@/types/foodics";
+
 vi.mock("@/services/branches.service");
 function createBranch(id: string, name: string, acceptsReservations = false): Branch {
     return {

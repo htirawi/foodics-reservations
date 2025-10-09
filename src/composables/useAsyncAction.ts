@@ -1,4 +1,5 @@
 import { ref } from "vue";
+
 import type { IAsyncActionState } from "@/types/async";
 
 /**

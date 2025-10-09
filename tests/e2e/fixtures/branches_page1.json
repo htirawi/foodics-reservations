@@ -1,0 +1,90 @@
+{
+  "data": [
+    {
+      "id": "97a57184-e3e5-4d0e-8556-09270dcd686c",
+      "name": "Branch 1",
+      "name_localized": null,
+      "reference": "B01",
+      "type": 1,
+      "latitude": null,
+      "longitude": null,
+      "phone": null,
+      "opening_from": "00:00",
+      "opening_to": "00:00",
+      "inventory_end_of_day_time": "00:00",
+      "receipt_header": null,
+      "receipt_footer": null,
+      "settings": null,
+      "created_at": "2022-11-02 05:51:39",
+      "updated_at": "2025-10-08 20:09:03",
+      "deleted_at": null,
+      "receives_online_orders": true,
+      "accepts_reservations": true,
+      "reservation_duration": 60,
+      "reservation_times": {
+        "friday": [],
+        "monday": [],
+        "sunday": [
+          ["12:00", "13:00"],
+          ["13:00", "14:00"]
+        ],
+        "tuesday": [],
+        "saturday": [
+          ["12:00", "13:00"],
+          ["13:00", "14:00"]
+        ],
+        "thursday": [
+          ["12:00", "13:00"],
+          ["13:00", "14:00"]
+        ],
+        "wednesday": []
+      },
+      "address": null,
+      "sections": [
+        {
+          "id": "97ea3166-58c3-41c8-b203-00ffdde4cabf",
+          "branch_id": "97a57184-e3e5-4d0e-8556-09270dcd686c",
+          "name": "Terrace",
+          "name_localized": null,
+          "meta": null,
+          "created_at": "2022-12-06 10:04:29",
+          "updated_at": "2022-12-06 10:04:29",
+          "deleted_at": null,
+          "floor_id": null,
+          "revenue_center_id": null,
+          "tables": [
+            {
+              "id": "97ea3168-f320-4972-bec3-ee155080c483",
+              "section_id": "97ea3166-58c3-41c8-b203-00ffdde4cabf",
+              "name": "New Table 2",
+              "status": 1,
+              "seats": 1,
+              "parent_id": null,
+              "revenue_center_id": null,
+              "meta": null,
+              "created_at": "2022-12-06 10:04:31",
+              "updated_at": "2025-10-05 19:28:23",
+              "deleted_at": null,
+              "accepts_reservations": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "links": {
+    "first": "http://localhost:5173/api/branches?page=1",
+    "last": "http://localhost:5173/api/branches?page=2",
+    "prev": null,
+    "next": "http://localhost:5173/api/branches?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 2,
+    "path": "http://localhost:5173/api/branches",
+    "per_page": 1,
+    "to": 1,
+    "total": 2
+  }
+}

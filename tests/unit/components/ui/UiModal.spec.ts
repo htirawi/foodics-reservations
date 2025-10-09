@@ -6,10 +6,12 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import type { VueWrapper } from "@vue/test-utils";
 import { mount } from "@vue/test-utils";
+import type { VueWrapper } from "@vue/test-utils";
+
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { createI18n } from "vue-i18n";
+
 import UiModal from "@/components/ui/UiModal.vue";
 
 const i18n = createI18n({

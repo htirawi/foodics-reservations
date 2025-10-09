@@ -1,10 +1,21 @@
 import { type Ref } from "vue";
-import { useSettingsValidation } from "./useSettingsValidation";
+
+import { MIN_DURATION_MINUTES } from "@/constants/reservations";
 import type { Weekday, ReservationTimes } from "@/types/foodics";
+
+import { useSettingsValidation } from "@features/branches/composables/useSettingsValidation";
+
 export function useSettingsValidationLogic(duration: Ref<number>, weekSlots: Ref<ReservationTimes>, t: (key: string) => string) {
-    const { errors, validateDuration, validateDaySlots, clearAllErrors } = useSettingsValidation();
+    const { errors, validateDaySlots, clearAllErrors } = useSettingsValidation();
+    
     function checkDuration(): boolean {
-        return validateDuration(duration.value, t("settings.duration.errors.min"));
+        const val = duration.value;
+        if (!Number.isInteger(val) || val < MIN_DURATION_MINUTES) {
+            errors.value.duration = t("settings.duration.errors.min");
+            return false;
+        }
+        errors.value.duration = undefined;
+        return true;
     }
     function checkSlots(day: Weekday): boolean {
         return validateDaySlots(weekSlots.value[day] ?? [], day, {

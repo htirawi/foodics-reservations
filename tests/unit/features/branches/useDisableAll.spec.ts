@@ -7,10 +7,12 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
+
+import { useToast } from "@/composables/useToast";
 import { useDisableAll } from "@/features/branches/composables/useDisableAll";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import { useUIStore } from "@/stores/ui.store";
-import { useToast } from "@/composables/useToast";
+
 vi.mock("@/features/branches/stores/branches.store");
 vi.mock("@/stores/ui.store");
 vi.mock("@/composables/useToast");

@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { computed, useId, watch } from "vue";
+
 import { useI18n } from "vue-i18n";
+
+import { MIN_DURATION_MINUTES, MAX_DURATION_MINUTES } from "@/constants/reservations";
 import { useDurationField } from "@/features/branches/composables/useDurationField";
+
 const props = withDefaults(defineProps<{
     modelValue: number | null;
     min?: number;
     max?: number;
 }>(), {
-    min: 1,
-    max: 480,
+    min: MIN_DURATION_MINUTES,
+    max: MAX_DURATION_MINUTES,
 });
 const emit = defineEmits<{
     "update:modelValue": [
@@ -26,25 +30,16 @@ const { rawValue, isValid, error: composableError, handleInput } = useDurationFi
 
 const error = computed(() => {
     const composableErr = composableError.value;
-    if (composableErr) {
-        // Map generic errors to i18n keys
-        if (composableErr.includes("at least")) {
-            const min = composableErr.match(/\d+/)?.[0];
-            return t("settings.duration.errors.min", { min: min ?? props.min });
-        }
-        if (composableErr.includes("at most")) {
-            const max = composableErr.match(/\d+/)?.[0];
-            return t("settings.duration.errors.max", { max: max ?? props.max });
-        }
-        if (composableErr.includes("whole number")) {
-            return t("settings.duration.errors.integer");
-        }
-        if (composableErr.includes("required")) {
-            return t("settings.duration.errors.required");
-        }
-        return composableErr;
-    }
-    return undefined;
+    if (!composableErr) return undefined;
+
+    const errorMap = {
+        MIN: () => t("settings.duration.errors.min", { min: composableErr.min ?? props.min }),
+        MAX: () => t("settings.duration.errors.max", { max: composableErr.max ?? props.max }),
+        INTEGER: () => t("settings.duration.errors.integer"),
+        REQUIRED: () => t("settings.duration.errors.required"),
+    };
+
+    return errorMap[composableErr.code]();
 });
 
 watch(isValid, (valid) => {
@@ -62,17 +57,16 @@ watch(isValid, (valid) => {
     <input
       :id="inputId"
       v-model="rawValue"
-      type="number"
-      :min="min"
-      :max="max"
-      step="1"
+      type="text"
+      inputmode="numeric"
+      pattern="[0-9]*"
       :placeholder="t('settings.duration.placeholder')"
       :aria-invalid="!isValid"
       :aria-describedby="error ? errorId : undefined"
       class="block w-full rounded-xl border px-4 py-3 text-neutral-900 transition-colors focus:outline-none focus:ring-2"
       :class="[
-        error 
-          ? 'border-error-300 focus:border-error-500 focus:ring-error-500/20' 
+        error
+          ? 'border-error-300 focus:border-error-500 focus:ring-error-500/20'
           : 'border-neutral-300 focus:border-primary-500 focus:ring-primary-500/20'
       ]"
       data-testid="settings-duration-input"

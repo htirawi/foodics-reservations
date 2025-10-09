@@ -2,11 +2,14 @@
  * @file useSettingsForm.spec.ts
  * @summary Unit tests for useSettingsForm composable
  */
-import { describe, it, expect, beforeEach } from "vitest";
 import { reactive, defineComponent, h } from "vue";
-import { createPinia, setActivePinia } from "pinia";
-import { createI18n } from "vue-i18n";
+
 import { mount } from "@vue/test-utils";
+
+import { createPinia, setActivePinia } from "pinia";
+import { describe, it, expect, beforeEach } from "vitest";
+import { createI18n } from "vue-i18n";
+
 import { useSettingsForm } from "@/features/branches/composables/useSettingsForm";
 
 const i18n = createI18n({

@@ -8,6 +8,7 @@
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { createI18n } from "vue-i18n";
+
 import { useLocale } from "@/composables/useLocale";
 import { useUIStore } from "@/stores/ui.store";
 

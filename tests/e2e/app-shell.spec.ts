@@ -7,7 +7,10 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { test, expect } from "@playwright/test";
-import { setupOfflineMode } from "./setup/intercepts";
+
+import { setupOfflineMode } from "@tests/e2e/setup/intercepts";
+import type { IWindowWithStore } from "@tests/e2e/types";
+
 test.describe("App Shell", () => {
     test("renders header with title", async ({ page }) => {
         await setupOfflineMode(page);
@@ -86,12 +89,7 @@ test.describe("Toaster", () => {
         await setupOfflineMode(page);
         await page.goto("/");
         await page.evaluate(() => {
-            interface WindowWithStore extends Window {
-                __uiStore?: {
-                    notify: (msg: string, type: string, duration: number) => void;
-                };
-            }
-            const uiStore = (window as WindowWithStore).__uiStore;
+            const uiStore = (window as IWindowWithStore).__uiStore;
             if (uiStore) {
                 uiStore.notify("Test success message", "success", 0);
             }
@@ -105,12 +103,7 @@ test.describe("Toaster", () => {
         await setupOfflineMode(page);
         await page.goto("/");
         await page.evaluate(() => {
-            interface WindowWithStore extends Window {
-                __uiStore?: {
-                    notify: (msg: string, type: string, duration: number) => void;
-                };
-            }
-            const uiStore = (window as WindowWithStore).__uiStore;
+            const uiStore = (window as IWindowWithStore).__uiStore;
             if (uiStore) {
                 uiStore.notify("Operation completed successfully", "success", 0);
             }
@@ -123,17 +116,12 @@ test.describe("Toaster", () => {
         await setupOfflineMode(page);
         await page.goto("/");
         await page.evaluate(() => {
-            interface WindowWithStore extends Window {
-                __uiStore?: {
-                    notify: (msg: string, type: string, duration: number) => void;
-                };
-            }
-            const uiStore = (window as WindowWithStore).__uiStore;
+            const uiStore = (window as IWindowWithStore).__uiStore;
             if (uiStore) {
                 uiStore.notify("An error occurred", "error", 0);
             }
         });
-        const toast = page.getByTestId("toast-error");
+        const toast = page.getByTestId("toast-error").first();
         await expect(toast).toBeVisible();
         await expect(toast).toContainText("An error occurred");
     });
@@ -141,12 +129,7 @@ test.describe("Toaster", () => {
         await setupOfflineMode(page);
         await page.goto("/");
         await page.evaluate(() => {
-            interface WindowWithStore extends Window {
-                __uiStore?: {
-                    notify: (msg: string, type: string, duration: number) => void;
-                };
-            }
-            const uiStore = (window as WindowWithStore).__uiStore;
+            const uiStore = (window as IWindowWithStore).__uiStore;
             if (uiStore) {
                 uiStore.notify("Dismissible toast", "info", 0);
             }

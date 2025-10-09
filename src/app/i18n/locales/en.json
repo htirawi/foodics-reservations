@@ -112,12 +112,12 @@
         "end": "End (HH:mm)"
       },
       "errors": {
-        "required": "Both start and end are required.",
-        "format": "Use HH:mm (e.g., 09:30).",
-        "order": "Start time must be before end time.",
-        "max": "At most 3 slots per day.",
-        "overlap": "Slots must not overlap.",
-        "overnightNotSupported": "Overnight ranges aren't supported.",
+        "required": "Both start and end times are required.",
+        "format": "Invalid time format. Use 24-hour format (e.g., 09:30, 14:00).",
+        "order": "End time must be later than start time (e.g., 09:00 to 12:00).",
+        "max": "Maximum 3 time slots per day allowed.",
+        "overlap": "Time slots cannot overlap with each other.",
+        "overnightNotSupported": "Time slots cannot span across midnight.",
         "touchingOk": "Adjacent time ranges that touch are allowed."
       }
     },
@@ -135,12 +135,15 @@
       "applyToAll": "Apply on all days",
       "remove": "Remove time slot",
       "from": "From",
-      "to": "To"
+      "to": "To",
+      "emptyState": "No time slots configured. Click the + button to add one."
     },
     "actions": {
       "save": "Save",
+      "saving": "Saving...",
       "close": "Close",
-      "disableReservations": "Disable Reservations"
+      "disableReservations": "Disable Reservations",
+      "disabling": "Disabling..."
     },
     "validation": {
       "durationRequired": "Duration is required",
@@ -148,6 +151,20 @@
       "timeRequired": "Both start and end times are required",
       "timeInvalid": "End time must be after start time",
       "timeOverlap": "Time slots cannot overlap"
+    },
+    "toast": {
+      "saveSuccess": "Settings saved successfully.",
+      "saveError": "Failed to save settings. Please try again.",
+      "disableSuccess": "Branch reservations have been disabled.",
+      "disableError": "Failed to disable reservations. Please try again."
+    },
+    "confirm": {
+      "unsavedChanges": {
+        "title": "Unsaved Changes",
+        "message": "You have unsaved changes. Are you sure you want to close without saving?",
+        "confirm": "Discard Changes",
+        "cancel": "Keep Editing"
+      }
     }
   },
   "addBranches": {

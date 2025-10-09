@@ -1,0 +1,52 @@
+{
+  "data": [
+    {
+      "id": "disabled-branch-1",
+      "name": "Disabled Branch",
+      "name_localized": null,
+      "reference": "DIS-001",
+      "type": 1,
+      "latitude": null,
+      "longitude": null,
+      "phone": null,
+      "opening_from": "09:00",
+      "opening_to": "22:00",
+      "inventory_end_of_day_time": "00:00",
+      "receipt_header": null,
+      "receipt_footer": null,
+      "settings": null,
+      "created_at": "2022-11-03 10:00:00",
+      "updated_at": "2025-10-08 18:00:00",
+      "deleted_at": null,
+      "receives_online_orders": false,
+      "accepts_reservations": false,
+      "reservation_duration": 60,
+      "reservation_times": {
+        "friday": [],
+        "monday": [],
+        "sunday": [],
+        "tuesday": [],
+        "saturday": [],
+        "thursday": [],
+        "wednesday": []
+      },
+      "address": null,
+      "sections": []
+    }
+  ],
+  "links": {
+    "first": "http://localhost:5173/api/branches?page=1",
+    "last": "http://localhost:5173/api/branches?page=2",
+    "prev": "http://localhost:5173/api/branches?page=1",
+    "next": null
+  },
+  "meta": {
+    "current_page": 2,
+    "from": 2,
+    "last_page": 2,
+    "path": "http://localhost:5173/api/branches",
+    "per_page": 1,
+    "to": 2,
+    "total": 2
+  }
+}

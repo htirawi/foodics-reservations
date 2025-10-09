@@ -2,11 +2,14 @@
  * @file useSlotsManagement.spec.ts
  * @summary Unit tests for useSlotsManagement composable
  */
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ref, defineComponent, h } from "vue";
-import { createPinia, setActivePinia } from "pinia";
-import { createI18n } from "vue-i18n";
+
 import { mount } from "@vue/test-utils";
+
+import { createPinia, setActivePinia } from "pinia";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { createI18n } from "vue-i18n";
+
 import { useSlotsManagement } from "@/features/branches/composables/useSlotsManagement";
 import { useUIStore } from "@/stores/ui.store";
 import type { ReservationTimes } from "@/types/foodics";

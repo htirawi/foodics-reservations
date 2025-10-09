@@ -1,6 +1,7 @@
 import type { Ref } from "vue";
-import type { IBranch } from "@/types/foodics";
+
 import type { IApiError } from "@/types/api";
+import type { IBranch } from "@/types/foodics";
 
 /**
  * Process Promise.allSettled results into succeeded and failed IDs

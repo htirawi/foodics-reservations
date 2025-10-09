@@ -2,12 +2,28 @@
  * @file useSettingsActions.spec.ts
  * @summary Unit tests for useSettingsActions composable
  */
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ref } from "vue";
+
 import { createPinia, setActivePinia } from "pinia";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+
 import { useSettingsActions } from "@/features/branches/composables/useSettingsActions";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import type { IBranch, ReservationTimes } from "@/types/foodics";
+
+// Mock vue-i18n
+vi.mock("vue-i18n", () => ({
+  useI18n: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+// Mock UI store
+vi.mock("@/stores/ui.store", () => ({
+  useUIStore: () => ({
+    notify: vi.fn(),
+  }),
+}));
 
 describe("useSettingsActions", () => {
   let branchesStore: ReturnType<typeof useBranchesStore>;

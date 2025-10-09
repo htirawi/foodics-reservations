@@ -1,59 +1,88 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch, nextTick } from "vue";
+
 import { useI18n } from "vue-i18n";
-import type { ITable } from "@/types/foodics";
-import BaseButton from "@/components/ui/BaseButton.vue";
+
 import BaseModal from "@/components/ui/BaseModal.vue";
-import DaySlots from "./DaySlots.vue";
-import DurationField from "./ReservationSettingsModal/DurationField.vue";
+import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts";
+import { TESTID_SETTINGS_MODAL } from "@/constants/testids";
 import { useSettingsForm } from "@/features/branches/composables/useSettingsForm";
+
+import DaySlots  from "@features/branches/components/DaySlots.vue";
+import DurationField  from "@features/branches/components/ReservationSettingsModal/DurationField.vue";
+import SettingsModalActions  from "@features/branches/components/ReservationSettingsModal/SettingsModalActions.vue";
+
 const props = withDefaults(defineProps<{
     branchId: string | null;
 }>(), {
     branchId: null,
 });
+
 const emit = defineEmits<{
-    close: [
-    ];
+    close: [];
 }>();
+
 const { t } = useI18n();
-const { isOpen, branch, duration, weekSlots, weekdays, availableTables, errors, addSlot, removeSlot, updateSlot, applyToAllDays, handleSave, handleDisable, } = useSettingsForm(props, () => emit("close"));
+const { isOpen, branch, duration, weekSlots, weekdays, availableTables, errors, getTableDisplayName, addSlot, removeSlot, updateSlot, applyToAllDays, handleSave, handleDisable, handleClose, isSaving, isDisabling } = useSettingsForm(props, () => emit("close"));
+
 const canSave = computed<boolean>(() => {
-    // Check if duration is valid
     if (!duration.value || duration.value < 1) return false;
-    
-    // Allow save if duration is valid
+    if (errors.value.duration) return false;
+    if (errors.value.slots && Object.keys(errors.value.slots).length > 0) return false;
     return true;
 });
 
-function getTableDisplayName(table: ITable): string {
-    // Find the section for this table
-    const section = branch.value?.sections?.find(s => 
-        s.tables?.some(t => t.id === table.id)
-    );
-    const sectionName = section?.name ?? 'Unknown';
-    const tableName = table.name ?? table.id;
-    return `${sectionName} – ${tableName}`;
-}
+const isKeyboardEnabled = computed(() => isOpen.value && !isSaving.value && !isDisabling.value);
+useKeyboardShortcuts({
+    isEnabled: isKeyboardEnabled,
+    onEscape: handleClose,
+    onSave: handleSave,
+    canSave,
+});
 
-function handleClose(): void {
-    emit("close");
-}
+watch(isOpen, async (open) => {
+    if (open) {
+        await nextTick();
+        const durationInput = document.querySelector('[data-testid="duration-input"]') as HTMLInputElement;
+        if (durationInput) {
+            durationInput.focus();
+        }
+    }
+});
 </script>
 
 <template>
   <BaseModal
     :model-value="isOpen"
     size="xl"
-    data-testid="settings-modal"
+    :testid="TESTID_SETTINGS_MODAL"
+    role="dialog"
+    aria-labelledby="settings-modal-title"
+    aria-describedby="settings-modal-description"
     @update:model-value="handleClose"
   >
     <template #title>
-      {{ branch ? t('settings.title', { branchName: branch.name }) : '' }}
+      <span id="settings-modal-title">
+        {{ branch ? t('settings.title', { branchName: branch.name }) : '' }}
+      </span>
     </template>
 
-    <div v-if="branch" class="space-y-6">
-      <div class="rounded-lg bg-primary-50 p-4 text-primary-700" data-testid="working-hours-info">
+    <!-- Loading skeleton -->
+    <div v-if="isOpen && !branch" class="space-y-6 animate-pulse">
+      <div class="h-12 bg-neutral-200 rounded"></div>
+      <div class="h-20 bg-neutral-200 rounded"></div>
+      <div class="h-32 bg-neutral-200 rounded"></div>
+      <div class="h-96 bg-neutral-200 rounded"></div>
+    </div>
+
+    <div v-else-if="branch" class="space-y-6">
+      <div
+        id="settings-modal-description"
+        class="bg-blue-50 border-t-2 border-b-2 border-blue-500 px-4 py-3 text-blue-700"
+        data-testid="working-hours-info"
+        role="status"
+        aria-live="polite"
+      >
         {{ t('settings.workingHours', { from: branch.opening_from, to: branch.opening_to }) }}
       </div>
 
@@ -65,24 +94,20 @@ function handleClose(): void {
         <label class="mb-2 block text-sm font-medium text-neutral-700">
           {{ t('settings.tables.label') }}
         </label>
-        
-        <div v-if="availableTables.length > 0" class="space-y-3">
-          <div data-testid="settings-tables-summary" class="text-sm text-neutral-600">
-            {{ t('settings.tables.summary', { count: availableTables.length }) }}
-          </div>
-          
-          <ul data-testid="settings-tables-list" role="list" class="space-y-2">
-            <li
+
+        <div v-if="availableTables.length > 0" class="rounded-lg bg-neutral-50 p-4">
+          <div class="flex flex-wrap gap-2">
+            <div
               v-for="table in availableTables"
               :key="table.id"
               :data-testid="`settings-tables-table-${table.id}`"
-              class="rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm"
+              class="rounded-full border-2 border-blue-500 bg-white px-4 py-2 text-sm text-neutral-900"
             >
               {{ getTableDisplayName(table) }}
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
-        
+
         <p v-else class="text-sm text-neutral-500">
           {{ t('settings.tables.noTables') }}
         </p>
@@ -104,21 +129,14 @@ function handleClose(): void {
     </div>
 
     <template #actions>
-      <BaseButton variant="danger" data-testid="disable-button" @click="handleDisable">
-        {{ t('settings.actions.disableReservations') }}
-      </BaseButton>
-      <div class="flex gap-3">
-        <BaseButton variant="ghost" data-testid="settings-cancel" @click="handleClose">
-          {{ t('settings.actions.close') }}
-        </BaseButton>
-        <BaseButton
-variant="primary"
-:disabled="!canSave"
-data-testid="save-button"
-@click="handleSave">
-          {{ t('settings.actions.save') }}
-        </BaseButton>
-      </div>
+      <SettingsModalActions
+        :can-save="canSave"
+        :is-saving="isSaving"
+        :is-disabling="isDisabling"
+        @save="handleSave"
+        @disable="handleDisable"
+        @close="handleClose"
+      />
     </template>
   </BaseModal>
 </template>

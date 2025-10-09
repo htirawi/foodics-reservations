@@ -7,13 +7,13 @@
  */
 
 import type { Page } from '@playwright/test'
-import { injectAxe, configureAxe, getViolations } from 'axe-playwright'
 import type { Result } from 'axe-core'
+import { injectAxe, configureAxe, getViolations } from 'axe-playwright'
 
 /**
  * Accessibility test options
  */
-export interface A11yOptions {
+export interface IA11yOptions {
   /**
    * Include specific accessibility rules
    * @see https://github.com/dequelabs/axe-core/blob/master/doc/rule-descriptions.md
@@ -47,7 +47,7 @@ export interface A11yOptions {
 /**
  * Default a11y options
  */
-const DEFAULT_OPTIONS: Required<A11yOptions> = {
+const DEFAULT_OPTIONS: Required<IA11yOptions> = {
   includedRules: [],
   excludedRules: [],
   excludeSelectors: [],
@@ -74,7 +74,7 @@ const DEFAULT_OPTIONS: Required<A11yOptions> = {
  */
 export async function checkA11y(
   page: Page,
-  options: A11yOptions = {}
+  options: IA11yOptions = {}
 ): Promise<void> {
   const opts = { ...DEFAULT_OPTIONS, ...options }
 
@@ -153,7 +153,7 @@ ${nodes}
 export async function checkA11yForSelector(
   page: Page,
   selector: string,
-  options: A11yOptions = {}
+  options: IA11yOptions = {}
 ): Promise<void> {
   const opts = { ...DEFAULT_OPTIONS, ...options }
 

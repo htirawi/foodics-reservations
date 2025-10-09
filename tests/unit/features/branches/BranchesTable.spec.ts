@@ -6,11 +6,15 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
+
+import { describe, it, expect, vi } from "vitest";
+import { createI18n } from "vue-i18n";
+
 import BranchesTable from "@/features/branches/components/BranchesTable.vue";
 import type { Branch } from "@/types/foodics";
-import { createI18n } from "vue-i18n";
+
+
 const i18n = createI18n({
     legacy: false,
     locale: "en",

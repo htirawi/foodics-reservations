@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { onMounted, computed, defineAsyncComponent } from "vue";
-
-import type { IApiError } from "@/types/api";
+import { onMounted, onBeforeUnmount, computed, defineAsyncComponent, ref } from "vue";
 
 import BaseButton from "@/components/ui/BaseButton.vue";
 import EmptyState from "@/components/ui/EmptyState.vue";
 import PageLoading from "@/components/ui/PageLoading.vue";
+import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import BranchesCards from "@/features/branches/components/BranchesCards.vue";
 import BranchesTable from "@/features/branches/components/BranchesTable.vue";
 import DisableAllButton from "@/features/branches/components/DisableAllButton.vue";
+import { useModals } from "@/features/branches/composables/useModals";
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
+import type { IApiError } from "@/types/api";
 
 const AddBranchesModal = defineAsyncComponent(
   () => import("@/features/branches/components/AddBranchesModal.vue")
@@ -16,12 +18,6 @@ const AddBranchesModal = defineAsyncComponent(
 const BranchSettingsModal = defineAsyncComponent(
   () => import("@/features/branches/components/BranchSettingsModal.vue")
 );
-
-import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
-
-import { useModals } from "@/features/branches/composables/useModals";
-
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
 
 const branchesStore = useBranchesStore();
 const modals = useModals();
@@ -31,17 +27,25 @@ const loading = computed(() => branchesStore.loading);
 const error = computed(() => branchesStore.error);
 const enabledBranches = computed(() => branchesStore.enabledBranches);
 
+const isMounted = ref(true);
+
 onMounted(async () => {
     try {
         await branchesStore.fetchBranches(true);
     }
     catch (err) {
-        handleError(err as IApiError, {
-            clearStoreError: () => {
-                branchesStore.error = null;
-            },
-        });
+        if (isMounted.value) {
+            handleError(err as IApiError, {
+                clearStoreError: () => {
+                    branchesStore.error = null;
+                },
+            });
+        }
     }
+});
+
+onBeforeUnmount(() => {
+    isMounted.value = false;
 });
 </script>
 
@@ -149,9 +153,11 @@ aria-hidden="true">
 
     <AddBranchesModal
       v-model="modals.showAddModal.value"
+      data-testid="add-branches-modal-wrapper"
     />
     <BranchSettingsModal
       v-if="modals.selectedBranchId.value"
+      data-testid="branch-settings-modal-wrapper"
       :branch-id="modals.selectedBranchId.value"
       @close="modals.closeSettingsModal"
       @saved="modals.closeSettingsModal"

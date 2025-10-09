@@ -7,8 +7,10 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { describe, it, expect } from "vitest";
+
 import { sanitizeDuration, isValidDuration, isValidTimeFormat, timeToMinutes, isValidSlotTuple, slotsOverlap, validateDaySlots, isValidReservationTimes, } from "@/features/branches/utils/reservation.validation";
 import type { SlotTuple, ReservationTimes } from "@/types/foodics";
+
 describe("reservation.validation", () => {
     describe("sanitizeDuration", () => {
         it("returns null for null/undefined", () => {
@@ -60,7 +62,7 @@ describe("reservation.validation", () => {
     });
     describe("isValidDuration", () => {
         it("returns true for valid durations with default bounds", () => {
-            expect(isValidDuration(1)).toBe(true);
+            expect(isValidDuration(5)).toBe(true);
             expect(isValidDuration(30)).toBe(true);
             expect(isValidDuration(60)).toBe(true);
             expect(isValidDuration(1440)).toBe(true);

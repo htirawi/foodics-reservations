@@ -1,11 +1,19 @@
-import type { IToast } from "./toast";
-import type { IConfirmOptions } from "./confirm";
+import type { IConfirmOptions } from "@/types/confirm";
+import type { IToast } from "@/types/toast";
 
 export type ModalName = "addBranches" | "settings";
 
-interface IConfirmDialogState {
+export interface IAuthBannerState {
+  isVisible: boolean;
+  message: string | null;
+  onRetry: (() => void) | null;
+  autoDismissTimer: ReturnType<typeof setTimeout> | null;
+}
+
+export interface IConfirmDialogState {
   isOpen: boolean;
   options: IConfirmOptions | null;
+  resolve: ((value: boolean) => void) | null;
 }
 
 export interface IUIStoreState {
@@ -14,5 +22,6 @@ export interface IUIStoreState {
   confirmDialog: IConfirmDialogState;
 }
 
-// Backward-compatibility alias
 export type UIStoreState = IUIStoreState;
+export type AuthBannerState = IAuthBannerState;
+export type ConfirmDialogState = IConfirmDialogState;

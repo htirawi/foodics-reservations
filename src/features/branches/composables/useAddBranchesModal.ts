@@ -1,5 +1,7 @@
 import { ref, computed, watch, type Ref } from "vue";
+
 import type { Branch } from "@/types/foodics";
+
 function filterBranches(branches: Branch[] | undefined, query: string): Branch[] {
     if (!branches)
         return [];

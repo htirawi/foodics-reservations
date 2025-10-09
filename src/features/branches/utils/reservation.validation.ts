@@ -6,8 +6,10 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - HH:mm format only (24-hour); no date libraries.
  */
-import type { SlotTuple, ReservationTimes } from "@/types/foodics";
+import { TIME_FORMAT_REGEX, MIN_DURATION_MINUTES, MAX_DURATION_MINUTES } from "@/constants";
 import type { IDurationOptions } from "@/types/duration";
+import type { SlotTuple, ReservationTimes } from "@/types/foodics";
+import type { IReservationTimesValidation } from "@/types/validation";
 import {
   parseHHmm,
   toMinutes,
@@ -15,16 +17,15 @@ import {
   timeToMinutes,
   compareHHmm,
 } from "@/utils/time";
+
 import {
   slotOverlaps,
   normalizeSlots,
-} from "./slot.operations";
+} from "@features/branches/utils/slot.operations";
 import {
   validateDaySlots,
   validateReservationTimes,
-} from "./slot.validation";
-import type { IReservationTimesValidation } from "@/types/validation";
-import { TIME_FORMAT_REGEX, MIN_DURATION_MINUTES, MAX_DURATION_MINUTES } from "@/constants";
+} from "@features/branches/utils/slot.validation";
 
 // Re-export utilities for convenience
 export { parseHHmm, toMinutes, isHHmm, timeToMinutes, compareHHmm };

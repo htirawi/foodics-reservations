@@ -6,9 +6,12 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
+
+import { describe, it, expect } from "vitest";
+
 import BaseButton from "@/components/ui/BaseButton.vue";
+
 describe("BaseButton", () => {
     it("renders with primary variant by default", () => {
         const wrapper = mount(BaseButton, {

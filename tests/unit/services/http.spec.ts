@@ -6,10 +6,12 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import MockAdapter from "axios-mock-adapter";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+
 import { httpClient } from "@/services/http";
 import type { ApiError } from "@/types/api";
+
 describe("HTTP Client", () => {
     let mock: MockAdapter;
     beforeEach(() => {

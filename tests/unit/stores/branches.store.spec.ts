@@ -6,11 +6,13 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import { BranchesService } from "@/services/branches.service";
 import type { Branch, UpdateBranchSettingsPayload } from "@/types/foodics";
+
 vi.mock("@/services/branches.service");
 const mockBranch: Branch = {
     id: "1",
@@ -59,7 +61,7 @@ describe("useBranchesStore", () => {
     describe("fetchBranches", () => {
         it("loads branches successfully", async () => {
             const store = useBranchesStore();
-            vi.mocked(BranchesService.getBranches).mockResolvedValue([mockBranch, mockBranch2]);
+            vi.mocked(BranchesService.getAllBranches).mockResolvedValue([mockBranch, mockBranch2]);
             await store.fetchBranches();
             expect(store.branches).toEqual([mockBranch, mockBranch2]);
             expect(store.loading).toBe(false);
@@ -67,7 +69,7 @@ describe("useBranchesStore", () => {
         });
         it("sets loading state during fetch", async () => {
             const store = useBranchesStore();
-            vi.mocked(BranchesService.getBranches).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve([mockBranch]), 100)));
+            vi.mocked(BranchesService.getAllBranches).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve([mockBranch]), 100)));
             const fetchPromise = store.fetchBranches();
             expect(store.loading).toBe(true);
             await fetchPromise;
@@ -76,16 +78,16 @@ describe("useBranchesStore", () => {
         it("handles fetch errors", async () => {
             const store = useBranchesStore();
             const apiError = { status: 500, message: "Network error" };
-            vi.mocked(BranchesService.getBranches).mockRejectedValue(apiError);
+            vi.mocked(BranchesService.getAllBranches).mockRejectedValue(apiError);
             await expect(store.fetchBranches()).rejects.toEqual(apiError);
             expect(store.error).toBe("Network error");
             expect(store.loading).toBe(false);
         });
         it("passes includeSections flag to service", async () => {
             const store = useBranchesStore();
-            vi.mocked(BranchesService.getBranches).mockResolvedValue([]);
+            vi.mocked(BranchesService.getAllBranches).mockResolvedValue([]);
             await store.fetchBranches(true);
-            expect(BranchesService.getBranches).toHaveBeenCalledWith(true);
+            expect(BranchesService.getAllBranches).toHaveBeenCalledWith(true);
         });
     });
     describe("getters", () => {

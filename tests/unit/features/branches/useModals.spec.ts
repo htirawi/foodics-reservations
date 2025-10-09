@@ -2,8 +2,9 @@
  * @file useModals.spec.ts
  * @summary Unit tests for useModals composable
  */
-import { describe, it, expect, beforeEach } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
+import { describe, it, expect, beforeEach } from "vitest";
+
 import { useModals } from "@/features/branches/composables/useModals";
 
 describe("useModals", () => {

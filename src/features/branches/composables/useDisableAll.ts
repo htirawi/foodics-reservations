@@ -1,8 +1,10 @@
 import { useI18n } from "vue-i18n";
+
 import { useAsyncAction } from "@/composables/useAsyncAction";
 import { useToast } from "@/composables/useToast";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import { useUIStore } from "@/stores/ui.store";
+
 export function useDisableAll() {
     const { t } = useI18n();
     const branchesStore = useBranchesStore();

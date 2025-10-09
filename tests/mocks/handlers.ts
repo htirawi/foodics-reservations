@@ -7,7 +7,8 @@
  */
 
 import { http, HttpResponse } from 'msw'
-import { mockBranches } from './data/branches'
+
+import { mockBranches } from '@tests/mocks/data/branches'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api-staging.foodics.dev/v5'
 

@@ -1,8 +1,7 @@
-import type { SlotTuple } from '@/types/foodics';
-import { timeToMinutes, isHHmm } from '@/utils/time';
 import { MIN_SLOT_DURATION_MINUTES } from '@/constants/time';
-
-type BoundaryResult = { ok: true } | { ok: false; error: string };
+import type { SlotTuple } from '@/types/foodics';
+import type { BoundaryResult } from '@/types/validation';
+import { timeToMinutes, isHHmm } from '@/utils/time';
 
 /**
  * Policy: Time boundaries (00:00-23:59)

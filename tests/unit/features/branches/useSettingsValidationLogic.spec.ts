@@ -2,8 +2,10 @@
  * @file useSettingsValidationLogic.spec.ts
  * @summary Unit tests for useSettingsValidationLogic composable
  */
-import { describe, it, expect } from "vitest";
 import { ref } from "vue";
+
+import { describe, it, expect } from "vitest";
+
 import { useSettingsValidationLogic } from "@/features/branches/composables/useSettingsValidationLogic";
 import type { ReservationTimes, SlotTuple } from "@/types/foodics";
 

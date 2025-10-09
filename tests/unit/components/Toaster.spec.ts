@@ -6,12 +6,15 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount } from "@vue/test-utils";
+
 import { setActivePinia, createPinia } from "pinia";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { createI18n } from "vue-i18n";
+
 import AppToaster from "@/components/layout/AppToaster.vue";
 import { useUIStore } from "@/stores/ui.store";
+
 const i18n = createI18n({
     legacy: false,
     locale: "en",

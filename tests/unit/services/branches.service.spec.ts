@@ -6,12 +6,14 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import MockAdapter from "axios-mock-adapter";
-import { httpClient } from "@/services/http";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+
 import { BranchesService } from "@/services/branches.service";
-import type { Branch, ReservationTimes, SlotTuple } from "@/types/foodics";
+import { httpClient } from "@/services/http";
 import type { ApiError } from "@/types/api";
+import type { Branch, ReservationTimes, SlotTuple } from "@/types/foodics";
+
 describe("BranchesService", () => {
     let mock: MockAdapter;
     const mockReservationTimes: ReservationTimes = {

@@ -3,6 +3,7 @@
  * @summary Unit tests for useToastDisplay composable
  */
 import { describe, it, expect } from "vitest";
+
 import { useToastDisplay } from "@/composables/useToastDisplay";
 
 describe("useToastDisplay", () => {

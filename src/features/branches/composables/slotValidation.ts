@@ -1,30 +1,29 @@
+import { MAX_SLOTS_PER_DAY } from "@/constants/reservations";
 import type { ReservationTimes, Weekday, SlotTuple } from "@/types/foodics";
 import { isValidRange, canAddSlot, normalizeDay } from "@/utils/slots";
-import { WEEKDAY_ORDER } from "./slotEditorActions";
-import { MAX_SLOTS_PER_DAY } from "@/constants/reservations";
+
+import { WEEKDAY_ORDER } from "@features/branches/composables/slotEditorActions";
 
 /**
- * Validate slots for a single day.
+ * Validate a single slot and collect errors.
  */
-export function validateDaySlots(slots: SlotTuple[]): boolean {
-  if (!slots || slots.length === 0) return true;
-  
-  // Check each slot individually
-  for (const slot of slots) {
-    const validation = isValidRange(slot);
-    if (!validation.ok) return false;
+function validateSingleSlot(
+  slot: SlotTuple,
+  index: number,
+  allSlots: SlotTuple[],
+  errors: string[]
+): void {
+  const rangeValidation = isValidRange(slot);
+  if (!rangeValidation.ok) {
+    errors.push(rangeValidation.error);
+    return;
   }
-  
-  // Check overlap and max limits
-  for (let i = 0; i < slots.length; i++) {
-    const slot = slots[i];
-    if (!slot) continue;
-    const existingSlots = slots.slice(0, i);
-    const validation = canAddSlot(existingSlots, slot, MAX_SLOTS_PER_DAY);
-    if (!validation.ok) return false;
+
+  const existingSlots = allSlots.slice(0, index);
+  const overlapValidation = canAddSlot(existingSlots, slot, MAX_SLOTS_PER_DAY);
+  if (!overlapValidation.ok) {
+    errors.push(overlapValidation.error);
   }
-  
-  return true;
 }
 
 /**
@@ -32,29 +31,24 @@ export function validateDaySlots(slots: SlotTuple[]): boolean {
  */
 export function getDayValidationErrors(slots: SlotTuple[]): string[] {
   if (!slots || slots.length === 0) return [];
-  
+
   const errors: string[] = [];
-  
-  // Check each slot individually
-  for (const slot of slots) {
-    const validation = isValidRange(slot);
-    if (!validation.ok) {
-      errors.push(validation.error);
-    }
-  }
-  
-  // Check overlap and max limits
+
   for (let i = 0; i < slots.length; i++) {
     const slot = slots[i];
-    if (!slot) continue;
-    const existingSlots = slots.slice(0, i);
-    const validation = canAddSlot(existingSlots, slot, MAX_SLOTS_PER_DAY);
-    if (!validation.ok) {
-      errors.push(validation.error);
+    if (slot) {
+      validateSingleSlot(slot, i, slots, errors);
     }
   }
-  
+
   return errors;
+}
+
+/**
+ * Validate slots for a single day.
+ */
+export function validateDaySlots(slots: SlotTuple[]): boolean {
+  return getDayValidationErrors(slots).length === 0;
 }
 
 /**
@@ -64,7 +58,7 @@ export function emitValidity(
   times: ReservationTimes,
   emit: (e: "update:valid", valid: boolean) => void
 ): void {
-  const allValid = WEEKDAY_ORDER.every((day) => validateDaySlots(times[day] ?? []));
+  const allValid = WEEKDAY_ORDER.every((day: Weekday) => validateDaySlots(times[day] ?? []));
   emit("update:valid", allValid);
 }
 
