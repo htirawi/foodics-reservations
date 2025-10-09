@@ -261,6 +261,21 @@ module.exports = {
       },
     },
     {
+      // Relax rules for Vercel serverless functions (Node.js backend, not Vue)
+      files: [
+        'api/**/*.{js,ts}',
+      ],
+      rules: {
+        'no-restricted-syntax': 'off',
+        'no-restricted-imports': 'off',
+        'complexity': 'off',
+        'max-depth': 'off',
+        'max-lines-per-function': 'off',
+        'no-console': 'off',
+        'max-lines': 'off',
+      },
+    },
+    {
       // Relax rules for build scripts and config files
       files: [
         'scripts/**/*.{js,mjs,ts}',
