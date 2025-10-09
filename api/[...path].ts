@@ -55,7 +55,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ 
       error: 'Failed to fetch from Foodics API',
       details: error instanceof Error ? error.message : 'Unknown error',
-      requestedUrl: apiUrl
+      requestedUrl: apiUrl,
+      query: req.query,
+      url: req.url
     });
   }
 }
