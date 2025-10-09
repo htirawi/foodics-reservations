@@ -26,9 +26,9 @@ function useBranchesState() {
     const selectedBranchId = ref<string | null>(null);
     const loading = ref(false);
     const error = ref<string | null>(null);
-    const enabledBranches = computed(() => branches.value.filter(isEnabledBranch));
-    const disabledBranches = computed(() => branches.value.filter(isDisabledBranch));
-    const branchById = computed(() => (id: string) => findBranchById(branches.value, id));
+    const enabledBranches = computed(() => (branches.value ?? []).filter(isEnabledBranch));
+    const disabledBranches = computed(() => (branches.value ?? []).filter(isDisabledBranch));
+    const branchById = computed(() => (id: string) => findBranchById(branches.value ?? [], id));
     const reservableTablesCount = computed(() => (branch: IBranch) => countReservableTables(branch));
     return { branches, selectedBranchId, loading, error, enabledBranches, disabledBranches, branchById, reservableTablesCount };
 }
@@ -37,9 +37,11 @@ function useFetchBranches(branches: Ref<IBranch[]>, loading: Ref<boolean>, error
         loading.value = true;
         error.value = null;
         try {
-            branches.value = await BranchesService.getAllBranches(includeSections);
+            const result = await BranchesService.getAllBranches(includeSections);
+            branches.value = result ?? [];
         }
         catch (err) {
+            branches.value = [];
             const apiError = err as IApiError;
             error.value = apiError.message ?? ERROR_MSG_FETCH_BRANCHES_FAILED;
             throw err;
