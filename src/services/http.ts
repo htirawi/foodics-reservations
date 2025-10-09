@@ -1,6 +1,5 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
-import type { IApiError } from "@/types/api";
-import { useUIStore } from "@/stores/ui.store";
+
 import {
     API_BASE_URL,
     HTTP_CONTENT_TYPE_JSON,
@@ -9,6 +8,8 @@ import {
     HTTP_STATUS_INTERNAL_SERVER_ERROR,
     ERROR_MSG_NETWORK_FALLBACK,
 } from "@/constants";
+import { useUIStore } from "@/stores/ui.store";
+import type { IApiError } from "@/types/api";
 
 function normalizeApiError(error: AxiosError<{
     message?: string;

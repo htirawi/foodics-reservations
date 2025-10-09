@@ -1,13 +1,16 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { mount, flushPromises } from "@vue/test-utils";
-import { createPinia, setActivePinia } from "pinia";
-import { createI18n } from "vue-i18n";
 import { ref } from "vue";
-import BranchesListView from "@/features/branches/views/BranchesListView.vue";
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
-import { useUIStore } from "@/stores/ui.store";
-import * as useModalsModule from "@/features/branches/composables/useModals";
+
+import { mount, flushPromises } from "@vue/test-utils";
+
+import { createPinia, setActivePinia } from "pinia";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { createI18n } from "vue-i18n";
+
 import { HTTP_STATUS_SERVER_ERROR_MIN } from "@/constants/http";
+import * as useModalsModule from "@/features/branches/composables/useModals";
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
+import BranchesListView from "@/features/branches/views/BranchesListView.vue";
+import { useUIStore } from "@/stores/ui.store";
 import type { IApiError } from "@/types/api";
 
 const i18n = createI18n({
@@ -21,6 +24,15 @@ const i18n = createI18n({
         empty: { title: "No branches", description: "Add branches to get started", action: "Add Branches" },
         error: { title: "Error loading branches" },
         toast: { fetchError: "Failed to fetch branches" },
+        table: {
+          branch: "Branch",
+          reference: "Reference",
+          tablesCount: "Number of Tables",
+          duration: "Reservation Duration",
+        },
+        duration: {
+          minutes: "{count} Minutes",
+        },
       },
       errors: {
         server: { tryAgain: "Server error, please try again" },
@@ -173,7 +185,7 @@ describe("BranchesListView", () => {
     vi.spyOn(branchesStore, "fetchBranches").mockRejectedValue(serverError);
     const notifySpy = vi.spyOn(uiStore, "notify");
 
-    mount(BranchesListView, {
+    const wrapper = mount(BranchesListView, {
       global: { plugins: [pinia, i18n], stubs: defaultStubs },
     });
 
@@ -181,6 +193,8 @@ describe("BranchesListView", () => {
 
     expect(notifySpy).toHaveBeenCalledWith("Server error, please try again", "error");
     expect(branchesStore.error).toBeNull();
+
+    wrapper.unmount();
   });
 
   it("should show toast for non-server errors on mount", async () => {
@@ -192,13 +206,15 @@ describe("BranchesListView", () => {
     vi.spyOn(branchesStore, "fetchBranches").mockRejectedValue(clientError);
     const notifySpy = vi.spyOn(uiStore, "notify");
 
-    mount(BranchesListView, {
+    const wrapper = mount(BranchesListView, {
       global: { plugins: [pinia, i18n], stubs: defaultStubs },
     });
 
     await flushPromises();
 
     expect(notifySpy).toHaveBeenCalledWith("Client error occurred", "error");
+
+    wrapper.unmount();
   });
 
   it("should render disable all button with correct disabled state", () => {

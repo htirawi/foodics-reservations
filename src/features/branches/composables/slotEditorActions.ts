@@ -1,6 +1,6 @@
+import { WEEKDAYS, DEFAULT_SLOT_START, DEFAULT_SLOT_END } from "@/constants/reservations";
 import type { ReservationTimes, Weekday, SlotTuple } from "@/types/foodics";
 import type { ISlotUpdateParams } from "@/types/slots";
-import { WEEKDAYS, DEFAULT_SLOT_START, DEFAULT_SLOT_END } from "@/constants/reservations";
 
 export const WEEKDAY_ORDER = WEEKDAYS;
 

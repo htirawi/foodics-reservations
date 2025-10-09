@@ -6,12 +6,16 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { mount } from "@vue/test-utils";
 import { ref } from "vue";
-import AddBranchesModal from "@/features/branches/components/AddBranchesModal.vue";
-import { createI18n } from "vue-i18n";
+
+import { mount } from "@vue/test-utils";
+
 import { createPinia, setActivePinia } from "pinia";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { createI18n } from "vue-i18n";
+
+import AddBranchesModal from "@/features/branches/components/AddBranchesModal.vue";
+
 const mockUseAddBranchesModal = {
     selectedIds: ref<string[]>([]),
     selectedIdsSet: ref(new Set<string>()),

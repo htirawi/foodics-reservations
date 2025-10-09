@@ -3,6 +3,7 @@
  * @summary Unit tests for useModal composable
  */
 import { describe, it, expect } from "vitest";
+
 import { useModal } from "@/composables/useModal";
 
 describe("useModal", () => {

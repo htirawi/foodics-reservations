@@ -7,7 +7,9 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { test, expect } from "@playwright/test";
+
 import type { Branch } from "@/types/foodics";
+
 const IS_ONLINE_MODE = process.env["PW_E2E_ONLINE"] === "true";
 const API_BASE = process.env["PW_API_BASE_URL"] ?? "https://api.foodics.dev/v5";
 const AUTH_TOKEN = process.env["PW_STAGING_TOKEN"] ?? process.env["VITE_FOODICS_TOKEN"];

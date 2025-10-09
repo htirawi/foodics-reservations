@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { computed } from "vue";
+
 import { useI18n } from "vue-i18n";
-import type { ITable } from "@/types/foodics";
+
 import BaseButton from "@/components/ui/BaseButton.vue";
 import BaseModal from "@/components/ui/BaseModal.vue";
-import DaySlots from "./DaySlots.vue";
-import DurationField from "./ReservationSettingsModal/DurationField.vue";
+import { TESTID_SETTINGS_MODAL } from "@/constants/testids";
 import { useSettingsForm } from "@/features/branches/composables/useSettingsForm";
+import type { ITable } from "@/types/foodics";
+
+import DaySlots  from "@features/branches/components/DaySlots.vue";
+import DurationField  from "@features/branches/components/ReservationSettingsModal/DurationField.vue";
+
 const props = withDefaults(defineProps<{
     branchId: string | null;
 }>(), {
@@ -19,21 +24,17 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const { isOpen, branch, duration, weekSlots, weekdays, availableTables, errors, addSlot, removeSlot, updateSlot, applyToAllDays, handleSave, handleDisable, } = useSettingsForm(props, () => emit("close"));
 const canSave = computed<boolean>(() => {
-    // Check if duration is valid
     if (!duration.value || duration.value < 1) return false;
-    
-    // Allow save if duration is valid
     return true;
 });
 
 function getTableDisplayName(table: ITable): string {
-    // Find the section for this table
-    const section = branch.value?.sections?.find(s => 
+    const section = branch.value?.sections?.find(s =>
         s.tables?.some(t => t.id === table.id)
     );
     const sectionName = section?.name ?? 'Unknown';
     const tableName = table.name ?? table.id;
-    return `${sectionName} – ${tableName}`;
+    return `${sectionName} - ${tableName}`;
 }
 
 function handleClose(): void {
@@ -45,7 +46,7 @@ function handleClose(): void {
   <BaseModal
     :model-value="isOpen"
     size="xl"
-    data-testid="settings-modal"
+    :testid="TESTID_SETTINGS_MODAL"
     @update:model-value="handleClose"
   >
     <template #title>
@@ -53,7 +54,7 @@ function handleClose(): void {
     </template>
 
     <div v-if="branch" class="space-y-6">
-      <div class="rounded-lg bg-primary-50 p-4 text-primary-700" data-testid="working-hours-info">
+      <div class="bg-blue-50 border-t-2 border-b-2 border-blue-500 px-4 py-3 text-blue-700" data-testid="working-hours-info">
         {{ t('settings.workingHours', { from: branch.opening_from, to: branch.opening_to }) }}
       </div>
 
@@ -65,24 +66,20 @@ function handleClose(): void {
         <label class="mb-2 block text-sm font-medium text-neutral-700">
           {{ t('settings.tables.label') }}
         </label>
-        
-        <div v-if="availableTables.length > 0" class="space-y-3">
-          <div data-testid="settings-tables-summary" class="text-sm text-neutral-600">
-            {{ t('settings.tables.summary', { count: availableTables.length }) }}
-          </div>
-          
-          <ul data-testid="settings-tables-list" role="list" class="space-y-2">
-            <li
+
+        <div v-if="availableTables.length > 0" class="rounded-lg bg-neutral-50 p-4">
+          <div class="flex flex-wrap gap-2">
+            <div
               v-for="table in availableTables"
               :key="table.id"
               :data-testid="`settings-tables-table-${table.id}`"
-              class="rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm"
+              class="rounded-full border-2 border-blue-500 bg-white px-4 py-2 text-sm text-neutral-900"
             >
               {{ getTableDisplayName(table) }}
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
-        
+
         <p v-else class="text-sm text-neutral-500">
           {{ t('settings.tables.noTables') }}
         </p>

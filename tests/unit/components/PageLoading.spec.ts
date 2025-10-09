@@ -2,9 +2,11 @@
  * @file PageLoading.spec.ts
  * @summary Unit tests for PageLoading component
  */
-import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
+
+import { describe, it, expect } from "vitest";
 import { createI18n } from "vue-i18n";
+
 import PageLoading from "@/components/ui/PageLoading.vue";
 
 const i18n = createI18n({

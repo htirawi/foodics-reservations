@@ -1,4 +1,5 @@
 import { ref } from "vue";
+
 import type { IModalOptions } from "@/types/modal";
 
 /**

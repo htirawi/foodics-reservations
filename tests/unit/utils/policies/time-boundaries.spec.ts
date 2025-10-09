@@ -4,8 +4,9 @@
  * @remarks Comprehensive edge-case coverage (25+ test cases)
  */
 import { describe, it, expect } from 'vitest';
-import { validateTimeBoundaries, isOvernightRange } from '@/utils/policies/time-boundaries';
+
 import type { SlotTuple } from '@/types/foodics';
+import { validateTimeBoundaries, isOvernightRange } from '@/utils/policies/time-boundaries';
 
 describe('Time Boundary Policies', () => {
   describe('Valid boundaries', () => {

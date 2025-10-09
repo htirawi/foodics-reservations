@@ -2,7 +2,7 @@
 export const LOCALE_ENGLISH = 'en';
 export const LOCALE_ARABIC = 'ar';
 
-export const SUPPORTED_LOCALES = [LOCALE_ENGLISH, LOCALE_ARABIC] as const;
+export const SUPPORTED_LOCALES = [LOCALE_ENGLISH, LOCALE_ARABIC];
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number];
 
 // Default & Fallback

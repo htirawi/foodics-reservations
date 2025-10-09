@@ -1,4 +1,5 @@
 import { ref } from "vue";
+
 export function useModals() {
     const showAddModal = ref(false);
     const showSettingsModal = ref(false);

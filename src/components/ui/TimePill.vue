@@ -47,6 +47,7 @@ function handleRemove(): void {
     class="inline-flex items-center gap-2 rounded-lg border-2 border-primary-600 bg-white px-4 py-2.5"
     :data-testid="dataTestid"
   >
+    <span class="sr-only">{{ from }} - {{ to }}</span>
     <input
       type="time"
       :value="from"
@@ -63,6 +64,7 @@ function handleRemove(): void {
     <button
       v-if="removable"
       type="button"
+      data-testid="slot-delete-btn"
       :aria-label="$t('app.remove', 'Remove')"
       class="ms-2 rounded text-neutral-400 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
       @click="handleRemove"

@@ -7,7 +7,8 @@
  *   - External requests blocked by default; localhost allowed
  */
 import { test as base } from "@playwright/test";
-import { blockExternalRequests } from "../utils/network";
+
+import { blockExternalRequests } from "@tests/e2e/utils/network";
 
 /**
  * Extended test fixture with automatic offline mode

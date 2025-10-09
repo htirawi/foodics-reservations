@@ -1,0 +1,190 @@
+{
+  "data": [
+    {
+      "id": "enabled-1",
+      "name": "Branch 1",
+      "name_localized": null,
+      "reference": "B01",
+      "type": 1,
+      "accepts_reservations": true,
+      "reservation_duration": 60,
+      "reservation_times": {
+        "saturday": [["12:00", "13:00"], ["13:00", "14:00"]],
+        "sunday": [["12:00", "13:00"], ["13:00", "14:00"]],
+        "monday": [],
+        "tuesday": [],
+        "wednesday": [],
+        "thursday": [["12:00", "13:00"], ["13:00", "14:00"]],
+        "friday": []
+      },
+      "opening_from": "09:00",
+      "opening_to": "22:00",
+      "receives_online_orders": true,
+      "created_at": "2022-11-02 05:51:39",
+      "updated_at": "2025-10-08 20:09:03",
+      "deleted_at": null,
+      "sections": [
+        {
+          "id": "section-1",
+          "branch_id": "enabled-1",
+          "name": "Terrace",
+          "name_localized": null,
+          "created_at": "2022-12-06 10:04:29",
+          "updated_at": "2022-12-06 10:04:29",
+          "deleted_at": null,
+          "tables": [
+            {
+              "id": "table-1",
+              "section_id": "section-1",
+              "name": "Table 1",
+              "status": 1,
+              "seats": 4,
+              "created_at": "2022-12-06 10:04:31",
+              "updated_at": "2025-10-05 19:28:23",
+              "deleted_at": null,
+              "accepts_reservations": true
+            },
+            {
+              "id": "table-2",
+              "section_id": "section-1",
+              "name": "Table 2",
+              "status": 1,
+              "seats": 2,
+              "created_at": "2022-12-06 10:04:31",
+              "updated_at": "2025-10-05 19:25:55",
+              "deleted_at": null,
+              "accepts_reservations": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "enabled-2",
+      "name": "branch 2",
+      "name_localized": null,
+      "reference": "B02",
+      "type": 1,
+      "accepts_reservations": true,
+      "reservation_duration": 60,
+      "reservation_times": {
+        "saturday": [],
+        "sunday": [["13:00", "18:00"], ["19:00", "22:00"]],
+        "monday": [],
+        "tuesday": [["13:00", "18:00"], ["19:00", "22:00"]],
+        "wednesday": [["13:00", "18:00"], ["19:00", "22:00"]],
+        "thursday": [["13:00", "18:00"], ["19:00", "22:00"]],
+        "friday": [["13:00", "18:00"], ["19:00", "22:00"]]
+      },
+      "opening_from": "09:00",
+      "opening_to": "22:00",
+      "receives_online_orders": true,
+      "created_at": "2022-11-06 13:24:13",
+      "updated_at": "2025-10-08 20:09:03",
+      "deleted_at": null,
+      "sections": []
+    },
+    {
+      "id": "disabled-1",
+      "name": "B29",
+      "name_localized": null,
+      "reference": "B29",
+      "type": 1,
+      "accepts_reservations": false,
+      "reservation_duration": 30,
+      "reservation_times": null,
+      "opening_from": "09:00",
+      "opening_to": "22:00",
+      "receives_online_orders": true,
+      "created_at": "2022-12-22 09:24:29",
+      "updated_at": "2025-10-06 10:46:11",
+      "deleted_at": null,
+      "sections": []
+    },
+    {
+      "id": "disabled-2",
+      "name": "B30",
+      "name_localized": null,
+      "reference": "B30",
+      "type": 1,
+      "accepts_reservations": false,
+      "reservation_duration": 30,
+      "reservation_times": {
+        "saturday": [["11:00", "17:00"]],
+        "sunday": [["11:00", "17:00"]],
+        "monday": [["11:00", "17:00"]],
+        "tuesday": [["11:00", "17:00"]],
+        "wednesday": [["11:00", "17:00"]],
+        "thursday": [["11:00", "17:00"]],
+        "friday": [["11:00", "17:00"]]
+      },
+      "opening_from": "09:00",
+      "opening_to": "22:00",
+      "receives_online_orders": true,
+      "created_at": "2022-12-22 09:24:26",
+      "updated_at": "2025-10-06 10:46:10",
+      "deleted_at": null,
+      "sections": []
+    },
+    {
+      "id": "disabled-3",
+      "name": "B32",
+      "name_localized": null,
+      "reference": "B32",
+      "type": 1,
+      "accepts_reservations": false,
+      "reservation_duration": 30,
+      "reservation_times": null,
+      "opening_from": "09:00",
+      "opening_to": "22:00",
+      "receives_online_orders": true,
+      "created_at": "2022-12-22 09:24:23",
+      "updated_at": "2025-10-06 10:46:10",
+      "deleted_at": null,
+      "sections": []
+    },
+    {
+      "id": "soft-deleted-enabled",
+      "name": "Deleted Branch (was enabled)",
+      "name_localized": null,
+      "reference": "DEL-001",
+      "type": 1,
+      "accepts_reservations": true,
+      "reservation_duration": 40,
+      "reservation_times": {
+        "saturday": [],
+        "sunday": [],
+        "monday": [],
+        "tuesday": [],
+        "wednesday": [],
+        "thursday": [],
+        "friday": []
+      },
+      "opening_from": "09:00",
+      "opening_to": "22:00",
+      "receives_online_orders": true,
+      "created_at": "2022-12-22 09:11:10",
+      "updated_at": "2025-10-08 20:09:04",
+      "deleted_at": "2023-02-27 12:47:15",
+      "sections": []
+    },
+    {
+      "id": "soft-deleted-disabled",
+      "name": "Deleted Branch (was disabled)",
+      "name_localized": null,
+      "reference": "DEL-002",
+      "type": 1,
+      "accepts_reservations": false,
+      "reservation_duration": 30,
+      "reservation_times": null,
+      "opening_from": "09:00",
+      "opening_to": "22:00",
+      "receives_online_orders": true,
+      "created_at": "2022-12-22 09:13:38",
+      "updated_at": "2025-10-08 20:08:56",
+      "deleted_at": "2023-02-27 12:20:46",
+      "sections": []
+    }
+  ]
+}
+

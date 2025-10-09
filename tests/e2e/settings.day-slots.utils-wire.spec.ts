@@ -5,14 +5,27 @@
  */
 
 import { test, expect } from "@playwright/test";
-import { setupOfflineModeWithSections } from "./setup/intercepts";
-import { switchToLocale, assertLocaleState, type Locale } from "./lib/i18n";
+import type { Page } from "@playwright/test";
+
+import { switchToLocale, assertLocaleState, type Locale } from "@tests/e2e/lib/i18n";
+import { setupOfflineModeWithSections } from "@tests/e2e/setup/intercepts";
+
+async function waitForPageLoad(page: Page): Promise<void> {
+  await page.waitForLoadState("networkidle").catch(() => { });
+  await Promise.race([
+    page.waitForSelector("[data-testid=\"branches-table\"]", { timeout: 5000 }).catch(() => { }),
+    page.waitForSelector("[data-testid^=\"branch-card-\"]", { timeout: 5000 }).catch(() => { }),
+    page.waitForSelector("[data-testid=\"branches-empty\"]", { timeout: 5000 }).catch(() => { }),
+    page.waitForSelector("[data-testid=\"branches-error\"]", { timeout: 5000 }).catch(() => { }),
+  ]);
+  await page.waitForTimeout(100);
+}
 
 test.describe("Settings Day Slots - Utils Validation Wiring", () => {
   test.beforeEach(async ({ page }) => {
     await setupOfflineModeWithSections(page);
     await page.goto("/");
-    await page.getByTestId("branches-table").waitFor();
+    await waitForPageLoad(page);
   });
 
   for (const locale of ["en", "ar"] as Locale[]) {

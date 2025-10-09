@@ -6,12 +6,15 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { ref } from "vue";
+
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { useI18n } from "vue-i18n";
+
+import { useToast } from "@/composables/useToast";
 import { useBranchSelection } from "@/features/branches/composables/useBranchSelection";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
-import { useToast } from "@/composables/useToast";
-import { useI18n } from "vue-i18n";
+
 vi.mock("@/features/branches/stores/branches.store");
 vi.mock("@/composables/useToast");
 vi.mock("vue-i18n");

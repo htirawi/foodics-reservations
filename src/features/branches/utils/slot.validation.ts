@@ -1,8 +1,9 @@
+import { MAX_SLOTS_PER_DAY, WEEKDAYS } from "@/constants/reservations";
 import type { SlotTuple, ReservationTimes, Weekday } from "@/types/foodics";
 import type { IReservationTimesValidation } from "@/types/validation";
 import { isHHmm, timeToMinutes } from "@/utils/time";
-import { slotOverlaps } from "./slot.operations";
-import { MAX_SLOTS_PER_DAY, WEEKDAYS } from "@/constants/reservations";
+
+import { slotOverlaps } from "@features/branches/utils/slot.operations";
 
 /**
  * Check if slot represents overnight range (e.g., 22:00-02:00).

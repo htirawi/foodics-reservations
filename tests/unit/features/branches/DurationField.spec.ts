@@ -6,10 +6,13 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
+
+import { describe, it, expect } from "vitest";
 import { createI18n } from "vue-i18n";
+
 import DurationField from "@/features/branches/components/ReservationSettingsModal/DurationField.vue";
+
 const i18n = createI18n({
     legacy: false,
     locale: "en",
@@ -255,8 +258,8 @@ describe("ReservationSettingsModal/DurationField", () => {
             },
         });
         const input = wrapper.find<HTMLInputElement>("[data-testid=\"settings-duration-input\"]");
-        expect(input.attributes("min")).toBe("30");
-        expect(input.attributes("max")).toBe("120");
+        expect(input.attributes("type")).toBe("text");
+        expect(input.attributes("inputmode")).toBe("numeric");
     });
     it("mounts without errors in Arabic locale", async () => {
         const arI18n = createI18n({

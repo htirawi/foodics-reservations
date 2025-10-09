@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { h } from "vue";
+
 import { storeToRefs } from "pinia";
 
 import { useUIStore } from "@/stores/ui.store";
-
 import type { Toast } from "@/types/toast";
 
 const uiStore = useUIStore();

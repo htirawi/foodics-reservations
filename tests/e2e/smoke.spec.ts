@@ -7,7 +7,9 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { test, expect } from "@playwright/test";
-import { setupOfflineMode } from "./setup/intercepts";
+
+import { setupOfflineMode } from "@tests/e2e/setup/intercepts";
+
 test.describe("Smoke Tests", () => {
     test("should mount the app successfully", async ({ page }) => {
         await setupOfflineMode(page);

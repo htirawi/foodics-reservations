@@ -2,9 +2,11 @@
  * @file useSettingsActions.spec.ts
  * @summary Unit tests for useSettingsActions composable
  */
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ref } from "vue";
+
 import { createPinia, setActivePinia } from "pinia";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+
 import { useSettingsActions } from "@/features/branches/composables/useSettingsActions";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 import type { IBranch, ReservationTimes } from "@/types/foodics";

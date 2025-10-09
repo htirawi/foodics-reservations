@@ -5,9 +5,8 @@ import AppHeader from "@/components/layout/AppHeader.vue";
 import AppToaster from "@/components/layout/AppToaster.vue";
 import AuthTokenBanner from "@/components/ui/AuthTokenBanner.vue";
 import ConfirmDialog from "@/components/ui/ConfirmDialog.vue";
-import BranchesListView from "@/features/branches/views/BranchesListView.vue";
-
 import { useLocale } from "@/composables/useLocale";
+import BranchesListView from "@/features/branches/views/BranchesListView.vue";
 import { useUIStore } from "@/stores/ui.store";
 
 const { restoreLocale } = useLocale();

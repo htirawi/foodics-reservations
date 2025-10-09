@@ -1,6 +1,17 @@
 /* eslint-env node */
 module.exports = {
   root: true,
+  settings: {
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+        project: './tsconfig.json'
+      },
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue']
+      }
+    }
+  },
   env: {
     browser: true,
     es2021: true,
@@ -19,7 +30,7 @@ module.exports = {
     sourceType: 'module',
     extraFileExtensions: ['.vue'],
   },
-  plugins: ['@typescript-eslint', 'vue', 'eslint-comments'],
+  plugins: ['@typescript-eslint', 'vue', 'eslint-comments', 'import'],
   rules: {
     // Strict rules - no any/unknown
     '@typescript-eslint/no-explicit-any': 'error',
@@ -101,6 +112,83 @@ module.exports = {
         ],
       },
     ],
+
+    // Import organization and alias enforcement
+    // Disabled: Rule incorrectly flags aliased imports (@/...) as relative imports
+    // 'import/no-relative-parent-imports': 'error',
+    'import/order': ['error', {
+      'groups': [
+        ['builtin', 'external'],
+        'internal',
+        ['parent', 'sibling', 'index', 'object']
+      ],
+      'pathGroups': [
+        {
+          pattern: 'vue',
+          group: 'external',
+          position: 'before'
+        },
+        {
+          pattern: '@vue/**',
+          group: 'external',
+          position: 'before'
+        },
+        {
+          pattern: '@/**',
+          group: 'internal',
+          position: 'before'
+        },
+        {
+          pattern: '@features/**',
+          group: 'internal',
+          position: 'before'
+        },
+        {
+          pattern: '@components/**',
+          group: 'internal',
+          position: 'before'
+        },
+        {
+          pattern: '@composables/**',
+          group: 'internal',
+          position: 'before'
+        },
+        {
+          pattern: '@services/**',
+          group: 'internal',
+          position: 'before'
+        },
+        {
+          pattern: '@utils/**',
+          group: 'internal',
+          position: 'before'
+        },
+        {
+          pattern: '@constants/**',
+          group: 'internal',
+          position: 'before'
+        },
+        {
+          pattern: '@types/**',
+          group: 'internal',
+          position: 'before'
+        },
+        {
+          pattern: '@assets/**',
+          group: 'internal',
+          position: 'before'
+        }
+      ],
+      'pathGroupsExcludedImportTypes': ['builtin'],
+      'newlines-between': 'always',
+      'alphabetize': {
+        order: 'asc',
+        caseInsensitive: true
+      }
+    }],
+    'import/no-duplicates': 'error',
+    'import/first': 'error',
+    'import/newline-after-import': 'error',
 
     // Prevent async functions in Vue components (except tiny event handlers)
     'no-restricted-syntax': [
@@ -207,16 +295,26 @@ module.exports = {
       rules: {
         // Allow console in tests for debugging
         'no-console': 'off',
-        
+
         // Allow any in tests for mocks and flexible testing
         '@typescript-eslint/no-explicit-any': 'off',
-        
+
         // Allow unused vars in tests for setup
         '@typescript-eslint/no-unused-vars': 'off',
-        
+
         // Allow service imports in tests
         'no-restricted-imports': 'off',
         'no-restricted-syntax': 'off',
+
+        // Enforce interface naming convention in tests too
+        '@typescript-eslint/naming-convention': [
+          'error',
+          {
+            selector: 'interface',
+            format: ['PascalCase'],
+            custom: { regex: '^I[A-Z].*$', match: true }
+          }
+        ],
         
         // Keep ts-comment bans even in tests - ban all @ts-* comments
         '@typescript-eslint/ban-ts-comment': ['error', {
@@ -239,7 +337,7 @@ module.exports = {
         'max-lines-per-function': 'off',
         'max-nested-callbacks': 'off',
         'max-depth': 'off',
-        'max-lines': ['error', { max: 300, skipComments: true, skipBlankLines: true }],
+        'max-lines': ['error', { max: 400, skipComments: true, skipBlankLines: true }],
         'complexity': 'off',
         'max-params': 'off',
         

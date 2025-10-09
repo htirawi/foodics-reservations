@@ -1,4 +1,5 @@
 import { ref } from "vue";
+
 import type { Weekday, SlotTuple } from "@/types/foodics";
 import type { IValidationErrors } from "@/types/validation";
 import { isValidRange, isOverlapping } from "@/utils/slots";
@@ -17,8 +18,7 @@ function validateSlotOverlaps(slots: SlotTuple[], { overlap }: { overlap: string
     for (let i = 0; i < slots.length; i++) {
         const slot = slots[i];
         if (!slot) continue;
-        
-        // Check this slot against all other slots for overlaps
+
         const hasOverlap = checkSlotOverlaps(slot, slots, i + 1);
         if (hasOverlap) {
             return overlap;

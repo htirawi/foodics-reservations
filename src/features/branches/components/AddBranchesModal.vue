@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
+
 import { useI18n } from "vue-i18n";
 
 import BaseButton from "@/components/ui/BaseButton.vue";
 import BaseInput from "@/components/ui/BaseInput.vue";
 import EmptyState from "@/components/ui/EmptyState.vue";
 import UiModal from "@/components/ui/UiModal.vue";
-
 import { useDebounceFn } from "@/composables/useDebounce";
 import { useToast } from "@/composables/useToast";
-
 import { useAddBranchesEnabling } from "@/features/branches/composables/useAddBranchesEnabling";
 import { useAddBranchesModal } from "@/features/branches/composables/useAddBranchesModal";
-
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 
 const props = defineProps<{
@@ -45,8 +43,6 @@ function handleClose(): void { if (!saving.value) {
 
 watch(() => props.modelValue, (isOpen) => { if (!isOpen)
     clear(); });
-
-const disabledBranches = branchesStore.disabledBranches;
 </script>
 
 <template>
@@ -60,7 +56,7 @@ const disabledBranches = branchesStore.disabledBranches;
     </template>
     <div data-testid="add-branches-modal">
       <EmptyState
-        v-if="disabledBranches.length === 0"
+        v-if="branchesStore.disabledBranches.length === 0"
         data-testid="add-branches-empty"
         :title="$t('addBranches.empty.title')"
         :description="$t('addBranches.empty.description')"

@@ -1,5 +1,3 @@
-import type { IApiError } from "@/types/api";
-import type { IMappedError } from "@/types/error";
 import {
     HTTP_STATUS_UNAUTHORIZED,
     HTTP_STATUS_CLIENT_ERROR_MIN,
@@ -9,6 +7,8 @@ import {
     I18N_KEY_ERROR_SERVER_TRY_AGAIN,
     I18N_KEY_PREFIX_ERROR_CLIENT,
 } from "@/constants";
+import type { IApiError } from "@/types/api";
+import type { IMappedError } from "@/types/error";
 
 /**
  * Maps an API error to a structured error with i18n key.

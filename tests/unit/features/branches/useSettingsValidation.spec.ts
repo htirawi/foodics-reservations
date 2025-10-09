@@ -3,6 +3,7 @@
  * @summary Unit tests for useSettingsValidation composable
  */
 import { describe, it, expect } from "vitest";
+
 import { useSettingsValidation } from "@/features/branches/composables/useSettingsValidation";
 import type { SlotTuple } from "@/types/foodics";
 

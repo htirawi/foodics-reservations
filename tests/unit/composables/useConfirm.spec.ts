@@ -3,6 +3,7 @@
  * @summary Unit tests for useConfirm composable
  */
 import { describe, it, expect } from "vitest";
+
 import { useConfirm } from "@/composables/useConfirm";
 
 describe("useConfirm", () => {

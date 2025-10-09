@@ -3,7 +3,6 @@ import { storeToRefs } from "pinia";
 
 import BaseButton from "@/components/ui/BaseButton.vue";
 import UiBanner from "@/components/ui/UiBanner.vue";
-
 import { useUIStore } from "@/stores/ui.store";
 
 const uiStore = useUIStore();

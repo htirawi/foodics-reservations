@@ -1,17 +1,8 @@
-import type { SlotTuple, ReservationTimes } from "@/types/foodics";
-import { isHHmm, timeToMinutes } from "./time";
 import { WEEKDAYS, MAX_SLOTS_PER_DAY } from "@/constants/reservations";
+import type { SlotTuple, ReservationTimes } from "@/types/foodics";
+import type { ValidationResult } from "@/types/validation";
 
-// Policy implementations available in src/utils/policies/
-// - time-boundaries: 00:00/23:59 handling, overnight rejection
-// - overlap-detection: Touching allowed, strict overlap forbidden
-// - slot-limits: MAX_SLOTS_PER_DAY enforcement
-// - normalization: Idempotency, stability, deep clone
-// - null-safety: Graceful null/undefined handling
-
-type ValidationResult =
-  | { ok: true }
-  | { ok: false; error: string };
+import { isHHmm, timeToMinutes } from "@utils/time";
 
 /**
  * Validate a slot tuple [start, end].

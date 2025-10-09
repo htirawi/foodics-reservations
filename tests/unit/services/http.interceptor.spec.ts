@@ -4,8 +4,9 @@
  * @remarks Tests ApiError shape with status, code, message, and details
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import MockAdapter from "axios-mock-adapter";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+
 import { httpClient } from "@/services/http";
 import type { IApiError } from "@/types/api";
 

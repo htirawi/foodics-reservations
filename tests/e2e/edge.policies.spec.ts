@@ -57,7 +57,8 @@
  */
 
 import { test, expect } from "@playwright/test";
-import { switchToLocale } from "./lib/i18n";
+
+import { switchToLocale } from "@tests/e2e/lib/i18n";
 
 test.describe("Edge-Case Policies - E2E (Documented)", () => {
   test.describe("Basic Verification", () => {

@@ -8,8 +8,10 @@
  */
 import { test, expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
-import { setupOfflineModeWithDisabledBranches } from "./setup/intercepts";
-import { switchToLocale } from "./lib/i18n";
+
+import { switchToLocale } from "@tests/e2e/lib/i18n";
+import { setupOfflineModeWithDisabledBranches } from "@tests/e2e/setup/intercepts";
+
 async function waitForPageLoad(page: Page): Promise<void> {
     await page.waitForLoadState("networkidle").catch(() => { });
     await Promise.race([

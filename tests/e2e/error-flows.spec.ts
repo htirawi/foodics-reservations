@@ -5,7 +5,8 @@
  */
 
 import { test, expect } from "@playwright/test";
-import { switchToLocale } from "./lib/i18n";
+
+import { switchToLocale } from "@tests/e2e/lib/i18n";
 
 test.describe("Error Handling", () => {
   test.describe("401 Unauthorized - Auth Token Banner", () => {

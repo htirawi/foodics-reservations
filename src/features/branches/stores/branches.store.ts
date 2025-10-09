@@ -1,15 +1,7 @@
 import { ref, computed, type Ref, type ComputedRef } from "vue";
+
 import { defineStore } from "pinia";
-import type { IBranch, IUpdateBranchSettingsPayload } from "@/types/foodics";
-import type { IApiError } from "@/types/api";
-import { BranchesService } from "@/services/branches.service";
-import { countReservableTables, findBranchById } from "@/features/branches/utils/branch.helpers";
-import {
-    processBatchResults,
-    applyOptimisticUpdate,
-    rollbackWithPartialSuccess,
-    handleCompleteFailure,
-} from "@/features/branches/utils/batch-operations";
+
 import {
     ERROR_MSG_FETCH_BRANCHES_FAILED,
     ERROR_MSG_ENABLE_BRANCHES_FAILED,
@@ -17,13 +9,25 @@ import {
     ERROR_MSG_UPDATE_SETTINGS_FAILED,
     STORE_NAME_BRANCHES,
 } from "@/constants";
+import {
+    processBatchResults,
+    applyOptimisticUpdate,
+    rollbackWithPartialSuccess,
+    handleCompleteFailure,
+} from "@/features/branches/utils/batch-operations";
+import { countReservableTables, findBranchById } from "@/features/branches/utils/branch.helpers";
+import { BranchesService } from "@/services/branches.service";
+import type { IApiError } from "@/types/api";
+import type { IBranch, IUpdateBranchSettingsPayload } from "@/types/foodics";
+import { isEnabledBranch, isDisabledBranch } from "@/utils/branches";
+
 function useBranchesState() {
     const branches = ref<IBranch[]>([]);
     const selectedBranchId = ref<string | null>(null);
     const loading = ref(false);
     const error = ref<string | null>(null);
-    const enabledBranches = computed(() => branches.value.filter((b) => b.accepts_reservations));
-    const disabledBranches = computed(() => branches.value.filter((b) => !b.accepts_reservations));
+    const enabledBranches = computed(() => branches.value.filter(isEnabledBranch));
+    const disabledBranches = computed(() => branches.value.filter(isDisabledBranch));
     const branchById = computed(() => (id: string) => findBranchById(branches.value, id));
     const reservableTablesCount = computed(() => (branch: IBranch) => countReservableTables(branch));
     return { branches, selectedBranchId, loading, error, enabledBranches, disabledBranches, branchById, reservableTablesCount };
@@ -33,7 +37,7 @@ function useFetchBranches(branches: Ref<IBranch[]>, loading: Ref<boolean>, error
         loading.value = true;
         error.value = null;
         try {
-            branches.value = await BranchesService.getBranches(includeSections);
+            branches.value = await BranchesService.getAllBranches(includeSections);
         }
         catch (err) {
             const apiError = err as IApiError;

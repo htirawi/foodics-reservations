@@ -4,10 +4,12 @@
  * @remarks Tests rendering, variants, dismiss, and accessibility
  */
 
-import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import UiBanner from "@/components/ui/UiBanner.vue";
+
+import { describe, it, expect } from "vitest";
 import { createI18n } from "vue-i18n";
+
+import UiBanner from "@/components/ui/UiBanner.vue";
 
 const i18n = createI18n({
   legacy: false,

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import type { Weekday, SlotTuple } from "@/types/foodics";
-import BaseButton from "@/components/ui/BaseButton.vue";
+
 import TimePill from "@/components/ui/TimePill.vue";
-defineProps<{
+import { MAX_SLOTS_PER_DAY, WEEKDAY_SATURDAY } from "@/constants/reservations";
+import type { Weekday, SlotTuple } from "@/types/foodics";
+
+const props = defineProps<{
     day: Weekday;
     slots: SlotTuple[];
     error?: string | undefined;
@@ -39,47 +41,62 @@ function handleApplyToAll(): void {
 
 <template>
   <div
-    class="rounded-lg border border-neutral-200 bg-neutral-50 p-4"
+    class="rounded-lg border border-neutral-200 bg-white p-4"
     :data-testid="`day-${day}`"
   >
-    <div class="mb-3 flex items-center justify-between">
-      <h3 class="text-sm font-medium text-neutral-900">
+    <div class="mb-4 flex items-center justify-between">
+      <h3 class="text-base font-normal text-neutral-700">
         {{ t(`settings.days.${day}`) }}
       </h3>
-      <BaseButton
-        variant="ghost"
-        size="sm"
+      <button
+        v-if="props.day === WEEKDAY_SATURDAY"
+        type="button"
+        class="text-sm font-medium text-violet-600 hover:text-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
         :data-testid="`apply-all-${day}`"
         @click="handleApplyToAll"
       >
         {{ t('settings.timeSlots.applyToAll') }}
-      </BaseButton>
+      </button>
     </div>
 
-    <div v-if="slots.length > 0" class="space-y-2">
-      <TimePill
-        v-for="(slot, idx) in slots"
-        :key="idx"
-        :from="slot[0]"
-        :to="slot[1]"
-        :editable="true"
-        :removable="true"
-        :data-testid="`settings-slot-row-${day}-${idx}`"
-        @update:from="(val) => handleUpdateSlot(idx, 'from', val)"
-        @update:to="(val) => handleUpdateSlot(idx, 'to', val)"
-        @remove="handleRemove(idx)"
-      />
+    <div class="rounded-lg bg-neutral-50 p-4">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex flex-wrap gap-2">
+          <TimePill
+            v-for="(slot, idx) in slots"
+            :key="idx"
+            :from="slot[0]"
+            :to="slot[1]"
+            :editable="true"
+            :removable="true"
+            :data-testid="`settings-slot-row-${day}-${idx}`"
+            @update:from="(val) => handleUpdateSlot(idx, 'from', val)"
+            @update:to="(val) => handleUpdateSlot(idx, 'to', val)"
+            @remove="handleRemove(idx)"
+          />
+        </div>
+        <button
+          type="button"
+          class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border-2 border-neutral-300 bg-white text-neutral-400 hover:border-neutral-400 hover:text-neutral-600 disabled:cursor-not-allowed disabled:opacity-50"
+          :disabled="slots.length >= MAX_SLOTS_PER_DAY"
+          :data-testid="`add-slot-${day}`"
+          :aria-label="t('settings.timeSlots.add')"
+          @click="handleAdd"
+        >
+          <svg
+class="h-4 w-4"
+fill="none"
+viewBox="0 0 24 24"
+stroke="currentColor"
+stroke-width="2.5">
+            <path
+stroke-linecap="round"
+stroke-linejoin="round"
+d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      </div>
     </div>
-
-    <BaseButton
-      variant="ghost"
-      size="sm"
-      class="mt-2"
-      :data-testid="`add-slot-${day}`"
-      @click="handleAdd"
-    >
-      + {{ t('settings.timeSlots.add') }}
-    </BaseButton>
 
     <p
       v-if="error"

@@ -1,7 +1,10 @@
 import { ref, type Ref } from "vue";
+
 import type { Composer } from "vue-i18n";
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
+
 import type { useToast } from "@/composables/useToast";
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
+
 export function useAddBranchesEnabling(selectedIds: Ref<string[]>, clear: () => void, toast: ReturnType<typeof useToast>, t: Composer["t"]) {
     const branchesStore = useBranchesStore();
     const saving = ref(false);

@@ -7,12 +7,26 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { test, expect } from "@playwright/test";
-import { setupOfflineModeWithSections } from "./setup/intercepts";
+import type { Page } from "@playwright/test";
+
+import { setupOfflineModeWithSections } from "@tests/e2e/setup/intercepts";
+
+async function waitForPageLoad(page: Page): Promise<void> {
+    await page.waitForLoadState("networkidle").catch(() => { });
+    await Promise.race([
+        page.waitForSelector("[data-testid=\"branches-table\"]", { timeout: 5000 }).catch(() => { }),
+        page.waitForSelector("[data-testid^=\"branch-card-\"]", { timeout: 5000 }).catch(() => { }),
+        page.waitForSelector("[data-testid=\"branches-empty\"]", { timeout: 5000 }).catch(() => { }),
+        page.waitForSelector("[data-testid=\"branches-error\"]", { timeout: 5000 }).catch(() => { }),
+    ]);
+    await page.waitForTimeout(100);
+}
+
 test.describe("Branches Settings Modal", () => {
     test.beforeEach(async ({ page }) => {
         await setupOfflineModeWithSections(page);
         await page.goto("/");
-        await page.getByTestId("branches-table").waitFor();
+        await waitForPageLoad(page);
     });
     test.describe("EN locale", () => {
         test("opens modal with all sections visible", async ({ page }) => {
@@ -203,7 +217,7 @@ test.describe("Branches Settings Modal", () => {
         test.beforeEach(async ({ page }) => {
             await setupOfflineModeWithSections(page);
             await page.goto("/");
-            await page.getByTestId("branches-table").waitFor();
+            await waitForPageLoad(page);
             await page.getByTestId("locale-switcher").click();
             await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
         });

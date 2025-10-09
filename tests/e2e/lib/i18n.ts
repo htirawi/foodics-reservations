@@ -7,14 +7,15 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import type { Page, expect } from "@playwright/test";
+
 export type Locale = "en" | "ar";
-export interface LocaleAssertions {
+export interface ILocaleAssertions {
     htmlDir: string;
     htmlLang: string;
     headerTitle: string;
     localeSwitcherText: string;
 }
-const LOCALE_DATA: Record<Locale, LocaleAssertions> = {
+const LOCALE_DATA: Record<Locale, ILocaleAssertions> = {
     en: {
         htmlDir: "ltr",
         htmlLang: "en",

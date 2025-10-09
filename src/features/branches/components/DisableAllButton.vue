@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import BaseButton from "@/components/ui/BaseButton.vue";
-
 import { useDisableAll } from "@/features/branches/composables/useDisableAll";
 
 interface Props {
@@ -16,7 +15,7 @@ const { busy, disableAll } = useDisableAll();
 
 <template>
   <BaseButton
-    data-test-id="disable-all"
+    data-testid="disable-all-btn"
     variant="danger"
     :disabled="disabled || busy"
     @click="disableAll"

@@ -9,7 +9,8 @@
  */
 
 import { test, expect } from '@playwright/test'
-import { checkA11y, checkA11yForSelector } from './helpers/a11y'
+
+import { checkA11y, checkA11yForSelector } from '@tests/e2e/helpers/a11y'
 
 test.describe('Accessibility - Core Pages', () => {
   test.beforeEach(async ({ page }) => {

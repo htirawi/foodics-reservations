@@ -1,8 +1,7 @@
-import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { IToast } from "@/types/toast";
-import type { IConfirmOptions } from "@/types/confirm";
-import type { ModalName } from "@/types/ui";
+
+import { defineStore } from "pinia";
+
 import {
     CONFIRM_DIALOG_DEFAULT_CONFIRM_TEXT,
     CONFIRM_DIALOG_DEFAULT_CANCEL_TEXT,
@@ -12,19 +11,10 @@ import {
     AUTH_BANNER_AUTO_DISMISS_MS,
     STORE_NAME_UI,
 } from "@/constants";
+import type { IConfirmOptions } from "@/types/confirm";
+import type { IToast } from "@/types/toast";
+import type { ModalName, AuthBannerState, ConfirmDialogState } from "@/types/ui";
 
-interface AuthBannerState {
-  isVisible: boolean;
-  message: string | null;
-  onRetry: (() => void) | null;
-  autoDismissTimer: ReturnType<typeof setTimeout> | null;
-}
-
-interface ConfirmDialogState {
-  isOpen: boolean;
-  options: IConfirmOptions | null;
-  resolve: ((value: boolean) => void) | null;
-}
 function createToast(message: string, type: IToast["type"], duration: number): IToast {
     const id = `${Date.now()}-${Math.random()}`;
     return { id, message, type, duration };
@@ -100,19 +90,17 @@ function useAuthBanner() {
         autoDismissTimer: null,
     });
     function showAuthBanner({ message, onRetry, autoDismiss }: { message?: string; onRetry?: () => void; autoDismiss?: boolean } = {}): void {
-        // Clear existing timer if any
         if (authBanner.value.autoDismissTimer) {
             clearTimeout(authBanner.value.autoDismissTimer);
         }
-        
+
         authBanner.value = {
             isVisible: true,
             message: message ?? null,
             onRetry: onRetry ?? null,
             autoDismissTimer: null,
         };
-        
-        // Set auto-dismiss timer if requested
+
         if (autoDismiss) {
             authBanner.value.autoDismissTimer = setTimeout(() => {
                 hideAuthBanner();
@@ -120,7 +108,6 @@ function useAuthBanner() {
         }
     }
     function hideAuthBanner(): void {
-        // Clear timer if active
         if (authBanner.value.autoDismissTimer) {
             clearTimeout(authBanner.value.autoDismissTimer);
         }

@@ -9,7 +9,9 @@
 import dotenv from "dotenv";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { runSafetyPreflight } from "./safety-preflight";
+
+import { runSafetyPreflight } from "@tests/e2e/setup/safety-preflight";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const envPath = resolve(__dirname, "../../../.env.e2e");

@@ -1,10 +1,13 @@
 import { watch } from "vue";
+
 import { useI18n } from "vue-i18n";
-import { useSettingsActions } from "./useSettingsActions";
-import { useSettingsState } from "./useSettingsState";
-import { useSettingsValidationLogic } from "./useSettingsValidationLogic";
-import { useSlotsManagement } from "./useSlotsManagement";
+
 import { WEEKDAYS } from "@/constants/reservations";
+
+import { useSettingsActions } from "@features/branches/composables/useSettingsActions";
+import { useSettingsState } from "@features/branches/composables/useSettingsState";
+import { useSettingsValidationLogic } from "@features/branches/composables/useSettingsValidationLogic";
+import { useSlotsManagement } from "@features/branches/composables/useSlotsManagement";
 
 const weekdays = WEEKDAYS;
 export function useSettingsForm(branchId: Readonly<{ branchId: string | null }>, onClose: () => void) {

@@ -1,7 +1,8 @@
 import { type Ref } from "vue";
-import type { IBranch, Weekday, ReservationTimes } from "@/types/foodics";
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
+
 import { WEEKDAYS } from "@/constants/reservations";
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
+import type { IBranch, Weekday, ReservationTimes } from "@/types/foodics";
 
 const weekdays = WEEKDAYS;
 export function useSettingsActions(

@@ -5,6 +5,7 @@
  */
 
 import { describe, it, expect } from "vitest";
+
 import { useErrorMapper } from "@/composables/useErrorMapper";
 import type { IApiError } from "@/types/api";
 

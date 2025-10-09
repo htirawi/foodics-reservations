@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import BaseButton from "@/components/ui/BaseButton.vue";
-
 import { TESTID_EMPTY_STATE } from "@/constants/testids";
 
 withDefaults(defineProps<{

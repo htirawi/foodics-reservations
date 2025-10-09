@@ -1,4 +1,5 @@
 import { computed } from "vue";
+
 import { useLocale } from "@/composables/useLocale";
 
 export const useRTL = () => {

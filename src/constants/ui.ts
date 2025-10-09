@@ -9,7 +9,7 @@ export const TOAST_TYPES = [
   TOAST_TYPE_ERROR,
   TOAST_TYPE_WARNING,
   TOAST_TYPE_INFO,
-] as const;
+];
 
 // Toast Durations (milliseconds)
 export const TOAST_DEFAULT_DURATION_MS = 5000;
@@ -24,7 +24,7 @@ export const CONFIRM_VARIANTS = [
   CONFIRM_VARIANT_INFO,
   CONFIRM_VARIANT_WARNING,
   CONFIRM_VARIANT_DANGER,
-] as const;
+];
 
 // Confirm Dialog Defaults
 export const CONFIRM_DIALOG_DEFAULT_CONFIRM_TEXT = 'Confirm';

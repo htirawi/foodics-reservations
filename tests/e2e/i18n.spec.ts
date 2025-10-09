@@ -7,6 +7,7 @@
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
 import { test, expect } from "@playwright/test";
+
 const STORAGE_KEY = "foodics-locale";
 test.describe("i18n and RTL", () => {
     test.beforeEach(async ({ page }) => {

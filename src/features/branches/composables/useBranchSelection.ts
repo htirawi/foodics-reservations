@@ -1,10 +1,14 @@
 import { type Ref } from "vue";
-import { useBranchesStore } from "@/features/branches/stores/branches.store";
-import { useToast } from "@/composables/useToast";
+
 import { useI18n } from "vue-i18n";
-import { useBranchSelectionState } from "./useBranchSelectionState";
-import { useBranchSelectionActions } from "./useBranchSelectionActions";
-import { useBranchEnabling } from "./useBranchEnabling";
+
+import { useToast } from "@/composables/useToast";
+import { useBranchesStore } from "@/features/branches/stores/branches.store";
+
+import { useBranchEnabling } from "@features/branches/composables/useBranchEnabling";
+import { useBranchSelectionActions } from "@features/branches/composables/useBranchSelectionActions";
+import { useBranchSelectionState } from "@features/branches/composables/useBranchSelectionState";
+
 export function useBranchSelection(isOpen: Ref<boolean>) {
     const branchesStore = useBranchesStore();
     const { t } = useI18n();

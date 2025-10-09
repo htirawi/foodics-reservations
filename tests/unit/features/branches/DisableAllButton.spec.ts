@@ -6,13 +6,17 @@
  *   - TypeScript strict; no any/unknown; use ?./??.
  *   - i18n/RTL ready; a11y ≥95; minimal deps.
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { mount } from "@vue/test-utils";
-import { createPinia } from "pinia";
 import { ref } from "vue";
-import DisableAllButton from "@/features/branches/components/DisableAllButton.vue";
+
+import { mount } from "@vue/test-utils";
+
+import { createPinia } from "pinia";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createI18n } from "vue-i18n";
+
+import DisableAllButton from "@/features/branches/components/DisableAllButton.vue";
 import * as useDisableAllModule from "@/features/branches/composables/useDisableAll";
+
 const i18n = createI18n({
     legacy: false,
     locale: "en",
@@ -45,7 +49,7 @@ describe("DisableAllButton", () => {
         const wrapper = mount(DisableAllButton, {
             global: { plugins: [i18n, createPinia()] },
         });
-        expect(wrapper.find("[data-test-id=\"disable-all\"]").exists()).toBe(true);
+        expect(wrapper.find("[data-testid=\"disable-all-btn\"]").exists()).toBe(true);
     });
     it("is not disabled by default", () => {
         const wrapper = mount(DisableAllButton, {

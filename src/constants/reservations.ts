@@ -18,7 +18,7 @@ export const WEEKDAYS = [
   WEEKDAY_WEDNESDAY,
   WEEKDAY_THURSDAY,
   WEEKDAY_FRIDAY,
-] as const;
+];
 
 export type Weekday = typeof WEEKDAYS[number];
 
@@ -30,7 +30,7 @@ export const DEFAULT_SLOT_START = '09:00';
 export const DEFAULT_SLOT_END = '17:00';
 
 // Reservation Duration Bounds (minutes)
-export const MIN_DURATION_MINUTES = 1;
+export const MIN_DURATION_MINUTES = 5;
 export const MAX_DURATION_MINUTES = 1440; // 24 hours
 
 // Time Format (used in documentation and labels)

@@ -2,9 +2,11 @@
  * @file useAddBranchesEnabling.spec.ts
  * @summary Unit tests for useAddBranchesEnabling composable
  */
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ref } from "vue";
+
 import { createPinia, setActivePinia } from "pinia";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+
 import { useAddBranchesEnabling } from "@/features/branches/composables/useAddBranchesEnabling";
 import { useBranchesStore } from "@/features/branches/stores/branches.store";
 

@@ -8,6 +8,10 @@ REPORT_TYPES_AUDIT.md
 PROOF_CLEAN_HISTORY.md
 COMPLIANCE_AUDIT.md
 .comments_sweep_progress.json
+.final_doc_progress.json
+.guidelines_progress.json
+.pkg_audit_progress.json
+.vue_order_progress.json
 test-*.log
 test-results.json
 

@@ -1,6 +1,7 @@
 import { useI18n } from "vue-i18n";
-import { useUIStore } from "@/stores/ui.store";
+
 import { useErrorMapper } from "@/composables/useErrorMapper";
+import { useUIStore } from "@/stores/ui.store";
 import type { IApiError } from "@/types/api";
 
 export function useApiErrorHandler() {
