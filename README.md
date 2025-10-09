@@ -640,5 +640,5 @@ Track progress, sprint planning, and task breakdown in the linked board.
 
 ---
 
-**Hussein Tirawi** | 2024
+**Hussein Tirawi** | 2025
 *Senior Frontend Engineer*
