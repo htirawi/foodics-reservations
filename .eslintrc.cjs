@@ -190,14 +190,7 @@ module.exports = {
     'import/first': 'error',
     'import/newline-after-import': 'error',
 
-    // Prevent async functions in Vue components (except tiny event handlers)
-    'no-restricted-syntax': [
-      'error',
-      {
-        selector: 'FunctionDeclaration[async=true]',
-        message: 'Async functions in Vue components should be minimal event handlers that call composables/stores. Extract complex async logic to composables.',
-      },
-    ],
+    // Note: async function restrictions moved to Vue-specific overrides below
 
     // General code quality
     'no-console': ['warn', { allow: ['warn', 'error'] }],
@@ -261,18 +254,16 @@ module.exports = {
       },
     },
     {
-      // Relax rules for Vercel serverless functions (Node.js backend, not Vue)
-      files: [
-        'api/**/*.{js,ts}',
-      ],
+      // Vue-specific restrictions (async functions should be minimal)
+      files: ['src/**/*.vue'],
       rules: {
-        'no-restricted-syntax': 'off',
-        'no-restricted-imports': 'off',
-        'complexity': 'off',
-        'max-depth': 'off',
-        'max-lines-per-function': 'off',
-        'no-console': 'off',
-        'max-lines': 'off',
+        'no-restricted-syntax': [
+          'error',
+          {
+            selector: 'FunctionDeclaration[async=true]',
+            message: 'Async functions in Vue components should be minimal event handlers that call composables/stores. Extract complex async logic to composables.',
+          },
+        ],
       },
     },
     {
