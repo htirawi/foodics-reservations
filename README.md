@@ -455,24 +455,6 @@ npm install
 npx playwright install --with-deps
 ```
 
-## Deployment to Vercel
-
-### Quick Start
-
-```bash
-# 1. Deploy to Vercel
-vercel --prod
-
-# 2. Add environment variables in Vercel Dashboard
-# VITE_FOODICS_TOKEN=your-token
-# VITE_API_BASE_URL=https://api.foodics.dev/v5
-
-# 3. Redeploy to apply env vars
-vercel --prod
-```
-
-📖 **Full deployment guide**: See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions, troubleshooting, and advanced configuration.
-
 ### Environment Configuration
 
 ```bash

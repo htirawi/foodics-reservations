@@ -190,14 +190,7 @@ module.exports = {
     'import/first': 'error',
     'import/newline-after-import': 'error',
 
-    // Prevent async functions in Vue components (except tiny event handlers)
-    'no-restricted-syntax': [
-      'error',
-      {
-        selector: 'FunctionDeclaration[async=true]',
-        message: 'Async functions in Vue components should be minimal event handlers that call composables/stores. Extract complex async logic to composables.',
-      },
-    ],
+    // Note: async function restrictions moved to Vue-specific overrides below
 
     // General code quality
     'no-console': ['warn', { allow: ['warn', 'error'] }],
@@ -258,6 +251,19 @@ module.exports = {
         '@typescript-eslint/no-explicit-any': 'off',
         'eslint-comments/no-use': 'off',
         'eslint-comments/require-description': 'off',
+      },
+    },
+    {
+      // Vue-specific restrictions (async functions should be minimal)
+      files: ['src/**/*.vue'],
+      rules: {
+        'no-restricted-syntax': [
+          'error',
+          {
+            selector: 'FunctionDeclaration[async=true]',
+            message: 'Async functions in Vue components should be minimal event handlers that call composables/stores. Extract complex async logic to composables.',
+          },
+        ],
       },
     },
     {

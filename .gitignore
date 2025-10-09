@@ -69,3 +69,4 @@ lerna-debug.log*
 /playwright/.cache/
 node_modules
 test-results.json
+.vercel
