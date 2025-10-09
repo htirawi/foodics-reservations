@@ -22,24 +22,22 @@ const emit = defineEmits<{
     ];
 }>();
 const { t } = useI18n();
-const { isOpen, branch, duration, weekSlots, weekdays, availableTables, errors, addSlot, removeSlot, updateSlot, applyToAllDays, handleSave, handleDisable, } = useSettingsForm(props, () => emit("close"));
+const { isOpen, branch, duration, weekSlots, weekdays, availableTables, errors, addSlot, removeSlot, updateSlot, applyToAllDays, handleSave, handleDisable, isSaving, isDisabling } = useSettingsForm(props, () => emit("close"));
 const canSave = computed<boolean>(() => {
     if (!duration.value || duration.value < 1) return false;
+    if (errors.value.duration) return false;
+    if (errors.value.slots && Object.keys(errors.value.slots).length > 0) return false;
     return true;
 });
 
 function getTableDisplayName(table: ITable): string {
-    const section = branch.value?.sections?.find(s =>
-        s.tables?.some(t => t.id === table.id)
-    );
+    const section = branch.value?.sections?.find(s => s.tables?.some(t => t.id === table.id));
     const sectionName = section?.name ?? 'Unknown';
     const tableName = table.name ?? table.id;
     return `${sectionName} - ${tableName}`;
 }
 
-function handleClose(): void {
-    emit("close");
-}
+function handleClose(): void { emit("close"); }
 </script>
 
 <template>
@@ -101,19 +99,64 @@ function handleClose(): void {
     </div>
 
     <template #actions>
-      <BaseButton variant="danger" data-testid="disable-button" @click="handleDisable">
-        {{ t('settings.actions.disableReservations') }}
+      <BaseButton
+        variant="danger"
+        data-testid="disable-button"
+        :disabled="isDisabling || isSaving"
+        @click="handleDisable"
+      >
+        <span v-if="isDisabling" class="inline-flex items-center gap-2">
+          <svg
+class="h-4 w-4 animate-spin"
+xmlns="http://www.w3.org/2000/svg"
+fill="none"
+viewBox="0 0 24 24">
+            <circle
+class="opacity-25"
+cx="12"
+cy="12"
+r="10"
+stroke="currentColor"
+stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ t('settings.actions.disabling') }}
+        </span>
+        <span v-else>{{ t('settings.actions.disableReservations') }}</span>
       </BaseButton>
       <div class="flex gap-3">
-        <BaseButton variant="ghost" data-testid="settings-cancel" @click="handleClose">
+        <BaseButton
+          variant="ghost"
+          data-testid="settings-cancel"
+          :disabled="isSaving || isDisabling"
+          @click="handleClose"
+        >
           {{ t('settings.actions.close') }}
         </BaseButton>
         <BaseButton
-variant="primary"
-:disabled="!canSave"
-data-testid="save-button"
-@click="handleSave">
-          {{ t('settings.actions.save') }}
+          variant="primary"
+          :disabled="!canSave || isSaving || isDisabling"
+          data-testid="save-button"
+          @click="handleSave"
+        >
+          <span v-if="isSaving" class="inline-flex items-center gap-2">
+            <svg
+class="h-4 w-4 animate-spin"
+xmlns="http://www.w3.org/2000/svg"
+fill="none"
+viewBox="0 0 24 24">
+              <circle
+class="opacity-25"
+cx="12"
+cy="12"
+r="10"
+stroke="currentColor"
+stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            {{ t('settings.actions.saving') }}
+          </span>
+          <span v-else>{{ t('settings.actions.save') }}</span>
         </BaseButton>
       </div>
     </template>
